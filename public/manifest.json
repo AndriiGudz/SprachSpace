@@ -1,5 +1,5 @@
 {
-  "short_name": "React App",
+  "short_name": "SprachSpace",
   "name": "Create React App Sample",
   "icons": [
     {
@@ -10,6 +10,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#01579B",
   "background_color": "#ffffff"
 }
