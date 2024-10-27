@@ -2,8 +2,12 @@
  "app": {
     "title": "SprachSpace - Language room, space for communication and learning",
     "description": "SprachSpace - platform for learning languages ​​through group communication"
-  }, 
-  "homePage": {
-    
+  },
+  "header": {
+    "signIn": "Sign in"
+  },
+  "nav": {
+    "meet": "Meetings",
+    "about": "About Us"
   }
 }
