@@ -1,20 +1,21 @@
-import './styles.css';
+import './styles.css'
 
 interface ButtonSignProps {
-  text: string;
+  text: string
+  onClick: () => void
 }
 
-function ButtonSign({ text }: ButtonSignProps) {
+function ButtonSignBl({ text, onClick }: ButtonSignProps) {
   return (
     <div id="container">
-      <button className="learn-more">
+      <button onClick={onClick} className="learn-more">
         <span className="circle" aria-hidden="true">
           <span className="icon arrow"></span>
         </span>
         <span className="button-text">{text}</span>
       </button>
     </div>
-  );
+  )
 }
 
-export default ButtonSign;
+export default ButtonSignBl

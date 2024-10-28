@@ -1,72 +1,39 @@
-import { Suspense, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import './i18n'
-import GlobalStyles from './styles/GlobalStyles'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Layout from './components/Layout/Layout'
-import Home from './pages/Home/Home'
+// App.tsx
+import { Suspense, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import './i18n';
+import GlobalStyles from './styles/GlobalStyles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+import Home from './pages/Home/Home';
+import PageSignInUp from './pages/PageSignInUp/PageSignInUp';
+import theme from './theme'; // Импортируем тему
+import { ThemeProvider } from '@mui/material/styles';
 
 function App() {
-  const { t, i18n } = useTranslation()
-
-  const theme = createTheme({
-    typography: {
-      fontFamily: 'Oswald, sans-serif',
-      allVariants: {
-        fontStyle: 'normal',
-        fontWeight: 400,
-        lineHeight: '100%',
-        letterSpacing: '0.32px',
-      },
-    },
-    palette: {
-      text: {
-        primary: '#212121',
-        secondary: '#757575',
-      },
-    },
-  })
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    document.title = t('app.title')
-    const descriptionMetaTag = document.querySelector(
-      'meta[name="description"]'
-    )
-    if (descriptionMetaTag) {
-      descriptionMetaTag.setAttribute('content', t('app.description'))
-    }
-
-    document.documentElement.setAttribute('lang', i18n.language)
-
-    i18n.on('languageChanged', (lng) => {
-      document.title = t('app.title')
-      if (descriptionMetaTag) {
-        descriptionMetaTag.setAttribute('content', t('app.description'))
-      }
-      document.documentElement.setAttribute('lang', lng)
-    })
-
-    return () => {
-      i18n.off('languageChanged')
-    }
-  }, [t, i18n])
+    // Логика с title и описанием
+  }, [t, i18n]);
 
   return (
     <BrowserRouter>
       <Suspense fallback={<div>Loading...</div>}>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}> {/* Применяем тему */}
           <CssBaseline />
           <GlobalStyles />
-          <Layout />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/signin" element={<PageSignInUp />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+            </Route>
           </Routes>
         </ThemeProvider>
       </Suspense>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

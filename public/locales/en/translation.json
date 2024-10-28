@@ -1,13 +1,29 @@
 {
- "app": {
+  "app": {
     "title": "SprachSpace - Language room, space for communication and learning",
     "description": "SprachSpace - platform for learning languages ​​through group communication"
   },
   "header": {
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "signUp": "Sign up"
   },
   "nav": {
     "meet": "Meetings",
     "about": "About Us"
+  },
+  "signinUp": {
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create Account",
+    "googleSignIn": "Sign in with Google",
+    "orUseAccount": "or use your account",
+    "orUseEmail": "or use your email for registration",
+    "forgotPassword": "Forgot your password?",
+    "welcomeBack": "Welcome Back!",
+    "welcomeBackText": "To keep connected with us please login with your personal info",
+    "helloFriend": "Hello, Friend!",
+    "helloFriendText": "Enter your personal details and start journey with us",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password"
   }
 }
