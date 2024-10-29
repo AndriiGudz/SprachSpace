@@ -10,16 +10,14 @@ import {
   Overlay,
   OverlayPanel,
   SocialContainer,
-  ButtonSign,
   TextBox,
   CloseButton,
   CloseButtonBlack,
   FormField,
   TextFieldBox,
 } from './styles'
-import ButtonSignFFF from '../ButtonSignFFF/ButtonSignFFF'
 import { TextField } from '@mui/material' // Импортируем TextField из MUI
-import ButtonSignBl from '../ButtonSignBl/ButtonSignBl'
+import ButtonSign from '../ButtonSign/ButtonSign'
 
 function SignInUp() {
   const { t } = useTranslation()
@@ -50,24 +48,24 @@ function SignInUp() {
           </SocialContainer>
           <span>{t('signinUp.orUseAccount')}</span>
           <TextFieldBox>
-          <TextField
-            label={t('signinUp.emailPlaceholder')}
-            type="email"
-            className="inputSecondary"
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label={t('signinUp.passwordPlaceholder')}
-            type="password"
-            className="inputSecondary"
-            fullWidth
-            margin="normal"
-          />
+            <TextField
+              label={t('signinUp.emailPlaceholder')}
+              type="email"
+              className="inputSecondary"
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label={t('signinUp.passwordPlaceholder')}
+              type="password"
+              className="inputSecondary"
+              fullWidth
+              margin="normal"
+            />
           </TextFieldBox>
           <a href="#">{t('signinUp.forgotPassword')}</a>
-          <ButtonSign>{t('header.signIn')}</ButtonSign>
-          <ButtonSignBl text={t('header.signIn')} onClick={handleCloseClick} />
+          {/* <ButtonSign>{t('header.signIn')}</ButtonSign> */}
+          <ButtonSign text={t('header.signIn')} onClick={handleCloseClick} variant='light' />
         </FormField>
       </FormContainer>
 
@@ -84,29 +82,30 @@ function SignInUp() {
           </SocialContainer>
           <span>{t('signinUp.orUseEmail')}</span>
           <TextFieldBox>
-          <TextField
-            label={t('signinUp.namePlaceholder')}
-            type="text"
-            className="inputSecondary"
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label={t('signinUp.emailPlaceholder')}
-            type="email"
-            className="inputSecondary"
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label={t('signinUp.passwordPlaceholder')}
-            type="password"
-            className="inputSecondary"
-            fullWidth
-            margin="normal"
-          />
+            <TextField
+              label={t('signinUp.namePlaceholder')}
+              type="text"
+              className="inputSecondary"
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label={t('signinUp.emailPlaceholder')}
+              type="email"
+              className="inputSecondary"
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label={t('signinUp.passwordPlaceholder')}
+              type="password"
+              className="inputSecondary"
+              fullWidth
+              margin="normal"
+            />
           </TextFieldBox>
-          <ButtonSign>{t('header.signUp')}</ButtonSign>
+          {/* <ButtonSign>{t('header.signUp')}</ButtonSign> */}
+          <ButtonSign text={t('header.signIn')} onClick={handleCloseClick} variant='light' />
         </FormField>
       </FormContainer>
 
@@ -117,9 +116,10 @@ function SignInUp() {
             <TextBox>
               <p>{t('signinUp.welcomeBackText')}</p>
             </TextBox>
-            <ButtonSignFFF
+            <ButtonSign
               text={t('header.signIn')}
               onClick={handleSignInClick}
+              variant='dark'
             />
           </OverlayPanel>
           <OverlayPanel className="overlay-right">
@@ -130,9 +130,10 @@ function SignInUp() {
             <TextBox>
               <p>{t('signinUp.helloFriendText')}</p>
             </TextBox>
-            <ButtonSignFFF
+            <ButtonSign
               text={t('header.signUp')}
               onClick={handleSignUpClick}
+              variant='dark'
             />
           </OverlayPanel>
         </Overlay>

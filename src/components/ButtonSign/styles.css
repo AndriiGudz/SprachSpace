@@ -22,9 +22,17 @@ button.learn-more .circle {
   margin: 0;
   width: 36px;
   height: 36px;
-  background: #fff;
   border-radius: 50px;
 }
+
+button.learn-more.light .circle {
+  background: #01579B;
+}
+
+button.learn-more.dark .circle {
+  background: #fff;
+}
+
 button.learn-more .circle .icon {
   transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
   position: absolute;
@@ -33,6 +41,7 @@ button.learn-more .circle .icon {
   margin: auto;
   background: #fff;
 }
+
 button.learn-more .circle .icon.arrow {
   transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
   left: 0.125rem;
@@ -42,14 +51,23 @@ button.learn-more .circle .icon.arrow {
 }
 button.learn-more .circle .icon.arrow::before {
   position: absolute;
-  content: "";
+  content: '';
   top: -0.25rem;
   width: 0.625rem;
   height: 0.625rem;
-  border-top: 0.125rem solid #01579B;
-  border-right: 0.125rem solid #01579B;
   transform: rotate(45deg);
 }
+
+button.learn-more.light .circle .icon.arrow::before {
+  border-top: 0.125rem solid #fff;
+  border-right: 0.125rem solid #fff;
+}
+
+button.learn-more.dark .circle .icon.arrow::before {
+  border-top: 0.125rem solid #01579B;
+  border-right: 0.125rem solid #01579B;
+}
+
 button.learn-more .button-text {
   transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
   position: absolute;
@@ -59,19 +77,36 @@ button.learn-more .button-text {
   bottom: 0;
   padding: 0.55rem 0;
   margin: 0 0 0 2.15rem;
-  color: #fff;
   font-weight: 400;
   line-height: 100%;
   letter-spacing: 0.32px;
   text-align: center;
 }
+
+button.learn-more.light .button-text {
+  color: #212121;
+}
+
+button.learn-more.dark .button-text {
+  color: #fff;
+}
+
 button:hover .circle {
   width: 100%;
 }
-button:hover .circle .icon.arrow {
+
+button.light:hover .circle .icon.arrow {
+  background: #fff;
+  transform: translate(1rem, 0);
+}
+button.light:hover .button-text {
+  color: #fff;
+}
+
+button.dark:hover .circle .icon.arrow {
   background: #01579B;
   transform: translate(1rem, 0);
 }
-button:hover .button-text {
+button.dark:hover .button-text {
   color: #01579B;
 }

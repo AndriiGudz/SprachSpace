@@ -3,12 +3,13 @@ import './styles.css'
 interface ButtonSignProps {
   text: string
   onClick: () => void
+  variant?: 'light' | 'dark'
 }
 
-function ButtonSignBl({ text, onClick }: ButtonSignProps) {
+function ButtonSign({ text, onClick, variant }: ButtonSignProps) {
   return (
     <div id="container">
-      <button onClick={onClick} className="learn-more">
+      <button onClick={onClick} className={`learn-more ${variant}`}>
         <span className="circle" aria-hidden="true">
           <span className="icon arrow"></span>
         </span>
@@ -18,4 +19,4 @@ function ButtonSignBl({ text, onClick }: ButtonSignProps) {
   )
 }
 
-export default ButtonSignBl
+export default ButtonSign
