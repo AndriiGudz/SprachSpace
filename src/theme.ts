@@ -32,6 +32,7 @@ const theme = createTheme({
     MuiTextField: {
       defaultProps: {
         variant: 'outlined',
+        margin: 'none', // Убираем стандартные отступы
       },
       styleOverrides: {
         root: {
@@ -42,6 +43,14 @@ const theme = createTheme({
           '&.inputSecondary .MuiOutlinedInput-root': {
             backgroundColor: '#E1F5FE', // Альтернативный цвет фона
           },
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          marginTop: 0,   // Убираем верхний отступ
+          marginBottom: 0, // Убираем нижний отступ
         },
       },
     },

@@ -20,7 +20,7 @@ function Header() {
         <Logo width="252" height="70" />
       </a>
       <NavLinks />
-      <ButtonSign text={t('header.signIn')} onClick={handleSignInClick} variant='light' />
+      <ButtonSign text={t('header.signIn')} onClick={handleSignInClick} variant='light' type="button"/>
       <LanguageSelector />
     </HeaderBox>
   )

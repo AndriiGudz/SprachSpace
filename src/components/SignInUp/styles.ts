@@ -72,6 +72,15 @@ export const FormField = styled.form`
   span {
     color: #616161;
   }
+
+  a {
+    color: #616161;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
 `
 
 export const TextFieldBox = styled.div`
