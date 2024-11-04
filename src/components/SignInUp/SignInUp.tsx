@@ -46,7 +46,7 @@ const SignInSchema = Yup.object().shape({
 })
 
 const SignUpSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
+  // name: Yup.string().required('Name is required'),
   email: Yup.string()
     .required('Email is required')
     .email('Invalid email')
@@ -254,7 +254,7 @@ function SignInUp() {
               </SocialContainer>
               <span>{t('signinUp.orUseEmail')}</span>
               <TextFieldBox>
-                <Field name="name">
+                {/* <Field name="name">
                   {({ field, meta }: any) => (
                     <TextField
                       {...field}
@@ -267,7 +267,7 @@ function SignInUp() {
                       error={Boolean(meta.touched && meta.error)}
                     />
                   )}
-                </Field>
+                </Field> */}
                 <Field name="email">
                   {({ field, meta }: any) => (
                     <TextField
