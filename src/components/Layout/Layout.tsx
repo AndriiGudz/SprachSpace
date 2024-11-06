@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom'
 import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
 import { LayoutComponent, Main } from './styles'
@@ -7,7 +8,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <LayoutComponent>
       <Header />
-      <Main>{children}</Main>
+      <Main><Outlet /></Main>
       <Footer />
     </LayoutComponent>
   )

@@ -11,6 +11,7 @@ import theme from './theme' // Импортируем тему
 import { ThemeProvider } from '@mui/material/styles'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
+import Notifications from './components/Notifications/Notifications'
 
 function App() {
   const { t, i18n } = useTranslation()
@@ -23,6 +24,7 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <Suspense fallback={<div>Loading...</div>}>
+        <Notifications />
           <ThemeProvider theme={theme}>
             {' '}
             {/* Применяем тему */}

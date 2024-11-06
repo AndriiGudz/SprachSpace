@@ -26,6 +26,9 @@ import {
 } from './styles'
 import { TextField } from '@mui/material'
 import ButtonSign from '../ButtonSign/ButtonSign'
+import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux'
+import { login } from '../../store/redux/authSlice/authSlice'
 
 // Валидационные схемы
 const SignInSchema = Yup.object().shape({
@@ -46,7 +49,6 @@ const SignInSchema = Yup.object().shape({
 })
 
 const SignUpSchema = Yup.object().shape({
-  // name: Yup.string().required('Name is required'),
   email: Yup.string()
     .required('Email is required')
     .email('Invalid email')
@@ -72,6 +74,7 @@ function SignInUp() {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch() // Подключаем диспетчер Redux
 
   const handleSignInClick = () => {
     setIsRightPanelActive(false)
@@ -94,7 +97,7 @@ function SignInUp() {
     password: string
   }) => {
     try {
-      const response = await fetch('http://localhost:8080/auth/login', {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,16 +108,17 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json()
         console.log('Login successful:', data)
-        // Действия при успешной авторизации
-        navigate('/dashboard') // Перенаправление на другую страницу после успешного входа
+        dispatch(login(data.user)) // Сохраняем пользователя в глобальном хранилище
+        toast.success("You have successfully logged in!")
+        navigate('/')
       } else {
         const errorData = await response.json()
         console.error('Login failed:', errorData)
-        alert(errorData.message || 'Login failed')
+        toast.error(errorData.message || 'Login failed')
       }
     } catch (error) {
       console.error('An error occurred:', error)
-      alert('An unexpected error occurred. Please try again later.')
+      toast.error('An unexpected error occurred. Please try again later.')
     }
   }
 
@@ -123,7 +127,7 @@ function SignInUp() {
     password: string
   }) => {
     try {
-      const response = await fetch('http://localhost:8080/users/register', {
+      const response = await fetch('http://localhost:8080/api/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,16 +138,17 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json()
         console.log('Registration successful:', data)
-        // Действия после успешной регистрации, например, перенаправление
-        navigate('/dashboard') // Перенаправление на другую страницу после успешной регистрации
+        dispatch(login(data.user)) // Сохраняем пользователя в глобальном хранилище после регистрации
+        toast.success("You have registered successfully!")
+        navigate('/')
       } else {
         const errorData = await response.json()
         console.error('Registration failed:', errorData)
-        alert(errorData.message || 'Registration failed')
+        toast.error(errorData.message || 'Registration failed')
       }
     } catch (error) {
       console.error('An error occurred:', error)
-      alert('An unexpected error occurred. Please try again later.')
+      toast.error('An unexpected error occurred. Please try again later.')
     }
   }
 

@@ -1,9 +1,12 @@
-function Home() {
-    return (
-        <div>
+import UserMenu from '../../components/UserMenu/UserMenu'
+import { PageBox } from './styles'
 
-        </div>
-    )
+function Home() {
+  return (
+    <PageBox>
+      <UserMenu />
+    </PageBox>
+  )
 }
 
 export default Home

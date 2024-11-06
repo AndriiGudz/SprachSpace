@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+<g id="react-icons/MdReviews" clip-path="url(#clip0_67_241)">
+<path id="Vector" d="M18.4 4H5.6C4.72 4 4 4.72 4 5.6V20L7.2 16.8H18.4C19.28 16.8 20 16.08 20 15.2V5.6C20 4.72 19.28 4 18.4 4ZM13.256 11.656L12 14.4L10.744 11.656L8 10.4L10.744 9.144L12 6.4L13.256 9.144L16 10.4L13.256 11.656Z" fill="currentColor"/>
+</g>
+<defs>
+<clipPath id="clip0_67_241">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>

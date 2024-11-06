@@ -14,4 +14,5 @@ export const Main = styled.main`
   justify-content: flex-start;
   flex: 1;
   width: 100%;
+  background: var(--light-blue-lighten-5, #E1F5FE);
 `
