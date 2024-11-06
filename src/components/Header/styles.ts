@@ -6,6 +6,7 @@ export const HeaderBox = styled.div`
   padding: 15px 32px;
   align-items: center;
   gap: 42px;
+  z-index: 1;
 
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);

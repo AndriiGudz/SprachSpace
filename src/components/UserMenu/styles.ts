@@ -14,6 +14,7 @@ export const UserMenuContainer = styled.div`
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2),
     -6px 6px 10px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 `
 
 export const UserInfo = styled.div`

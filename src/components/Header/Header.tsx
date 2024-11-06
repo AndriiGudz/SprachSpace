@@ -5,7 +5,14 @@ import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
 import MenuIcon from '@mui/icons-material/Menu'
 import ButtonSign from '../ButtonSign/ButtonSign'
 import LanguageSelector from '../LanguageSelector/LanguageSelector'
-import { HeaderBox, LogoContainer, MenuButton, DesktopOnly, AvatarContainer, MobileAvatar } from './styles'
+import {
+  HeaderBox,
+  LogoContainer,
+  MenuButton,
+  DesktopOnly,
+  AvatarContainer,
+  MobileAvatar,
+} from './styles'
 import NavLinks from '../NavLinks/NavLinks'
 import defaultAvatar from '../../assets/default-avatar.png' // Иконка по умолчанию
 
@@ -13,7 +20,9 @@ function Header() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const user = useSelector((state: any) => state.auth.user) // Извлекаем информацию о пользователе
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated)
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  )
 
   const handleSignInClick = () => {
     navigate('/signin')

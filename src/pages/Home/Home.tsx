@@ -4,7 +4,7 @@ import { PageBox } from './styles'
 function Home() {
   return (
     <PageBox>
-      <UserMenu />
+      {/* <UserMenu /> */}
     </PageBox>
   )
 }
