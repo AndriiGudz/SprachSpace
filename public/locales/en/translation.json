@@ -26,5 +26,17 @@
     "emailPlaceholder": "Email",
     "passwordPlaceholder": "Password",
     "acceptTerms": "I accept the Terms and Conditions"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "scheduledMeetings": "Scheduled Meetings",
+    "friends": "Friends",
+    "reviews": "Reviews",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "meetings": "Meetings",
+    "about": "About Us",
+    "logoutSuccess": "You have successfully logged out."
   }
 }

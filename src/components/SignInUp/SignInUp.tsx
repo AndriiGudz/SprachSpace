@@ -28,7 +28,7 @@ import { TextField } from '@mui/material'
 import ButtonSign from '../ButtonSign/ButtonSign'
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
-import { login } from '../../store/redux/authSlice/authSlice'
+import { setUser, setTokens } from '../../store/redux/userSlice/userSlice'
 
 // Валидационные схемы
 const SignInSchema = Yup.object().shape({
@@ -108,8 +108,37 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json()
         console.log('Login successful:', data)
-        dispatch(login(data.user)) // Сохраняем пользователя в глобальном хранилище
-        toast.success("You have successfully logged in!")
+        // Сохраняем информацию о пользователе в глобальном хранилище
+        dispatch(
+          setUser({
+            id: data.id,
+            nickname: data.nickname,
+            name: data.name,
+            surname: data.surname,
+            email: data.email,
+            birthdayDate: data.birthdayDate,
+            nativeLanguage: data.nativeLanguage,
+            learningLanguage: data.learningLanguage,
+            skillLevel: data.skillLevel,
+            rating: data.rating,
+            internalCurrency: data.internalCurrency,
+            status: data.status,
+            avatar: data.avatar,
+          })
+        )
+
+        // Сохраняем токены
+        dispatch(
+          setTokens({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          })
+        )
+
+        // Сохраняем данные в localStorage
+        localStorage.setItem('user', JSON.stringify(data))
+
+        toast.success('You have successfully logged in!')
         navigate('/')
       } else {
         const errorData = await response.json()
@@ -138,8 +167,8 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json()
         console.log('Registration successful:', data)
-        dispatch(login(data.user)) // Сохраняем пользователя в глобальном хранилище после регистрации
-        toast.success("You have registered successfully!")
+        dispatch(setUser(data.user)) // Сохраняем пользователя в глобальном хранилище после регистрации
+        toast.success('You have registered successfully!')
         navigate('/')
       } else {
         const errorData = await response.json()

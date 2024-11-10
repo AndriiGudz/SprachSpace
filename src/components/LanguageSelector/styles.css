@@ -1,0 +1,8 @@
+img {
+    width: 36px;
+    margin-right: 10px;
+
+    @media (max-width: 900px) {
+        width: 24px;
+    }
+}
