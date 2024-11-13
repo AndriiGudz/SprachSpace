@@ -1,47 +1,54 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 import {
   DividerStyled,
+  LinkStyle,
   MenuItemStyled,
   MobLangSel,
   MobOnly,
   UserInfo,
   UserMenuContainer,
   UserNav,
-} from './styles';
-import './icon.css';
-import { ReactComponent as ProfileIcon } from '../../assets/icon/PersonFilled.svg';
-import { ReactComponent as NotificationsIcon } from '../../assets/icon/IoNotifications.svg';
-import { ReactComponent as CalendarIcon } from '../../assets/icon/BiCalendar.svg';
-import { ReactComponent as FriendsIcon } from '../../assets/icon/GiThreeFriends.svg';
-import { ReactComponent as ReviewsIcon } from '../../assets/icon/MdReviews.svg';
-import { ReactComponent as SignIn } from '../../assets/icon/MdLogin.svg';
-import { ReactComponent as SignoutIcon } from '../../assets/icon/LogoutFilled.svg';
-import LanguageSelector from '../LanguageSelector/LanguageSelector';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearUser } from '../../store/redux/userSlice/userSlice';
-import { useNavigate } from 'react-router-dom';
-import { RootState } from '../../store/store';
-import { toast } from 'react-toastify';
+} from './styles'
+import './icon.css'
+import { ReactComponent as ProfileIcon } from '../../assets/icon/PersonFilled.svg'
+import { ReactComponent as NotificationsIcon } from '../../assets/icon/IoNotifications.svg'
+import { ReactComponent as CalendarIcon } from '../../assets/icon/BiCalendar.svg'
+import { ReactComponent as FriendsIcon } from '../../assets/icon/GiThreeFriends.svg'
+import { ReactComponent as ReviewsIcon } from '../../assets/icon/MdReviews.svg'
+import { ReactComponent as SignIn } from '../../assets/icon/MdLogin.svg'
+import { ReactComponent as SignoutIcon } from '../../assets/icon/LogoutFilled.svg'
+import LanguageSelector from '../LanguageSelector/LanguageSelector'
+import { useDispatch, useSelector } from 'react-redux'
+import { clearUser } from '../../store/redux/userSlice/userSlice'
+import { useNavigate, Link } from 'react-router-dom'
+import { RootState } from '../../store/store'
+import { toast } from 'react-toastify'
 
-function UserMenu() {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+interface UserMenuProps {
+  onMenuItemClick: () => void
+}
+
+function UserMenu({ onMenuItemClick }: UserMenuProps) {
+  const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
-  );
-  const user = useSelector((state: RootState) => state.user);
+  )
+  const user = useSelector((state: RootState) => state.user)
 
   const handleSignInClick = () => {
-    navigate('/signin');
-  };
+    onMenuItemClick()
+    navigate('/signin')
+  }
 
   const handleLogout = () => {
-    dispatch(clearUser());
-    localStorage.removeItem('user');
-    navigate('/');
-    toast.success(t('userMenu.logoutSuccess'));
-  };
+    dispatch(clearUser())
+    localStorage.removeItem('user')
+    onMenuItemClick()
+    navigate('/')
+    toast.success(t('userMenu.logoutSuccess'))
+  }
 
   return (
     <UserMenuContainer>
@@ -57,15 +64,17 @@ function UserMenu() {
         </>
       )}
       <MobOnly>
-        <MenuItemStyled>{t('userMenu.meetings')}</MenuItemStyled>
-        <MenuItemStyled>{t('userMenu.about')}</MenuItemStyled>
+        <MenuItemStyled onClick={onMenuItemClick}>{t('userMenu.meetings')}</MenuItemStyled>
+        <MenuItemStyled onClick={onMenuItemClick}>{t('userMenu.about')}</MenuItemStyled>
         {isAuthenticated && <DividerStyled />}
       </MobOnly>
       {isAuthenticated && (
         <UserNav>
-          <MenuItemStyled>
-            <ProfileIcon className="icon" /> {t('userMenu.profile')}
-          </MenuItemStyled>
+          <LinkStyle to="/profile" onClick={onMenuItemClick}>
+            <MenuItemStyled>
+              <ProfileIcon className="icon" /> {t('userMenu.profile')}
+            </MenuItemStyled>
+          </LinkStyle>
           <MenuItemStyled>
             <NotificationsIcon className="icon" /> {t('userMenu.notifications')}
           </MenuItemStyled>
@@ -95,7 +104,7 @@ function UserMenu() {
         </MenuItemStyled>
       )}
     </UserMenuContainer>
-  );
+  )
 }
 
-export default UserMenu;
+export default UserMenu
