@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { MenuItem, Select, Box, SelectChangeEvent } from '@mui/material'
+import './styles.css'
 
 import enFlag from '../../assets/flag/en.png'
 import deFlag from '../../assets/flag/de.png'
@@ -41,7 +42,6 @@ function LanguageSelector() {
           <img
             src={enFlag}
             alt="English"
-            style={{ width: '36px', marginRight: '10px' }}
           />
           En
         </Box>
@@ -51,7 +51,6 @@ function LanguageSelector() {
           <img
             src={deFlag}
             alt="Deutsch"
-            style={{ width: '36px', marginRight: '10px' }}
           />
           De
         </Box>
@@ -61,7 +60,6 @@ function LanguageSelector() {
           <img
             src={ukFlag}
             alt="Українська"
-            style={{ width: '36px', marginRight: '10px' }}
           />
           Uk
         </Box>
@@ -71,7 +69,6 @@ function LanguageSelector() {
           <img
             src={ruFlag}
             alt="Русский"
-            style={{ width: '36px', marginRight: '10px' }}
           />
           Ru
         </Box>

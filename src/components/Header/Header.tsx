@@ -1,10 +1,12 @@
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
-import MenuIcon from '@mui/icons-material/Menu'
-import ButtonSign from '../ButtonSign/ButtonSign'
-import LanguageSelector from '../LanguageSelector/LanguageSelector'
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useState, useEffect, useRef } from 'react';
+import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg';
+import MenuIcon from '@mui/icons-material/Menu';
+import ButtonSign from '../ButtonSign/ButtonSign';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
+import UserMenu from '../UserMenu/UserMenu'; // Импорт компонента UserMenu
 import {
   HeaderBox,
   LogoContainer,
@@ -12,21 +14,53 @@ import {
   DesktopOnly,
   AvatarContainer,
   MobileAvatar,
-} from './styles'
-import NavLinks from '../NavLinks/NavLinks'
-import defaultAvatar from '../../assets/default-avatar.png' // Иконка по умолчанию
+  UserMenuWrapper,
+} from './styles';
+import NavLinks from '../NavLinks/NavLinks';
+import defaultAvatar from '../../assets/default-avatar.png';
 
 function Header() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const user = useSelector((state: any) => state.auth.user) // Извлекаем информацию о пользователе
-  const isAuthenticated = useSelector(
-    (state: any) => state.auth.isAuthenticated
-  )
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Состояние для отслеживания видимости UserMenu
+  const user = useSelector((state: any) => state.user);
+  const isAuthenticated = user.isAuthenticated;
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const handleSignInClick = () => {
-    navigate('/signin')
-  }
+    navigate('/signin');
+  };
+
+  const toggleUserMenu = () => {
+    setIsMenuOpen((prev) => !prev); // Переключаем состояние меню
+  };
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    } else {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isMenuOpen]);
+
+  // Закрываем меню при разлогинивании
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setIsMenuOpen(false);
+    }
+  }, [isAuthenticated]);
+
+  console.log(isMenuOpen);
+  
 
   return (
     <HeaderBox>
@@ -36,14 +70,21 @@ function Header() {
       <DesktopOnly>
         <NavLinks />
         {isAuthenticated ? (
-          <AvatarContainer>
-            <img
-              src={user?.avatar || defaultAvatar}
-              alt="User Avatar"
-              width="36"
-              height="36"
-            />
-          </AvatarContainer>
+          <>
+            <AvatarContainer onClick={toggleUserMenu}>
+              <img
+                src={user.avatar || defaultAvatar}
+                alt="User Avatar"
+                width="36"
+                height="36"
+              />
+            </AvatarContainer>
+            {isMenuOpen && (
+              <UserMenuWrapper ref={menuRef}>
+                <UserMenu />
+              </UserMenuWrapper>
+            )}
+          </>
         ) : (
           <ButtonSign
             text={t('header.signIn')}
@@ -55,21 +96,35 @@ function Header() {
         <LanguageSelector />
       </DesktopOnly>
       {isAuthenticated ? (
-        <MobileAvatar>
-          <img
-            src={user?.avatar || defaultAvatar}
-            alt="User Avatar"
-            width="36"
-            height="36"
-          />
-        </MobileAvatar>
+        <>
+          <MobileAvatar onClick={toggleUserMenu}>
+            <img
+              src={user.avatar || defaultAvatar}
+              alt="User Avatar"
+              width="36"
+              height="36"
+            />
+          </MobileAvatar>
+          {isMenuOpen && (
+            <UserMenuWrapper ref={menuRef}>
+              <UserMenu />
+            </UserMenuWrapper>
+          )}
+        </>
       ) : (
-        <MenuButton>
-          <MenuIcon fontSize="large" />
-        </MenuButton>
+        <>
+          <MenuButton onClick={toggleUserMenu}>
+            <MenuIcon fontSize="large" />
+          </MenuButton>
+          {isMenuOpen && (
+            <UserMenuWrapper ref={menuRef}>
+              <UserMenu />
+            </UserMenuWrapper>
+          )}
+        </>
       )}
     </HeaderBox>
-  )
+  );
 }
 
-export default Header
+export default Header;

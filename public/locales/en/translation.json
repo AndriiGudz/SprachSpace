@@ -25,6 +25,33 @@
     "namePlaceholder": "Name",
     "emailPlaceholder": "Email",
     "passwordPlaceholder": "Password",
-    "acceptTerms": "I accept the Terms and Conditions"
+    "acceptTerms": "I accept the Terms and Conditions",
+    "registrationSuccess": "You have registered successfully!",
+    "loginSuccess": "You have successfully logged in!",
+    "loginFailed": "Login failed",
+    "registrationFailed": "Registration failed",
+    "unexpectedError": "An unexpected error occurred. Please try again later.",
+    "emailRequired": "Email is required",
+    "invalidEmail": "Invalid email",
+    "notAcceptableEmail": "This is not an acceptable email",
+    "passwordRequired": "Password is required",
+    "shortPassword": "Password is too short",
+    "smallLetter": "Password must contain at least one small letter",
+    "capitalLetter": "Password must contain at least one capital letter",
+    "numberRequired": "Password must contain at least one numerical digit",
+    "specialSymbol": "Password must contain at least one special symbol",
+    "termsAcceptance": "You must accept the terms and conditions"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "scheduledMeetings": "Scheduled Meetings",
+    "friends": "Friends",
+    "reviews": "Reviews",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "meetings": "Meetings",
+    "about": "About Us",
+    "logoutSuccess": "You have successfully logged out."
   }
 }

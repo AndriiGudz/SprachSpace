@@ -10,11 +10,11 @@ export const UserMenuContainer = styled.div`
   width: 220px;
   padding: 14px 16px;
   border-radius: var(--none, 0px) var(--none, 0px) var(--none, 0px) 4px;
-  border: var(--none, 1px) solid var(--grey-darken-1, #757575);
+  /* border: var(--none, 1px) solid var(--grey-darken-1, #757575); */
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2),
     -6px 6px 10px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+  z-index: 1;
 `
 
 export const UserInfo = styled.div`
@@ -49,7 +49,24 @@ export const DividerStyled = styled(Divider)`
   background: var(--divider, rgba(0, 0, 0, 0.12));
 `
 
+export const UserNav = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`
+
 export const MobOnly = styled.div`
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+`
+
+export const MobLangSel = styled.div`
   display: none;
 
   @media (max-width: 900px) {

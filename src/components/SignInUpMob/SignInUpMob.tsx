@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import CloseIcon from '@mui/icons-material/Close'
+import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as GooglePlusIcon } from '../../assets/icons-google-plus.svg'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
@@ -17,11 +18,10 @@ import {
   Overlay,
   OverlayPanel,
   SocialContainer,
-  TextBox,
   CloseButton,
-  CloseButtonBlack,
   FormField,
   TextFieldBox,
+  ArrowTextBox,
 } from './styles'
 import { TextField } from '@mui/material'
 import ButtonSign from '../ButtonSign/ButtonSign'
@@ -31,9 +31,9 @@ import { setUser, setTokens } from '../../store/redux/userSlice/userSlice'
 import { SignInSchema } from '../../validationSchemas/SignInSchema'
 import { SignUpSchema } from '../../validationSchemas/SignUpSchema'
 
-function SignInUp() {
+function SignInUpMob() {
   const { t } = useTranslation()
-  const [isRightPanelActive, setIsRightPanelActive] = useState(false)
+  const [isUpPanelActive, setIsRightPanelActive] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -144,8 +144,11 @@ function SignInUp() {
   }
 
   return (
-    <Container className={isRightPanelActive ? 'right-panel-active' : ''}>
-      {/* Форма Входа */}
+    <Container className={isUpPanelActive ? 'right-panel-active' : ''}>
+      <CloseButton onClick={handleCloseClick}>
+        <CloseIcon fontSize="small" />
+      </CloseButton>
+      {/* Sign-In Form */}
       <FormContainer className="sign-in-container">
         <Formik
           initialValues={{ email: '', password: '' }}
@@ -222,15 +225,10 @@ function SignInUp() {
         </Formik>
       </FormContainer>
 
-      {/* Форма Регистрации */}
+      {/* Sign-Up Form */}
       <FormContainer className="sign-up-container">
         <Formik
-          initialValues={{
-            // name: '',
-            email: '',
-            password: '',
-            termsAccepted: false,
-          }}
+          initialValues={{ email: '', password: '', termsAccepted: false }}
           validationSchema={SignUpSchema}
           onSubmit={handleRegisterSubmit}
           validateOnBlur={true}
@@ -239,9 +237,6 @@ function SignInUp() {
         >
           {({ values, handleChange }) => (
             <FormField as={Form}>
-              <CloseButtonBlack onClick={handleCloseClick}>
-                <CloseIcon fontSize="small" />
-              </CloseButtonBlack>
               <h1>{t('signinUp.signUpTitle')}</h1>
               <SocialContainer>
                 <a href="#" className="social">
@@ -250,20 +245,6 @@ function SignInUp() {
               </SocialContainer>
               <span>{t('signinUp.orUseEmail')}</span>
               <TextFieldBox>
-                {/* <Field name="name">
-                  {({ field, meta }: any) => (
-                    <TextField
-                      {...field}
-                      label={t('signinUp.namePlaceholder')}
-                      type="text"
-                      fullWidth
-                      margin="normal"
-                      className="inputSecondary"
-                      helperText={meta.touched && meta.error ? meta.error : ''}
-                      error={Boolean(meta.touched && meta.error)}
-                    />
-                  )}
-                </Field> */}
                 <Field name="email">
                   {({ field, meta }: any) => (
                     <TextField
@@ -320,15 +301,10 @@ function SignInUp() {
                 }
                 label={t('signinUp.acceptTerms')}
               />
-              <ErrorMessage
-                name="termsAccepted"
-                render={(msg) => <div style={{ color: 'red' }}>{msg}</div>}
-              />
-
               <ButtonSign
-                type="submit"
                 text={t('header.signUp')}
                 variant="light"
+                type="submit"
               />
             </FormField>
           )}
@@ -337,33 +313,25 @@ function SignInUp() {
 
       {/* Overlay Panels */}
       <OverlayContainer>
-        <Overlay className="overlay">
-          <OverlayPanel className="overlay-left" isLeft>
-            <h1>{t('signinUp.welcomeBack')}</h1>
-            <TextBox>
-              <p>{t('signinUp.welcomeBackText')}</p>
-            </TextBox>
-            <ButtonSign
-              text={t('header.signIn')}
-              onClick={handleSignInClick}
-              variant="dark"
-              type="button"
-            />
+        <Overlay>
+          {/* Панель для переключения на sign-up */}
+          <OverlayPanel onClick={handleSignUpClick} isLeft={!isUpPanelActive}>
+            {!isUpPanelActive && (
+              <ArrowTextBox>
+                <ArrowUpIcon />
+                <h1>{t('signinUp.signUpTitle')}</h1>
+              </ArrowTextBox>
+            )}
           </OverlayPanel>
-          <OverlayPanel className="overlay-right">
-            <CloseButton onClick={handleCloseClick}>
-              <CloseIcon fontSize="small" />
-            </CloseButton>
-            <h1>{t('signinUp.helloFriend')}</h1>
-            <TextBox>
-              <p>{t('signinUp.helloFriendText')}</p>
-            </TextBox>
-            <ButtonSign
-              text={t('header.signUp')}
-              onClick={handleSignUpClick}
-              variant="dark"
-              type="button"
-            />
+
+          {/* Панель для переключения на sign-in */}
+          <OverlayPanel onClick={handleSignInClick} isLeft={isUpPanelActive}>
+            {isUpPanelActive && (
+              <ArrowTextBox>
+                <ArrowUpIcon />
+                <h1>{t('signinUp.signInTitle')}</h1>
+              </ArrowTextBox>
+            )}
           </OverlayPanel>
         </Overlay>
       </OverlayContainer>
@@ -371,4 +339,4 @@ function SignInUp() {
   )
 }
 
-export default SignInUp
+export default SignInUpMob

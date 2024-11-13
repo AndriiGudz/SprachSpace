@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 
 export const HeaderBox = styled.div`
+  position: relative;
   display: flex;
   width: 100%;
   padding: 15px 32px;
@@ -65,7 +66,7 @@ export const AvatarContainer = styled.div`
 
   &:hover {
     filter: drop-shadow(0px 0px 24px rgba(1, 87, 155, 0.25));
-    }
+  }
 `
 
 export const MobileAvatar = styled.div`
@@ -83,4 +84,11 @@ export const MobileAvatar = styled.div`
       object-fit: cover;
     }
   }
+`
+
+export const UserMenuWrapper = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
 `
