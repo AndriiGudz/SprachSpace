@@ -53,5 +53,30 @@
     "meetings": "Meetings",
     "about": "About Us",
     "logoutSuccess": "You have successfully logged out."
-  }
+  },
+  "profile": {
+    "alert": "Fill in your personal data to gain access to the application functionality."
+  },
+  "personalData": {
+    "title": "Personal data",
+    "nickname": "Nickname",
+    "name": "Name",
+    "surname": "Surname",
+    "birthdayDate": "Date of birth"
+  },
+  "languageSection": {
+    "title": "Language proficiency",
+    "addLanguage": "Add language",
+    "speakFluently": "I speak fluently:",
+    "learning": "I am studying:",
+    "language": "Language",
+    "level": "Level"
+  },
+    "securitySection": {
+      "title": "Security",
+      "emailLabel": "Email",
+      "backupEmailLabel": "Backup Email",
+      "addBackupEmail": "Add backup email",
+      "changePassword": "Change password"
+    }
 }

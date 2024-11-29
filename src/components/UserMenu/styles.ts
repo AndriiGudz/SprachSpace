@@ -1,6 +1,12 @@
 import styled from '@emotion/styled'
 import { Divider, MenuItem } from '@mui/material'
 import { ReactComponent as ProfileIconSVG } from '../../assets/icon/PersonFilled.svg'
+import { Link } from 'react-router-dom'
+
+export const LinkStyle = styled(Link)`
+  color: #212121;
+  text-decoration: none;
+`
 
 export const UserMenuContainer = styled.div`
   display: flex;

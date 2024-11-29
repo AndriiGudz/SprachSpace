@@ -7,6 +7,7 @@ const initialState: UserSlaceState = {
   name: null,
   surname: null,
   email: null,
+  backupEmail: null,
   birthdayDate: null,
   nativeLanguage: null,
   learningLanguage: null,
@@ -54,8 +55,14 @@ export const userSlice = createSlice({
     clearUser: (state) => {
       Object.assign(state, initialState)
     },
+    updateUser: (
+      state,
+      action: PayloadAction<Partial<Omit<UserSlaceState, 'isAuthenticated'>>>
+    ) => {
+      Object.assign(state, action.payload)
+    },
   },
 })
 
-export const { setUser, setTokens, clearUser } = userSlice.actions
+export const { setUser, setTokens, clearUser, updateUser } = userSlice.actions
 export default userSlice.reducer

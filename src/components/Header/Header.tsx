@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useState, useEffect, useRef } from 'react';
-import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg';
-import MenuIcon from '@mui/icons-material/Menu';
-import ButtonSign from '../ButtonSign/ButtonSign';
-import LanguageSelector from '../LanguageSelector/LanguageSelector';
-import UserMenu from '../UserMenu/UserMenu'; // Импорт компонента UserMenu
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { useState, useEffect, useRef } from 'react'
+import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
+import MenuIcon from '@mui/icons-material/Menu'
+import ButtonSign from '../ButtonSign/ButtonSign'
+import LanguageSelector from '../LanguageSelector/LanguageSelector'
+import UserMenu from '../UserMenu/UserMenu' // Импорт компонента UserMenu
 import {
   HeaderBox,
   LogoContainer,
@@ -15,52 +15,54 @@ import {
   AvatarContainer,
   MobileAvatar,
   UserMenuWrapper,
-} from './styles';
-import NavLinks from '../NavLinks/NavLinks';
-import defaultAvatar from '../../assets/default-avatar.png';
+} from './styles'
+import NavLinks from '../NavLinks/NavLinks'
+import defaultAvatar from '../../assets/default-avatar.png'
 
 function Header() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Состояние для отслеживания видимости UserMenu
-  const user = useSelector((state: any) => state.user);
-  const isAuthenticated = user.isAuthenticated;
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false) // Состояние для отслеживания видимости UserMenu
+  const user = useSelector((state: any) => state.user)
+  const isAuthenticated = user.isAuthenticated
+  const menuRef = useRef<HTMLDivElement | null>(null)
 
   const handleSignInClick = () => {
-    navigate('/signin');
-  };
+    navigate('/signin')
+  }
 
   const toggleUserMenu = () => {
-    setIsMenuOpen((prev) => !prev); // Переключаем состояние меню
-  };
+    setIsMenuOpen((prev) => !prev) // Переключаем состояние меню
+  }
 
   const handleOutsideClick = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      setIsMenuOpen(false);
+      setIsMenuOpen(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (isMenuOpen) {
-      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('mousedown', handleOutsideClick)
     } else {
-      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick)
     }
     return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [isMenuOpen]);
+      document.removeEventListener('mousedown', handleOutsideClick)
+    }
+  }, [isMenuOpen])
 
   // Закрываем меню при разлогинивании
   useEffect(() => {
     if (!isAuthenticated) {
-      setIsMenuOpen(false);
+      setIsMenuOpen(false)
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated])
 
-  console.log(isMenuOpen);
-  
+  // Закрывает меню при нажатии на пункт меню
+  const handleMenuItemClick = () => {
+    setIsMenuOpen(false)
+  }
 
   return (
     <HeaderBox>
@@ -81,7 +83,7 @@ function Header() {
             </AvatarContainer>
             {isMenuOpen && (
               <UserMenuWrapper ref={menuRef}>
-                <UserMenu />
+                <UserMenu onMenuItemClick={handleMenuItemClick} />
               </UserMenuWrapper>
             )}
           </>
@@ -107,7 +109,7 @@ function Header() {
           </MobileAvatar>
           {isMenuOpen && (
             <UserMenuWrapper ref={menuRef}>
-              <UserMenu />
+              <UserMenu onMenuItemClick={handleMenuItemClick} />
             </UserMenuWrapper>
           )}
         </>
@@ -118,13 +120,13 @@ function Header() {
           </MenuButton>
           {isMenuOpen && (
             <UserMenuWrapper ref={menuRef}>
-              <UserMenu />
+              <UserMenu onMenuItemClick={handleMenuItemClick} />
             </UserMenuWrapper>
           )}
         </>
       )}
     </HeaderBox>
-  );
+  )
 }
 
-export default Header;
+export default Header

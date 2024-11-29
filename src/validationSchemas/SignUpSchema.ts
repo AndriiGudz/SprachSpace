@@ -16,8 +16,7 @@ export const SignUpSchema = Yup.object().shape({
     .matches(/[A-Z]/, i18n.t('signinUp.capitalLetter'))
     .matches(/\d/, i18n.t('signinUp.numberRequired'))
     .matches(/[!@#$%^&*(),.?":{}|<>]/, i18n.t('signinUp.specialSymbol')),
-  termsAccepted: Yup.boolean().oneOf(
-    [true],
-    i18n.t('signinUp.termsAcceptance')
-  ),
+  termsAccepted: Yup.boolean()
+    .oneOf([true], i18n.t('signinUp.termsAcceptance'))
+    .default(false),
 })
