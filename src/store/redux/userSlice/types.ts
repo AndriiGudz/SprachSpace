@@ -4,6 +4,7 @@ export interface UserSlaceState {
   name: string | null
   surname: string | null
   email: string | null
+  backupEmail?: string | null
   birthdayDate: string | null
   nativeLanguage: string | null
   learningLanguage: string | null

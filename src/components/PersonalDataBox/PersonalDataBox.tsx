@@ -1,9 +1,10 @@
-import { Box, TextField, Avatar, IconButton } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import EditIcon from '@mui/icons-material/Edit'
-import { PersonalDataSectionProps } from './types'
-import dayjs from 'dayjs'
-import EditableSection from '../EditableSection/EditableSection'
+import { Box, TextField, Avatar, IconButton } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import EditIcon from '@mui/icons-material/Edit';
+import { useTranslation } from 'react-i18next';
+import { PersonalDataSectionProps } from './types';
+import dayjs from 'dayjs';
+import EditableSection from '../EditableSection/EditableSection';
 
 function PersonalDataBox({
   data,
@@ -13,12 +14,16 @@ function PersonalDataBox({
   onCancel,
   onChange,
 }: PersonalDataSectionProps) {
+  const { t } = useTranslation();
+
   const isEmpty =
-    !data.nickname && !data.name && !data.surname && !data.dateOfBirth
+    !data.nickname || !data.name || !data.surname || !data.birthdayDate;
+
+  const avatarSrc = data.avatar ? data.avatar : undefined;
 
   return (
     <EditableSection
-      title="Personal data"
+      title={t('personalData.title')}
       isEditing={isEditing}
       isEmpty={isEmpty}
       onEdit={onEdit}
@@ -27,7 +32,7 @@ function PersonalDataBox({
     >
       <Box display="flex" flexDirection="column" gap={2}>
         <Box position="relative" width="fit-content">
-          <Avatar src={data.avatar} sx={{ width: 100, height: 100, mb: 2 }} />
+          <Avatar src={avatarSrc} sx={{ width: 100, height: 100, mb: 2 }} />
           {isEditing && (
             <IconButton
               size="small"
@@ -45,37 +50,45 @@ function PersonalDataBox({
         </Box>
 
         <TextField
-          label="Nickname"
+          label={t('personalData.nickname')}
           value={data.nickname}
           onChange={(e) => onChange({ nickname: e.target.value })}
           disabled={!isEditing}
           fullWidth
+          className="inputGrey"
         />
         <TextField
-          label="Name"
+          label={t('personalData.name')}
           value={data.name}
           onChange={(e) => onChange({ name: e.target.value })}
           disabled={!isEditing}
           fullWidth
+          className="inputGrey"
         />
         <TextField
-          label="Surname"
+          label={t('personalData.surname')}
           value={data.surname}
           onChange={(e) => onChange({ surname: e.target.value })}
           disabled={!isEditing}
           fullWidth
+          className="inputGrey"
         />
         <DatePicker
-          label="Date of birth"
-          value={data.dateOfBirth ? dayjs(data.dateOfBirth) : null}
+          label={t('personalData.birthdayDate')}
+          value={data.birthdayDate ? dayjs(data.birthdayDate) : null}
           onChange={(date) =>
-            onChange({ dateOfBirth: date?.toISOString() || null })
+            onChange({ birthdayDate: date?.toISOString() || null })
           }
           disabled={!isEditing}
+          sx={{
+            '& .MuiInputBase-root': {
+              backgroundColor: '#EEE', // Цвет фона для инпута
+            },
+          }}
         />
       </Box>
     </EditableSection>
-  )
+  );
 }
 
-export default PersonalDataBox
+export default PersonalDataBox;

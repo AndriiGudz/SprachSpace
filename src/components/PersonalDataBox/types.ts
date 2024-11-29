@@ -1,9 +1,12 @@
 export interface PersonalData {
-  nickname: string
-  name: string
-  surname: string
-  dateOfBirth: string | null
-  avatar?: string
+  nickname?: string | null
+  name: string | null
+  surname: string | null
+  birthdayDate: string | null
+  avatar?: string | null
+  nativeLanguage?: string
+  learningLanguage?: string
+  backupEmail?: string | null
 }
 
 export interface PersonalDataSectionProps {
@@ -12,5 +15,5 @@ export interface PersonalDataSectionProps {
   onEdit: () => void
   onSave: () => void
   onCancel: () => void
-  onChange: (updatedData: Partial<PersonalData>) => void;
+  onChange: (updatedData: Partial<PersonalData>) => void
 }

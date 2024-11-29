@@ -15,25 +15,35 @@ interface EditableSectionProps {
 }
 
 function EditableSection({title, isEditing, isEmpty, onEdit, onSave, onCancel, children}: EditableSectionProps) {
+  
   const getBorderColor = () => {
-    if (isEditing) return '#1976d2';
-    if (isEmpty) return '#f44336';
-    return '#e0e0e0';
+    if (isEditing) return '#01579B';
+    if (isEmpty) return '#B80C0C';
+    return '#fff';
+  };
+
+  const getBoxShadow = () => {
+    if (isEditing) return '0px 0px 24px 0px rgba(1, 87, 155, 0.25)';
+    if (isEmpty) return '0px 0px 24px 0px rgba(184, 12, 12, 0.25)';
+    return '0px 0px 24px 0px rgba(0, 0, 0, 0.25)';
   };
 
   return (
     <Paper
       elevation={0}
       sx={{
-        p: 3,
-        border: 2,
+        px: '32px',
+        py: '24px',
+        border: 1,
         borderColor: getBorderColor(),
-        borderRadius: 2,
+        boxShadow: getBoxShadow(),
+        borderRadius: 1,
         position: 'relative',
+        width: '100%',
       }}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6" component="h2">
+        <Typography variant="h3" component="h3">
           {title}
         </Typography>
         <Box>

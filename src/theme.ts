@@ -15,6 +15,12 @@ const theme = createTheme({
       lineHeight: '100%',
       letterSpacing: '0.96px',
     },
+    h3: {
+      fontSize: '24px',
+      fontWeight: 700,
+      lineHeight: '100%',
+      letterSpacing: '0.48px',
+    },
   },
   palette: {
     text: {
@@ -37,11 +43,15 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           marginBottom: '16px',
+          borderRadius: '4px',
           '&.inputPrimary .MuiOutlinedInput-root': {
             backgroundColor: '#eee', // Основной цвет фона
           },
           '&.inputSecondary .MuiOutlinedInput-root': {
             backgroundColor: '#E1F5FE', // Альтернативный цвет фона
+          },
+          '&.inputGrey .MuiOutlinedInput-root': {
+            backgroundColor: '#EEE',
           },
         },
       },
@@ -49,31 +59,34 @@ const theme = createTheme({
     MuiFormControl: {
       styleOverrides: {
         root: {
-          marginTop: 0,   // Убираем верхний отступ
+          marginTop: 0, // Убираем верхний отступ
           marginBottom: 0, // Убираем нижний отступ
         },
       },
     },
     MuiOutlinedInput: {
-        styleOverrides: {
-          root: {
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#01579B', // Стиль для ховера
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#01579B', // Стиль для фокуса
-            },
+      styleOverrides: {
+        root: {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#01579B', // Стиль для ховера
           },
-          input: {
-            fontFamily: 'Oswald, sans-serif',
-            fontSize: '16px',
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#01579B', // Стиль для фокуса
           },
-          notchedOutline: {
-            borderWidth: '1px', // Ширина рамки
-            borderColor: '#fff', // Цвет рамки по умолчанию
+          '&.inputGrey .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#E0E0E0', // Цвет рамки для класса inputGrey
           },
         },
-      },      
+        input: {
+          fontFamily: 'Oswald, sans-serif',
+          fontSize: '16px',
+        },
+        notchedOutline: {
+          borderWidth: '1px', // Ширина рамки
+          borderColor: '#fff', // Цвет рамки по умолчанию
+        },
+      },
+    },
     MuiFormLabel: {
       styleOverrides: {
         root: {
