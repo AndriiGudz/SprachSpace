@@ -1,4 +1,3 @@
-import UserMenu from '../../components/UserMenu/UserMenu'
 import { PageBox } from './styles'
 
 function Home() {

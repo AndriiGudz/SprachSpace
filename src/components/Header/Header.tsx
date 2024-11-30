@@ -66,7 +66,7 @@ function Header() {
 
   return (
     <HeaderBox>
-      <LogoContainer href="/">
+      <LogoContainer onClick={() => navigate('/')}>
         <Logo />
       </LogoContainer>
       <DesktopOnly>
