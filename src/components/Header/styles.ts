@@ -21,6 +21,7 @@ export const HeaderBox = styled.div`
 export const LogoContainer = styled.a`
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   svg {
     width: 252px;

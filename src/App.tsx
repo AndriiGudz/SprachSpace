@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './i18n'
 import GlobalStyles from './styles/GlobalStyles'
@@ -11,17 +11,26 @@ import Profile from './pages/Profile/Profile'
 import ProtectedRoute from '../src/components/ProtectedRoute/ProtectedRoute'
 import theme from './theme'
 import { ThemeProvider } from '@mui/material/styles'
-import { Provider, useDispatch } from 'react-redux'
-import { store } from './store/store'
 import Notifications from './components/Notifications/Notifications'
-import { setTokens, setUser } from './store/redux/userSlice/userSlice'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { useDispatch } from 'react-redux'
+import { setTokens, setUser } from './store/redux/userSlice/userSlice'
+import LoadingScreen from './components/LoadingScreen/LoadingScreen'
 
 function App() {
   const dispatch = useDispatch()
+  const { t, i18n } = useTranslation()
+  const [isLoading, setIsLoading] = useState(true)
 
+  // Используем один useEffect для инициализации состояния загрузки и загрузки данных пользователя
   useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 4500)
+
+    // Загрузка данных пользователя из localStorage при инициализации приложения
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
       const userData = JSON.parse(storedUser)
@@ -33,43 +42,45 @@ function App() {
         })
       )
     }
+
+    return () => clearTimeout(timer)
   }, [dispatch])
 
-  const { t, i18n } = useTranslation()
-
+  // Обновление title страницы при изменении языка
   useEffect(() => {
-    // Логика с title и описанием
-  }, [t, i18n])
+    if (i18n.isInitialized) {
+      document.title = t('app.title')
+    }
+  }, [i18n.isInitialized, t]) // Используем `i18n.isInitialized` и `t` для корректного обновления
+
+  if (isLoading) {
+    return <LoadingScreen />
+  }
 
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Suspense fallback={<div>Loading...</div>}>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <CssBaseline />
+          <GlobalStyles />
           <Notifications />
-          <ThemeProvider theme={theme}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <CssBaseline />
-              <GlobalStyles />
-              <Routes>
-                <Route path="/signin" element={<PageSignInUp />} />
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<Home />} />
-                  {/* Защищенный маршрут для /profile и др.*/}
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Route>
-              </Routes>
-            </LocalizationProvider>
-          </ThemeProvider>
-        </Suspense>
-      </BrowserRouter>
-    </Provider>
+          <Routes>
+            <Route path="/signin" element={<PageSignInUp />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Routes>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
 
