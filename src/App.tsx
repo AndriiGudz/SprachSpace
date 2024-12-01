@@ -51,7 +51,7 @@ function App() {
     if (i18n.isInitialized) {
       document.title = t('app.title')
     }
-  }, [i18n.isInitialized, t]) // Используем `i18n.isInitialized` и `t` для корректного обновления
+  }, [i18n.isInitialized, t]) // Используем `i18n.isInitialized` и `t` для корректного обновления переводов
 
   if (isLoading) {
     return <LoadingScreen />
