@@ -83,5 +83,24 @@
       "title": "Improve your language skills with real people around the world",
       "description": "Connecting people for engaging conversations in different languages. Join live video meetings where you learn a language in a natural environment.",
       "join": "Let's get started"
+    },
+    "whySprachSpace": {
+      "titleBox": "Why SprachSpace?",
+      "title1": "Live communication in real time",
+      "title2": "Community of like-minded people",
+      "title3": "Select language and level",
+      "title4": "No textbooks - just practice",
+      "buttonFree": "Join for free"
+    },
+    "howItWorks": {
+      "titleBox": "How does this work?",
+      "subtitleBox": "These steps will help you quickly understand how to start using the platform.",
+      "title1": "Registration:",
+      "title2": "Room Selection:",
+      "title3": "Start Chatting:",
+      "description1": "Register and create a profile.",
+      "description2": "Choose or create a room based on your interests and the language you are studying.",
+      "description3": "Join meetings and learn through conversation.",
+      "buttonBegin": "Begin"
     }
 }

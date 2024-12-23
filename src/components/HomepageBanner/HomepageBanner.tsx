@@ -14,12 +14,8 @@ function HomepageBanner() {
     <BannerBox>
       <ContentBox>
         <BannerContent>
-          <h1>
-            {t('headerBanner.title')}
-          </h1>
-          <p>
-            {t('headerBanner.description')}
-          </p>
+          <h1>{t('headerBanner.title')}</h1>
+          <p>{t('headerBanner.description')}</p>
           <ButtonMUI
             text={t('headerBanner.join')}
             onClick={handleSignInClick}

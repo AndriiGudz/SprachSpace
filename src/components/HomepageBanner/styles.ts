@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import bannerImage from '../../assets/hp-banner.webp'
+// import bannerImage from '../../assets/hp-banner.webp'
+import bannerImage from '../../assets/banner.png'
 
 export const BannerBox = styled.div`
   display: flex;
@@ -16,7 +17,9 @@ export const ContentBox = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 1200px;
-  padding-bottom: 20px
+  padding-bottom: 20px;
+  padding-left: 24px;
+  padding-right: 24px;
 `
 
 export const BannerContent = styled.div`
@@ -38,5 +41,16 @@ export const BannerContent = styled.div`
 
   p {
     margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    width: 600px;
+  }
+
+  @media (max-width: 680px) {
+    width: 100%;
+    h1 {
+      font-size: 32px;
+    }
   }
 `
