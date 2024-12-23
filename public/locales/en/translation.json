@@ -78,5 +78,10 @@
       "backupEmailLabel": "Backup Email",
       "addBackupEmail": "Add backup email",
       "changePassword": "Change password"
+    },
+    "headerBanner": {
+      "title": "Improve your language skills with real people around the world",
+      "description": "Connecting people for engaging conversations in different languages. Join live video meetings where you learn a language in a natural environment.",
+      "join": "Let's get started"
     }
 }

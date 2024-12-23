@@ -1,11 +1,10 @@
+import HomepageBanner from '../../components/HomepageBanner/HomepageBanner'
 import { PageBox } from './styles'
 
 function Home() {
-  return (
-    <PageBox>
-      {/* <UserMenu /> */}
-    </PageBox>
-  )
+  return <PageBox>
+    <HomepageBanner />
+  </PageBox>
 }
 
 export default Home
