@@ -72,35 +72,80 @@
     "language": "Language",
     "level": "Level"
   },
-    "securitySection": {
-      "title": "Security",
-      "emailLabel": "Email",
-      "backupEmailLabel": "Backup Email",
-      "addBackupEmail": "Add backup email",
-      "changePassword": "Change password"
-    },
-    "headerBanner": {
-      "title": "Improve your language skills with real people around the world",
-      "description": "Connecting people for engaging conversations in different languages. Join live video meetings where you learn a language in a natural environment.",
-      "join": "Let's get started"
-    },
-    "whySprachSpace": {
-      "titleBox": "Why SprachSpace?",
-      "title1": "Live communication in real time",
-      "title2": "Community of like-minded people",
-      "title3": "Select language and level",
-      "title4": "No textbooks - just practice",
-      "buttonFree": "Join for free"
-    },
-    "howItWorks": {
-      "titleBox": "How does this work?",
-      "subtitleBox": "These steps will help you quickly understand how to start using the platform.",
-      "title1": "Registration:",
-      "title2": "Room Selection:",
-      "title3": "Start Chatting:",
-      "description1": "Register and create a profile.",
-      "description2": "Choose or create a room based on your interests and the language you are studying.",
-      "description3": "Join meetings and learn through conversation.",
-      "buttonBegin": "Begin"
+  "securitySection": {
+    "title": "Security",
+    "emailLabel": "Email",
+    "backupEmailLabel": "Backup Email",
+    "addBackupEmail": "Add backup email",
+    "changePassword": "Change password"
+  },
+  "headerBanner": {
+    "title": "Improve your language skills with real people around the world",
+    "description": "Connecting people for engaging conversations in different languages. Join live video meetings where you learn a language in a natural environment.",
+    "join": "Let's get started"
+  },
+  "whySprachSpace": {
+    "titleBox": "Why SprachSpace?",
+    "title1": "Live communication in real time",
+    "title2": "Community of like-minded people",
+    "title3": "Select language and level",
+    "title4": "No textbooks - just practice",
+    "buttonFree": "Join for free"
+  },
+  "howItWorks": {
+    "titleBox": "How does this work?",
+    "subtitleBox": "These steps will help you quickly understand how to start using the platform.",
+    "title1": "Registration:",
+    "title2": "Room Selection:",
+    "title3": "Start Chatting:",
+    "description1": "Register and create a profile.",
+    "description2": "Choose or create a room based on your interests and the language you are studying.",
+    "description3": "Join meetings and learn through conversation.",
+    "buttonBegin": "Begin"
+  },
+  "facts": {
+    "title": "Interesting facts about the benefits of learning a foreign language",
+    "items": {
+      "0": {
+        "title": "Improves cognitive abilities",
+        "content": "Learning a language stimulates the brain, enhancing memory, attention, and problem-solving skills."
+      },
+      "1": {
+        "title": "Slows brain aging",
+        "content": "Bilingualism is associated with a later onset of dementia and Alzheimer's disease."
+      },
+      "2": {
+        "title": "Expands career opportunities",
+        "content": "Knowing foreign languages increases the chances of landing high-paying jobs or advancing your career."
+      },
+      "3": {
+        "title": "Enhances multitasking skills",
+        "content": "People who speak multiple languages are better at handling several tasks simultaneously."
+      },
+      "4": {
+        "title": "Cultural understanding",
+        "content": "Learning a language provides insights into different cultures and ways of thinking."
+      },
+      "5": {
+        "title": "Improves decision-making",
+        "content": "Bilingual people often make more rational decisions when thinking in their second language."
+      },
+      "6": {
+        "title": "Boosts creativity",
+        "content": "Language learning enhances creative thinking and problem-solving abilities."
+      },
+      "7": {
+        "title": "Better first language",
+        "content": "Learning a second language improves understanding and usage of your native language."
+      },
+      "8": {
+        "title": "Travel advantages",
+        "content": "Speaking multiple languages makes traveling more enjoyable and meaningful."
+      },
+      "9": {
+        "title": "Social connections",
+        "content": "Language skills help build meaningful relationships with people from different cultures."
+      }
     }
+  }
 }
