@@ -15,11 +15,23 @@ const theme = createTheme({
       lineHeight: '100%',
       letterSpacing: '0.96px',
     },
+    h2: {
+      fontSize: '32px',
+      fontWeight: 700,
+      lineHeight: '100%',
+      letterSpacing: '0.64px',
+    },
     h3: {
       fontSize: '24px',
       fontWeight: 700,
       lineHeight: '100%',
       letterSpacing: '0.48px',
+    },
+    h4: {
+      fontSize: '20px',
+      fontWeight: 600,
+      lineHeight: '100%',
+      letterSpacing: '0.4px',
     },
   },
   palette: {

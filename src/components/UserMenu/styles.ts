@@ -1,6 +1,5 @@
 import styled from '@emotion/styled'
 import { Divider, MenuItem } from '@mui/material'
-import { ReactComponent as ProfileIconSVG } from '../../assets/icon/PersonFilled.svg'
 import { Link } from 'react-router-dom'
 
 export const LinkStyle = styled(Link)`
@@ -59,6 +58,10 @@ export const UserNav = styled.div`
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  @media (max-width: 900px) {
+    gap: 0px;
+  }
 `
 
 export const MobOnly = styled.div`
@@ -68,7 +71,6 @@ export const MobOnly = styled.div`
     display: block;
     display: flex;
     flex-direction: column;
-    gap: 14px;
   }
 `
 

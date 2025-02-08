@@ -15,4 +15,10 @@ export const Main = styled.main`
   flex: 1;
   width: 100%;
   background: var(--light-blue-lighten-5, #E1F5FE);
+  
+  padding-top: 90px;
+
+  @media (max-width: 900px) {
+    padding-top: 60px;
+  }
 `
