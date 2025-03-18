@@ -20,7 +20,7 @@ import { ReactComponent as SignoutIcon } from '../../assets/icon/LogoutFilled.sv
 import LanguageSelector from '../LanguageSelector/LanguageSelector'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearUser } from '../../store/redux/userSlice/userSlice'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../store/store'
 import { toast } from 'react-toastify'
 

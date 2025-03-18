@@ -25,26 +25,36 @@ function App() {
 
   // Используем один useEffect для инициализации состояния загрузки и загрузки данных пользователя
   useEffect(() => {
-    // Simulate loading time
+    // Симуляция загрузки (убери, если не нужен)
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 4500)
-
-    // Загрузка данных пользователя из localStorage при инициализации приложения
+  
+    // Загружаем данные из localStorage
     const storedUser = localStorage.getItem('user')
+    
     if (storedUser) {
-      const userData = JSON.parse(storedUser)
-      dispatch(setUser(userData))
-      dispatch(
-        setTokens({
-          accessToken: userData.accessToken,
-          refreshToken: userData.refreshToken,
-        })
-      )
+      try {
+        const userData = JSON.parse(storedUser)
+  
+        // Проверяем, есть ли в данных токены и пользователь не разлогинен
+        if (userData && userData.accessToken) {
+          dispatch(setUser(userData))
+          dispatch(
+            setTokens({
+              accessToken: userData.accessToken,
+              refreshToken: userData.refreshToken,
+            })
+          )
+        }
+      } catch (error) {
+        console.error('Ошибка при загрузке пользователя из localStorage:', error)
+      }
     }
-
+  
     return () => clearTimeout(timer)
   }, [dispatch])
+  
 
   // Обновление title страницы при изменении языка
   useEffect(() => {

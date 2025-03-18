@@ -69,7 +69,6 @@ function SignInUpMob() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Login successful:', data)
         // Сохраняем информацию о пользователе в глобальном хранилище
         dispatch(
           setUser({
@@ -79,9 +78,8 @@ function SignInUpMob() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            nativeLanguage: data.nativeLanguage,
-            learningLanguage: data.learningLanguage,
-            skillLevel: data.skillLevel,
+            nativeLanguages: data.nativeLanguages,
+            learningLanguages: data.learningLanguages,
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
@@ -128,7 +126,6 @@ function SignInUpMob() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Registration successful:', data)
         dispatch(setUser(data.user)) // Сохраняем пользователя в глобальном хранилище после регистрации
         toast.success(t('signinUp.registrationSuccess'))
         navigate('/')

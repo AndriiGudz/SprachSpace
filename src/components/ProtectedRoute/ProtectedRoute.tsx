@@ -6,15 +6,11 @@ interface ProtectedRouteProps {
   children: JSX.Element;
 }
 
-function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated)
 
-  if (!isAuthenticated) {
-    // Перенаправление на страницу входа, если пользователь не авторизован
-    return <Navigate to="/signin" replace />;
-  }
-
-  return children;
+  // Если пользователь не авторизован, отправляем на страницу входа
+  return isAuthenticated ? children : <Navigate to="/signin" replace />
 }
 
 export default ProtectedRoute;

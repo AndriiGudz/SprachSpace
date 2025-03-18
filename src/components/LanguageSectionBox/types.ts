@@ -1,16 +1,19 @@
-export interface Language {
-    id?: string;
-    name: string;
-    level?: string;
+export interface LanguageData {
+  id: number
+  skillLevel: string
+  language: {
+    id: number
+    name: string
   }
+}
   
-  export interface LanguageSectionProps {
-    nativeLanguage: string;
-    learningLanguage: string;
-    isEditing: boolean;
-    onEdit: () => void;
-    onSave: () => void;
-    onCancel: () => void;
-    onNativeLanguageChange: (newLanguage: string) => void;
-    onLearningLanguageChange: (newLanguage: string) => void;
-  }
+export interface LanguageSectionProps {
+  nativeLanguages: LanguageData[];
+  learningLanguages: LanguageData[];
+  isEditing: boolean;
+  onEdit: () => void;
+  onSave: () => void;
+  onCancel: () => void;
+  onNativeLanguagesChange: (newLanguages: LanguageData[]) => void;
+  onLearningLanguagesChange: (newLanguages: LanguageData[]) => void;
+}
