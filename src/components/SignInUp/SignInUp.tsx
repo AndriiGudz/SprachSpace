@@ -94,7 +94,14 @@ function SignInUp() {
 
       if (response.ok) {
         const data = await response.json();
+        
         console.log('Login successful:', data);
+        console.log('Data passed to setUser:', {
+          ...data,
+          nativeLanguages: data.nativeLanguages,
+          learningLanguages: data.learningLanguages,
+        });
+
         dispatch(
           setUser({
             id: data.id,
@@ -103,9 +110,8 @@ function SignInUp() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            nativeLanguage: data.nativeLanguage,
-            learningLanguage: data.learningLanguage,
-            skillLevel: data.skillLevel,
+            nativeLanguages: data.nativeLanguages,
+            learningLanguages: data.learningLanguages,
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
@@ -148,7 +154,7 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json();
         console.log('Registration successful:', data);
-        dispatch(setUser(data.user));
+        dispatch(setUser(data));
         toast.success(t('signinUp.registrationSuccess'));
         navigate('/');
       } else {

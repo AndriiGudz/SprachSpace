@@ -1,3 +1,12 @@
+export interface LanguageData {
+  id: number
+  skillLevel: string
+  language: {
+    id: number
+    name: string
+  }
+}
+
 export interface UserSlaceState {
   id: string | null
   nickname: string | null
@@ -6,9 +15,8 @@ export interface UserSlaceState {
   email: string | null
   backupEmail?: string | null
   birthdayDate: string | null
-  nativeLanguage: string | null
-  learningLanguage: string | null
-  skillLevel: string | null
+  nativeLanguages: LanguageData[]
+  learningLanguages: LanguageData[]
   rating: string | null
   internalCurrency: string | null
   status: boolean

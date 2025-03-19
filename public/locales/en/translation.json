@@ -55,7 +55,11 @@
     "logoutSuccess": "You have successfully logged out."
   },
   "profile": {
-    "alert": "Fill in your personal data to gain access to the application functionality."
+    "alert": "Fill in your personal data to gain access to the application functionality.",
+    "updatedSuccess": "Profile updated successfully",
+    "updateFailed": "Failed to update profile",
+    "networkError": "Network error occurred. Please check your connection.",
+    "unexpectedError": "An unexpected error occurred"
   },
   "personalData": {
     "title": "Personal data",
@@ -70,14 +74,33 @@
     "speakFluently": "I speak fluently:",
     "learning": "I am studying:",
     "language": "Language",
-    "level": "Level"
+    "level": "Level",
+    "add": "Add",
+    "nativeLanguageAdded": "Native language added successfully",
+    "nativeLanguageAddError": "Error adding native language",
+    "learningLanguageAdded": "Learning language added successfully",
+    "learningLanguageAddError": "Error adding learning language",
+    "nativeLanguageRemoved": "Native language removed successfully",
+    "nativeLanguageRemoveError": "Failed to remove native language",
+    "learningLanguageRemoved": "Learning language removed successfully",
+    "learningLanguageRemoveError": "Failed to remove learning language",
+    "noLanguageSelected": "No language selected yet",
+    "learningLanguageDeleteError": "Error deleting learning language",
+    "nativeLanguageDeleteError": "Error deleting native language"
   },
   "securitySection": {
     "title": "Security",
     "emailLabel": "Email",
     "backupEmailLabel": "Backup Email",
     "addBackupEmail": "Add backup email",
-    "changePassword": "Change password"
+    "changePassword": "Change password",
+    "deleteAccount": "Delete account",
+    "deleteAccountDialogTitle": "Confirm account deletion",
+    "deleteAccountDialogMessage": "Are you sure you want to delete your account? It cannot be restored.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "accountDeleted": "Account deleted successfully",
+    "accountDeleteError": "Failed to delete account"
   },
   "headerBanner": {
     "title": "Improve your language skills with real people around the world",
