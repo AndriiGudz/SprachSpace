@@ -93,7 +93,14 @@
     "emailLabel": "Email",
     "backupEmailLabel": "Backup Email",
     "addBackupEmail": "Add backup email",
-    "changePassword": "Change password"
+    "changePassword": "Change password",
+    "deleteAccount": "Delete account",
+    "deleteAccountDialogTitle": "Confirm account deletion",
+    "deleteAccountDialogMessage": "Are you sure you want to delete your account? It cannot be restored.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "accountDeleted": "Account deleted successfully",
+    "accountDeleteError": "Failed to delete account"
   },
   "headerBanner": {
     "title": "Improve your language skills with real people around the world",

@@ -126,7 +126,7 @@ function SignInUpMob() {
 
       if (response.ok) {
         const data = await response.json()
-        dispatch(setUser(data.user)) // Сохраняем пользователя в глобальном хранилище после регистрации
+        dispatch(setUser(data)) // Сохраняем пользователя в глобальном хранилище после регистрации
         toast.success(t('signinUp.registrationSuccess'))
         navigate('/')
       } else {

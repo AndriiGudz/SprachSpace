@@ -154,7 +154,7 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json();
         console.log('Registration successful:', data);
-        dispatch(setUser(data.user));
+        dispatch(setUser(data));
         toast.success(t('signinUp.registrationSuccess'));
         navigate('/');
       } else {
