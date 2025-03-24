@@ -33,6 +33,12 @@ const theme = createTheme({
       lineHeight: '100%',
       letterSpacing: '0.4px',
     },
+    body1: {
+      fontSize: '16px',
+      fontWeight: 400,
+      lineHeight: '100%',
+      letterSpacing: '0.32px',
+    },
   },
   palette: {
     text: {

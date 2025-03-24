@@ -17,6 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useDispatch } from 'react-redux'
 import { setTokens, setUser } from './store/redux/userSlice/userSlice'
 import LoadingScreen from './components/LoadingScreen/LoadingScreen'
+import Meetings from './pages/Meetings/Meetings'
 
 function App() {
   const dispatch = useDispatch()
@@ -78,6 +79,7 @@ function App() {
             <Route path="/signin" element={<PageSignInUp />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path='/meetings' element={<Meetings />} />
               <Route
                 path="/profile"
                 element={
