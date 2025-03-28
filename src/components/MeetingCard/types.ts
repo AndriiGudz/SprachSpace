@@ -9,6 +9,7 @@ export interface Meeting {
     maxParticipants: number;
     waitingParticipants: number;
     language: string;
+    proficiency: string;
     hostAvatar: string;
     ageRestriction: string | null;
     shareLink: string;

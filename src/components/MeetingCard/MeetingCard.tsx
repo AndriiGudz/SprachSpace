@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Card,
   CardContent,
@@ -45,6 +44,7 @@ const defaultMeeting: Meeting = {
   maxParticipants: 12,
   waitingParticipants: 9,
   language: 'en',
+  proficiency: 'beginner',
   hostAvatar: defAvatar,
   ageRestriction: null,
   shareLink: 'https://meeting-link.com/cooking-class',
@@ -165,7 +165,12 @@ function MeetingCard({ meeting = defaultMeeting }: MeetingCardProps) {
         <Box
           sx={{ ...bottomSectionStyle, flexWrap: isMobile ? 'wrap' : 'nowrap' }}
         >
-          <Box sx={{...languageContainerStyle, flexWrap: isMobile ? 'wrap' : 'nowrap'}}>
+          <Box
+            sx={{
+              ...languageContainerStyle,
+              flexWrap: isMobile ? 'wrap' : 'nowrap',
+            }}
+          >
             {/* Вместо иконки флага и текста – показываем одну фотографию */}
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <img
@@ -173,12 +178,16 @@ function MeetingCard({ meeting = defaultMeeting }: MeetingCardProps) {
                 alt={`${meeting.language} flag`}
                 style={{ width: 36, height: 36, marginRight: 8 }}
               />
+            <Typography color="text.secondary">
+              {meeting.proficiency}
+            </Typography>
             </Box>
+
 
             {/* Avatar */}
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <img
-                src={meeting.hostAvatar}
+                src={meeting.hostAvatar || defAvatar}
                 alt={`Avatar`}
                 style={{ width: 36, height: 36, marginRight: 8 }}
               />
@@ -243,3 +252,4 @@ function MeetingCard({ meeting = defaultMeeting }: MeetingCardProps) {
 }
 
 export default MeetingCard
+// Добавить переводы

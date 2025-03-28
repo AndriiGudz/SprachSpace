@@ -95,6 +95,7 @@ export const joinButtonStyle: SxProps<Theme> = {
   gap: '10px',
   borderRadius: '10px',
   background: 'var(--light-blue-darken-1, #039BE5)',
+  textTransform: 'none',
 
   '&:hover': {
     background: 'var(--light-blue-darken-2, #0288D1)',
