@@ -170,5 +170,32 @@
         "content": "Language skills help build meaningful relationships with people from different cultures."
       }
     }
+  },
+  "createRoomForm":{
+    "createRoom": "Create Room",
+    "roomName": "Room Name",
+    "category": "Category",
+    "roomLanguage": "Room Language",
+    "proficiency": "Proficiency",
+    "openTime": "Open Time",
+    "closeTime": "Close Time",
+    "minParticipants": "Min. Participants",
+    "maxParticipants": "Max. Participants",
+    "ageLimit": "Age Limit",
+    "createRoomButton": "Create Room"
+  },
+  "roomFilter": {
+    "category": "Category",
+    "language": "Language",
+    "proficiency": "Proficiency",
+    "date": "Date",
+    "apply": "Apply",
+    "reset": "Reset",
+    "createRoom": "Create Room",
+    "close": "Close",
+    "applyFilters": "Apply filters",
+    "roomCreated": "Room created:"
   }
+  
+  
 }
