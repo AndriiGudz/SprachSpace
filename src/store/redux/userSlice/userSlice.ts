@@ -14,6 +14,7 @@ export const initialState: UserSlaceState = storedUser
       birthdayDate: null,
       nativeLanguages: [],
       learningLanguages: [],
+      roles: null,
       rating: null,
       internalCurrency: null,
       status: false,
@@ -44,6 +45,7 @@ export const userSlice = createSlice({
       state.birthdayDate = action.payload.birthdayDate
       state.nativeLanguages = action.payload.nativeLanguages
       state.learningLanguages = action.payload.learningLanguages
+      state.roles = action.payload.roles
       state.rating = action.payload.rating
       state.internalCurrency = action.payload.internalCurrency
       state.status = action.payload.status

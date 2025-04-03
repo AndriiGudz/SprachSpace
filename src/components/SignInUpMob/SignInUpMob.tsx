@@ -80,6 +80,7 @@ function SignInUpMob() {
             birthdayDate: data.birthdayDate,
             nativeLanguages: data.nativeLanguages,
             learningLanguages: data.learningLanguages,
+            roles: data.roles,
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
