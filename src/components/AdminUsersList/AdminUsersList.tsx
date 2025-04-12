@@ -23,6 +23,7 @@ import {
 import { Search } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { UserSlaceState } from '../../store/redux/userSlice/types'
+import Loader from '../Loader/Loader'
 
 function UserList() {
   const [users, setUsers] = useState<UserSlaceState[]>([])
@@ -59,15 +60,13 @@ function UserList() {
   const filteredUsers = users.filter((user: UserSlaceState) => {
     const matchesSearch = Object.values(user).some(
       (value) =>
-        value &&
-        value.toString().toLowerCase().includes(search.toLowerCase())
+        value && value.toString().toLowerCase().includes(search.toLowerCase())
     )
     const matchesStatus =
       status === 'all' ||
       (status === 'active' && user.status === true) ||
       (status === 'blocked' && user.status === false)
-    const matchesRating =
-      rating === 'all' || user.rating!.toString() === rating
+    const matchesRating = rating === 'all' || user.rating!.toString() === rating
     return matchesSearch && matchesStatus && matchesRating
   })
 
@@ -87,7 +86,7 @@ function UserList() {
     page * itemsPerPage
   )
 
-  if (loading) return <div>Загрузка...</div>
+  if (loading) return <Loader />
   if (error) return <div>{error}</div>
 
   return (
@@ -158,7 +157,6 @@ function UserList() {
               value={rating}
               label="Rating"
               onChange={(e) => setRating(e.target.value as string)}
-              className="inputGrey"
               sx={{
                 height: '32px',
                 '& .MuiSelect-select': {
@@ -182,7 +180,11 @@ function UserList() {
         </Box>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        elevation={0}
+        sx={{ boxShadow: 'none' }}
+      >
         <Table>
           <TableHead sx={{ backgroundColor: '#EEE' }}>
             <TableRow>
