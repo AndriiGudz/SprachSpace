@@ -22,11 +22,11 @@ import {
 } from '@mui/material'
 import { Search } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import { UserSlaceState } from '../../store/redux/userSlice/types'
+import { UserSliceState } from '../../store/redux/userSlice/types'
 import Loader from '../Loader/Loader'
 
 function UserList() {
-  const [users, setUsers] = useState<UserSlaceState[]>([])
+  const [users, setUsers] = useState<UserSliceState[]>([])
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('all')
@@ -43,7 +43,7 @@ function UserList() {
     setLoading(true)
     fetch('http://localhost:8080/api/users')
       .then((response) => response.json())
-      .then((data: UserSlaceState[]) => {
+      .then((data: UserSliceState[]) => {
         setUsers(data)
         setLoading(false)
       })
@@ -57,7 +57,7 @@ function UserList() {
   const itemsPerPage = 10
 
   // Фильтрация пользователей по поиску, статусу и рейтингу
-  const filteredUsers = users.filter((user: UserSlaceState) => {
+  const filteredUsers = users.filter((user: UserSliceState) => {
     const matchesSearch = Object.values(user).some(
       (value) =>
         value && value.toString().toLowerCase().includes(search.toLowerCase())
@@ -66,7 +66,7 @@ function UserList() {
       status === 'all' ||
       (status === 'active' && user.status === true) ||
       (status === 'blocked' && user.status === false)
-    const matchesRating = rating === 'all' || user.rating!.toString() === rating
+    const matchesRating = rating === 'all' || user.rating?.toString() === rating
     return matchesSearch && matchesStatus && matchesRating
   })
 
@@ -77,7 +77,7 @@ function UserList() {
     setPage(value)
   }
 
-  const handleUserClick = (userId: string) => {
+  const handleUserClick = (userId: number) => {
     navigate(`/user/${userId}`)
   }
 
@@ -198,10 +198,10 @@ function UserList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedUsers.map((user: UserSlaceState) => (
+            {displayedUsers.map((user: UserSliceState) => (
               <TableRow
-                key={user.id!}
-                onClick={() => handleUserClick(user.id!.toString())}
+                key={user.id}
+                onClick={() => handleUserClick(user.id!)}
                 sx={{
                   backgroundColor: '#F5F5F5',
                   cursor: 'pointer',

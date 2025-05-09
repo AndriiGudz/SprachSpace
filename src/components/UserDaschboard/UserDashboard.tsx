@@ -8,32 +8,20 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import { UserSlaceState } from '../../store/redux/userSlice/types'
-
-export interface LanguageData {
-  id: number
-  skillLevel: string
-  language: {
-    id: number
-    name: string
-  }
-}
-
-export interface RoleData {
-  id: number
-  title: string
-  authority: string
-}
+import {
+  UserSliceState,
+  LanguageData,
+} from '../../store/redux/userSlice/types'
 
 // Демо‑пользователь
-const demoUser: UserSlaceState = {
-  id: '123',
+const demoUser: UserSliceState = {
+  id: 123,
   nickname: 'CoolUser',
   name: 'John',
   surname: 'Doe',
   email: 'john.doe@example.com',
-  backupEmail: 'john.doe.backup@example.com',
   birthdayDate: '1990-01-01',
+  foto: 'https://example.com/avatar.png',
   nativeLanguages: [
     { id: 1, skillLevel: 'Native', language: { id: 1, name: 'English' } },
     { id: 4, skillLevel: 'Native', language: { id: 4, name: 'Ukrainish' } },
@@ -42,27 +30,29 @@ const demoUser: UserSlaceState = {
     { id: 2, skillLevel: 'Beginner', language: { id: 2, name: 'German' } },
     { id: 3, skillLevel: 'Intermediate', language: { id: 3, name: 'Russian' } },
   ],
-  roles: {
-    id: 1,
-    title: 'User',
-    authority: 'active',
-  },
-  rating: '4.8',
-  internalCurrency: '150',
+  roles: [
+    {
+      id: 1,
+      title: 'ROLE_USER',
+      authority: '',
+    },
+  ],
+  rating: 4.8,
+  internalCurrency: 150,
   status: true,
-  avatar: 'https://example.com/avatar.png',
+  createdRooms: [],
   accessToken: 'ACCESS_TOKEN_EXAMPLE',
   refreshToken: 'REFRESH_TOKEN_EXAMPLE',
   isAuthenticated: true,
+  message: null,
 }
 
 function UserDashboard() {
-
   // Статистика пользователя
   const userStats = [
     { label: 'Points', value: demoUser.internalCurrency },
     { label: 'Reviews', value: '10' },
-    { label: 'Room Created', value: '1' },
+    { label: 'Room Created', value: demoUser.createdRooms.length.toString() },
     { label: 'Room Attended', value: '5' },
     { label: 'Rating', value: demoUser.rating },
   ]
@@ -71,11 +61,15 @@ function UserDashboard() {
   const languageInfo = [
     {
       label: 'Native Languages',
-      value: demoUser.nativeLanguages.map(l => l.language.name).join(', '),
+      value: demoUser.nativeLanguages
+        .map((l: LanguageData) => l.language.name)
+        .join(', '),
     },
     {
       label: 'Learning Languages',
-      value: demoUser.learningLanguages.map(l => l.language.name).join(', '),
+      value: demoUser.learningLanguages
+        .map((l: LanguageData) => l.language.name)
+        .join(', '),
     },
   ]
 
@@ -99,7 +93,7 @@ function UserDashboard() {
             {/* Avatar Section */}
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
               <Avatar
-                src={demoUser.avatar || ''}
+                src={demoUser.foto || ''}
                 alt={`${demoUser.nickname} avatar`}
                 sx={{ width: 100, height: 100, p: 2 }}
               />
@@ -134,10 +128,7 @@ function UserDashboard() {
                     <Typography variant="h3" sx={{ mb: 1 }}>
                       {stat.value}
                     </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ color: '#01579b' }}
-                    >
+                    <Typography variant="body1" sx={{ color: '#01579b' }}>
                       {stat.label}
                     </Typography>
                   </Paper>
@@ -161,24 +152,39 @@ function UserDashboard() {
                     gap: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
+                  <Box
+                    sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ textDecoration: 'underline' }}
+                    >
                       Nickname:
                     </Typography>
                     <Typography variant="body1" color="#757575">
                       {demoUser.nickname}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
+                  <Box
+                    sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ textDecoration: 'underline' }}
+                    >
                       Name:
                     </Typography>
                     <Typography variant="body1" color="#757575">
                       {demoUser.name}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
+                  <Box
+                    sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ textDecoration: 'underline' }}
+                    >
                       Surname:
                     </Typography>
                     <Typography variant="body1" color="#757575">
@@ -187,7 +193,10 @@ function UserDashboard() {
                   </Box>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
-                  <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ textDecoration: 'underline' }}
+                  >
                     Date of birth:
                   </Typography>
                   <Typography variant="body1" color="#757575">
@@ -195,7 +204,10 @@ function UserDashboard() {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
-                  <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ textDecoration: 'underline' }}
+                  >
                     Email:
                   </Typography>
                   <Typography variant="body1" color="#757575">
@@ -203,10 +215,16 @@ function UserDashboard() {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
-                  <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ textDecoration: 'underline' }}
+                  >
                     Status:
                   </Typography>
-                  <Typography variant="body1" sx={{ color: demoUser.status ? '#1A8E0B' : '#B80C0C' }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: demoUser.status ? '#1A8E0B' : '#B80C0C' }}
+                  >
                     {demoUser.status ? 'Active' : 'Blocked'}
                   </Typography>
                 </Box>
@@ -222,10 +240,17 @@ function UserDashboard() {
                 {languageInfo.map((info, index) => (
                   <Box key={index} sx={{ width: { xs: '100%', sm: '50%' } }}>
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                      <Typography sx={{ fontFamily: 'Oswald', textDecoration: 'underline' }}>
+                      <Typography
+                        sx={{
+                          fontFamily: 'Oswald',
+                          textDecoration: 'underline',
+                        }}
+                      >
                         {info.label}:
                       </Typography>
-                      <Typography sx={{ fontFamily: 'Oswald', color: '#757575' }}>
+                      <Typography
+                        sx={{ fontFamily: 'Oswald', color: '#757575' }}
+                      >
                         {info.value}
                       </Typography>
                     </Box>
@@ -235,7 +260,9 @@ function UserDashboard() {
             </Box>
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, p: 2 }}>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'center', gap: 2, p: 2 }}
+            >
               <Button
                 variant="contained"
                 sx={{

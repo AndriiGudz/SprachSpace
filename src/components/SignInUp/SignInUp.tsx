@@ -114,14 +114,15 @@ function SignInUp() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            nativeLanguages: data.nativeLanguages,
-            learningLanguages: data.learningLanguages,
-            roles: data.roles,
+            foto: data.foto,
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
-            avatar: data.avatar,
-            backupEmail: data.backupEmail || null,
+            nativeLanguages: data.nativeLanguages || [],
+            learningLanguages: data.learningLanguages || [],
+            roles: data.roles || [],
+            createdRooms: data.createdRooms || [],
+            message: data.message,
           })
         )
 

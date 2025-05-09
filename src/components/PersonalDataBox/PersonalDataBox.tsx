@@ -1,10 +1,10 @@
-import { Box, TextField, Avatar, IconButton } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import EditIcon from '@mui/icons-material/Edit';
-import { useTranslation } from 'react-i18next';
-import { PersonalDataSectionProps } from './types';
-import dayjs from 'dayjs';
-import EditableSection from '../EditableSection/EditableSection';
+import { Box, TextField, Avatar, IconButton } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import EditIcon from '@mui/icons-material/Edit'
+import { useTranslation } from 'react-i18next'
+import { PersonalDataSectionProps } from './types'
+import dayjs from 'dayjs'
+import EditableSection from '../EditableSection/EditableSection'
 
 function PersonalDataBox({
   data,
@@ -14,12 +14,12 @@ function PersonalDataBox({
   onCancel,
   onChange,
 }: PersonalDataSectionProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const isEmpty =
-    !data.nickname || !data.name || !data.surname || !data.birthdayDate;
+    !data.nickname || !data.name || !data.surname || !data.birthdayDate
 
-  const avatarSrc = data.avatar ? data.avatar : undefined;
+  const fotoSrc = data.foto ? data.foto : undefined
 
   return (
     <EditableSection
@@ -32,7 +32,7 @@ function PersonalDataBox({
     >
       <Box display="flex" flexDirection="column" gap={2}>
         <Box position="relative" width="fit-content">
-          <Avatar src={avatarSrc} sx={{ width: 100, height: 100, mb: 2 }} />
+          <Avatar src={fotoSrc} sx={{ width: 100, height: 100, mb: 2 }} />
           {isEditing && (
             <IconButton
               size="small"
@@ -88,7 +88,7 @@ function PersonalDataBox({
         />
       </Box>
     </EditableSection>
-  );
+  )
 }
 
-export default PersonalDataBox;
+export default PersonalDataBox

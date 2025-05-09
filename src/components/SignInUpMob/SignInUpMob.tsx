@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { Formik, Field, Form } from 'formik'
 import CloseIcon from '@mui/icons-material/Close'
 import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as GooglePlusIcon } from '../../assets/icons-google-plus.svg'
@@ -78,13 +78,15 @@ function SignInUpMob() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            nativeLanguages: data.nativeLanguages,
-            learningLanguages: data.learningLanguages,
-            roles: data.roles,
+            foto: data.foto,
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
-            avatar: data.avatar,
+            nativeLanguages: data.nativeLanguages || [],
+            learningLanguages: data.learningLanguages || [],
+            roles: data.roles || [],
+            createdRooms: data.createdRooms || [],
+            message: data.message,
           })
         )
 

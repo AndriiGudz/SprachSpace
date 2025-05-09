@@ -7,28 +7,34 @@ export interface LanguageData {
   }
 }
 
-interface RoleData {
+export interface RoleData {
   id: number
   title: string
   authority: string
 }
 
-export interface UserSlaceState {
-  id: string | null
+export interface RoomData {
+  id: number
+  // Добавьте другие поля комнаты по необходимости
+}
+
+export interface UserSliceState {
+  id: number | null
   nickname: string | null
   name: string | null
   surname: string | null
   email: string | null
-  backupEmail?: string | null
   birthdayDate: string | null
+  foto: string | null
+  rating: number | null
+  internalCurrency: number | null
+  status: boolean
   nativeLanguages: LanguageData[]
   learningLanguages: LanguageData[]
-  roles: RoleData | null
-  rating: string | null
-  internalCurrency: string | null
-  status: boolean
-  avatar?: string | null;
+  roles: RoleData[]
+  createdRooms: RoomData[]
   accessToken: string | null
   refreshToken: string | null
   isAuthenticated: boolean
+  message?: string | null
 }
