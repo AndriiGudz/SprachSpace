@@ -53,6 +53,7 @@
     "meetings": "Meetings",
     "about": "About Us",
     "logoutSuccess": "You have successfully logged out.",
+    "logoutError": "An error occurred while logging out. Please try again.",
     "userList": "User List"
   },
   "profile": {

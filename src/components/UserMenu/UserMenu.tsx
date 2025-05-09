@@ -47,11 +47,25 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
   }
 
   const handleLogout = () => {
-    dispatch(clearUser())
-    localStorage.removeItem('user')
-    onMenuItemClick()
-    navigate('/')
-    toast.success(t('userMenu.logoutSuccess'))
+    try {
+      // Очищаем состояние Redux
+      dispatch(clearUser())
+
+      // Очищаем localStorage
+      localStorage.removeItem('user')
+
+      // Закрываем меню
+      onMenuItemClick()
+
+      // Показываем уведомление об успешном выходе
+      toast.success(t('userMenu.logoutSuccess'))
+
+      // Редиректим на главную с заменой записи в истории
+      navigate('/', { replace: true })
+    } catch (error) {
+      console.error('Logout error:', error)
+      toast.error(t('userMenu.logoutError'))
+    }
   }
 
   return (
