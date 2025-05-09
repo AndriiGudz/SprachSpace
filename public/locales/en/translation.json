@@ -52,7 +52,8 @@
     "signIn": "Sign in",
     "meetings": "Meetings",
     "about": "About Us",
-    "logoutSuccess": "You have successfully logged out."
+    "logoutSuccess": "You have successfully logged out.",
+    "userList": "User List"
   },
   "profile": {
     "alert": "Fill in your personal data to gain access to the application functionality.",
@@ -171,7 +172,7 @@
       }
     }
   },
-  "createRoomForm":{
+  "createRoomForm": {
     "createRoom": "Create Room",
     "roomName": "Room Name",
     "category": "Category",
@@ -196,6 +197,4 @@
     "applyFilters": "Apply filters",
     "roomCreated": "Room created:"
   }
-  
-  
 }

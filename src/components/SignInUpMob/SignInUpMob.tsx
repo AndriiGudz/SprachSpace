@@ -30,6 +30,7 @@ import { useDispatch } from 'react-redux'
 import { setUser, setTokens } from '../../store/redux/userSlice/userSlice'
 import { SignInSchema } from '../../validationSchemas/SignInSchema'
 import { SignUpSchema } from '../../validationSchemas/SignUpSchema'
+import { RoleData } from '../../store/redux/userSlice/types'
 
 function SignInUpMob() {
   const { t } = useTranslation()
@@ -69,6 +70,38 @@ function SignInUpMob() {
 
       if (response.ok) {
         const data = await response.json()
+
+        console.log('=== Успешная авторизация (мобильная версия) ===')
+        console.log(
+          'Роли пользователя:',
+          data.roles.map((role: RoleData) => role.title).join(', ')
+        )
+        console.log(
+          'Полные данные пользователя:',
+          JSON.stringify(
+            {
+              id: data.id,
+              nickname: data.nickname,
+              name: data.name,
+              surname: data.surname,
+              email: data.email,
+              birthdayDate: data.birthdayDate,
+              foto: data.foto,
+              rating: data.rating,
+              internalCurrency: data.internalCurrency,
+              status: data.status,
+              nativeLanguages: data.nativeLanguages || [],
+              learningLanguages: data.learningLanguages || [],
+              roles: data.roles || [],
+              createdRooms: data.createdRooms || [],
+              message: data.message,
+            },
+            null,
+            2
+          )
+        )
+        console.log('=== Конец данных авторизации ===')
+
         // Сохраняем информацию о пользователе в глобальном хранилище
         dispatch(
           setUser({

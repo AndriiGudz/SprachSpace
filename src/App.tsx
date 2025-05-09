@@ -9,6 +9,7 @@ import Home from './pages/Home/Home'
 import PageSignInUp from './pages/PageSignInUp/PageSignInUp'
 import Profile from './pages/Profile/Profile'
 import ProtectedRoute from '../src/components/ProtectedRoute/ProtectedRoute'
+import AdminRoute from '../src/components/ProtectedRoute/AdminRoute'
 import theme from './theme'
 import { ThemeProvider } from '@mui/material/styles'
 import Notifications from './components/Notifications/Notifications'
@@ -84,16 +85,22 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="/meetings" element={<Meetings />} />
-              <Route path="/admin/users" element={<Admin />} />
-              <Route path="/admin/users/id" element={<UserDaschboard />} />
-              {/* <Route
+              <Route
                 path="/admin/users"
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <Admin />
-                  </ProtectedRoute>
+                  </AdminRoute>
                 }
-              /> */}
+              />
+              <Route
+                path="/admin/users/id"
+                element={
+                  <AdminRoute>
+                    <UserDaschboard />
+                  </AdminRoute>
+                }
+              />
               <Route
                 path="/profile"
                 element={

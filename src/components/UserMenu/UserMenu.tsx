@@ -17,6 +17,7 @@ import { ReactComponent as FriendsIcon } from '../../assets/icon/GiThreeFriends.
 import { ReactComponent as ReviewsIcon } from '../../assets/icon/MdReviews.svg'
 import { ReactComponent as SignIn } from '../../assets/icon/MdLogin.svg'
 import { ReactComponent as SignoutIcon } from '../../assets/icon/LogoutFilled.svg'
+import { ReactComponent as AdminIcon } from '../../assets/icon/AdminIcon.svg'
 import LanguageSelector from '../LanguageSelector/LanguageSelector'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearUser } from '../../store/redux/userSlice/userSlice'
@@ -36,6 +37,9 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
     (state: RootState) => state.user.isAuthenticated
   )
   const user = useSelector((state: RootState) => state.user)
+
+  // Проверяем, есть ли у пользователя роль администратора
+  const isAdmin = user.roles?.some((role) => role.title === 'ROLE_ADMIN')
 
   const handleSignInClick = () => {
     onMenuItemClick()
@@ -64,8 +68,12 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
         </>
       )}
       <MobOnly>
-        <MenuItemStyled onClick={onMenuItemClick}>{t('userMenu.meetings')}</MenuItemStyled>
-        <MenuItemStyled onClick={onMenuItemClick}>{t('userMenu.about')}</MenuItemStyled>
+        <MenuItemStyled onClick={onMenuItemClick}>
+          {t('userMenu.meetings')}
+        </MenuItemStyled>
+        <MenuItemStyled onClick={onMenuItemClick}>
+          {t('userMenu.about')}
+        </MenuItemStyled>
         {isAuthenticated && <DividerStyled />}
       </MobOnly>
       {isAuthenticated && (
@@ -75,6 +83,14 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
               <ProfileIcon className="icon" /> {t('userMenu.profile')}
             </MenuItemStyled>
           </LinkStyle>
+          {/* Добавляем ссылку на страницу администрирования, видимую только для админов */}
+          {isAdmin && (
+            <LinkStyle to="/admin/users" onClick={onMenuItemClick}>
+              <MenuItemStyled>
+                <AdminIcon className="icon" /> {t('userMenu.userList')}
+              </MenuItemStyled>
+            </LinkStyle>
+          )}
           <MenuItemStyled>
             <NotificationsIcon className="icon" /> {t('userMenu.notifications')}
           </MenuItemStyled>
