@@ -19,6 +19,7 @@ import { setTokens, setUser } from './store/redux/userSlice/userSlice'
 import LoadingScreen from './components/LoadingScreen/LoadingScreen'
 import Meetings from './pages/Meetings/Meetings'
 import Admin from './pages/Admin/PageAdminUsersList'
+import UserDaschboard from './pages/Admin/PageUserDaschboard'
 
 function App() {
   const dispatch = useDispatch()
@@ -84,6 +85,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path="/meetings" element={<Meetings />} />
               <Route path="/admin/users" element={<Admin />} />
+              <Route path="/admin/users/id" element={<UserDaschboard />} />
               {/* <Route
                 path="/admin/users"
                 element={
