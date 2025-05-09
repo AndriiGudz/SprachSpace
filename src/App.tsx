@@ -18,6 +18,8 @@ import { useDispatch } from 'react-redux'
 import { setTokens, setUser } from './store/redux/userSlice/userSlice'
 import LoadingScreen from './components/LoadingScreen/LoadingScreen'
 import Meetings from './pages/Meetings/Meetings'
+import Admin from './pages/Admin/PageAdminUsersList'
+import UserDaschboard from './pages/Admin/PageUserDaschboard'
 
 function App() {
   const dispatch = useDispatch()
@@ -30,14 +32,14 @@ function App() {
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 4500)
-  
+
     // Загружаем данные из localStorage
     const storedUser = localStorage.getItem('user')
-    
+
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser)
-  
+
         // Проверяем, есть ли в данных токены и пользователь не разлогинен
         if (userData && userData.accessToken) {
           dispatch(setUser(userData))
@@ -49,13 +51,15 @@ function App() {
           )
         }
       } catch (error) {
-        console.error('Ошибка при загрузке пользователя из localStorage:', error)
+        console.error(
+          'Ошибка при загрузке пользователя из localStorage:',
+          error
+        )
       }
     }
-  
+
     return () => clearTimeout(timer)
   }, [dispatch])
-  
 
   // Обновление title страницы при изменении языка
   useEffect(() => {
@@ -79,7 +83,17 @@ function App() {
             <Route path="/signin" element={<PageSignInUp />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
-              <Route path='/meetings' element={<Meetings />} />
+              <Route path="/meetings" element={<Meetings />} />
+              <Route path="/admin/users" element={<Admin />} />
+              <Route path="/admin/users/id" element={<UserDaschboard />} />
+              {/* <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              /> */}
               <Route
                 path="/profile"
                 element={

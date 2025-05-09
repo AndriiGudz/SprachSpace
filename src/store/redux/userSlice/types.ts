@@ -7,6 +7,12 @@ export interface LanguageData {
   }
 }
 
+interface RoleData {
+  id: number
+  title: string
+  authority: string
+}
+
 export interface UserSlaceState {
   id: string | null
   nickname: string | null
@@ -17,6 +23,7 @@ export interface UserSlaceState {
   birthdayDate: string | null
   nativeLanguages: LanguageData[]
   learningLanguages: LanguageData[]
+  roles: RoleData | null
   rating: string | null
   internalCurrency: string | null
   status: boolean
