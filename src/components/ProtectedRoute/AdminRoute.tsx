@@ -1,20 +1,25 @@
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
+import { Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 const AdminRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated, roles } = useSelector((state: RootState) => state.user);
+  const { isAuthenticated, roles } = useSelector(
+    (state: RootState) => state.user
+  )
 
   if (!isAuthenticated) {
-    return <Navigate to="/signin" replace />;
+    return <Navigate to="/signin" replace />
   }
 
-  if (!roles || roles.title !== 'ROLE_ADMIN') {
-    return <Navigate to="/" replace />;
+  // Проверяем наличие роли администратора в массиве ролей
+  const isAdmin = roles?.some((role) => role.title === 'ROLE_ADMIN')
+
+  if (!roles || !isAdmin) {
+    return <Navigate to="/" replace />
   }
 
-  return children;
-};
+  return children
+}
 
-export default AdminRoute;
+export default AdminRoute
 // Проверить при добавлении ролей

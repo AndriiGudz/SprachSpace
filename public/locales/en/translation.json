@@ -52,7 +52,9 @@
     "signIn": "Sign in",
     "meetings": "Meetings",
     "about": "About Us",
-    "logoutSuccess": "You have successfully logged out."
+    "logoutSuccess": "You have successfully logged out.",
+    "logoutError": "An error occurred while logging out. Please try again.",
+    "userList": "User List"
   },
   "profile": {
     "alert": "Fill in your personal data to gain access to the application functionality.",
@@ -171,7 +173,7 @@
       }
     }
   },
-  "createRoomForm":{
+  "createRoomForm": {
     "createRoom": "Create Room",
     "roomName": "Room Name",
     "category": "Category",
@@ -195,7 +197,44 @@
     "close": "Close",
     "applyFilters": "Apply filters",
     "roomCreated": "Room created:"
+  },
+  "adminUsersList": {
+    "searchPlaceholder": "Search by name, email, user ID, etc.",
+    "status": "Status",
+    "allUsers": "All users",
+    "active": "Active",
+    "blocked": "Blocked",
+    "rating": "Rating",
+    "allRatings": "All ratings",
+    "id": "ID",
+    "nickname": "Nickname",
+    "name": "Name",
+    "surname": "Surname",
+    "email": "Email"
+  },
+  "userDashboard": {
+    "noData": "User data is not available",
+    "points": "Points",
+    "reviews": "Reviews",
+    "roomCreated": "Rooms Created",
+    "roomAttended": "Rooms Attended",
+    "rating": "Rating",
+    "nativeLanguages": "Native Languages",
+    "learningLanguages": "Learning Languages",
+    "personalInformation": "Personal Information",
+    "nickname": "Nickname",
+    "name": "Name",
+    "surname": "Surname",
+    "dateOfBirth": "Date of Birth",
+    "email": "Email",
+    "status": "Status",
+    "active": "Active",
+    "blocked": "Blocked",
+    "languages": "Languages",
+    "block": "Block",
+    "unblock": "Unblock",
+    "delete": "Delete",
+    "setAdmin": "Set as Admin",
+    "processing": "Processing..."
   }
-  
-  
 }

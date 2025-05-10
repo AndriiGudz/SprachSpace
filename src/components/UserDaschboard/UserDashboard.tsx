@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   Avatar,
   Box,
@@ -8,74 +12,167 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import { UserSlaceState } from '../../store/redux/userSlice/types'
+import { UserSliceState, LanguageData } from '../../store/redux/userSlice/types'
+import Loader from '../Loader/Loader'
+import { RootState } from '../../store/store'
 
-export interface LanguageData {
-  id: number
-  skillLevel: string
-  language: {
-    id: number
-    name: string
+interface UserDashboardProps {
+  userId: string | undefined
+}
+
+function UserDashboard({ userId }: UserDashboardProps) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const adminId = useSelector((state: RootState) => state.user.id)
+  const [user, setUser] = useState<UserSliceState | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  useEffect(() => {
+    if (!userId) {
+      setError('User ID is required')
+      setLoading(false)
+      return
+    }
+
+    fetch(`http://localhost:8080/api/users/${userId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('User not found')
+        }
+        return response.json()
+      })
+      .then((data) => {
+        setUser(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error(err)
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [userId])
+
+  const handleBlock = async () => {
+    if (!user || isProcessing || !userId || !adminId) return
+    setIsProcessing(true)
+
+    try {
+      const endpoint = user.status
+        ? `http://localhost:8080/api/users/block?admin=${adminId}&user=${userId}`
+        : `http://localhost:8080/api/users/unlock?admin=${adminId}&user=${userId}`
+
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          user.status ? 'Failed to block user' : 'Failed to unblock user'
+        )
+      }
+
+      setUser((prev) => (prev ? { ...prev, status: !prev.status } : null))
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsProcessing(false)
+    }
   }
-}
 
-export interface RoleData {
-  id: number
-  title: string
-  authority: string
-}
+  const handleDelete = async () => {
+    if (!user || isProcessing || !userId) return
+    setIsProcessing(true)
 
-// Демо‑пользователь
-const demoUser: UserSlaceState = {
-  id: '123',
-  nickname: 'CoolUser',
-  name: 'John',
-  surname: 'Doe',
-  email: 'john.doe@example.com',
-  backupEmail: 'john.doe.backup@example.com',
-  birthdayDate: '1990-01-01',
-  nativeLanguages: [
-    { id: 1, skillLevel: 'Native', language: { id: 1, name: 'English' } },
-    { id: 4, skillLevel: 'Native', language: { id: 4, name: 'Ukrainish' } },
-  ],
-  learningLanguages: [
-    { id: 2, skillLevel: 'Beginner', language: { id: 2, name: 'German' } },
-    { id: 3, skillLevel: 'Intermediate', language: { id: 3, name: 'Russian' } },
-  ],
-  roles: {
-    id: 1,
-    title: 'User',
-    authority: 'active',
-  },
-  rating: '4.8',
-  internalCurrency: '150',
-  status: true,
-  avatar: 'https://example.com/avatar.png',
-  accessToken: 'ACCESS_TOKEN_EXAMPLE',
-  refreshToken: 'REFRESH_TOKEN_EXAMPLE',
-  isAuthenticated: true,
-}
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/users/delete?id=${userId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
 
-function UserDashboard() {
+      if (!response.ok) {
+        throw new Error('Failed to delete user')
+      }
+
+      // После успешного удаления перенаправляем на список пользователей используя React Router
+      navigate('/admin/users')
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleSetAdmin = async () => {
+    if (!user || isProcessing || !userId || !adminId) return
+    setIsProcessing(true)
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/users/setAdmin?admin=${adminId}&user=${userId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to set user as admin')
+      }
+
+      // Получаем обновленные данные пользователя
+      const updatedUser = await response.json()
+      setUser(updatedUser)
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  if (loading) return <Loader />
+  if (error) return <Typography color="error">{error}</Typography>
+  if (!user) return <Typography>{t('userDashboard.noData')}</Typography>
 
   // Статистика пользователя
   const userStats = [
-    { label: 'Points', value: demoUser.internalCurrency },
-    { label: 'Reviews', value: '10' },
-    { label: 'Room Created', value: '1' },
-    { label: 'Room Attended', value: '5' },
-    { label: 'Rating', value: demoUser.rating },
+    { label: t('userDashboard.points'), value: user.internalCurrency || 0 },
+    { label: t('userDashboard.reviews'), value: '10' },
+    {
+      label: t('userDashboard.roomCreated'),
+      value: user.createdRooms.length.toString(),
+    },
+    { label: t('userDashboard.roomAttended'), value: '5' },
+    { label: t('userDashboard.rating'), value: user.rating },
   ]
 
   // Информация о языках
   const languageInfo = [
     {
-      label: 'Native Languages',
-      value: demoUser.nativeLanguages.map(l => l.language.name).join(', '),
+      label: t('userDashboard.nativeLanguages'),
+      value: user.nativeLanguages
+        .map((l: LanguageData) => l.language.name)
+        .join(', '),
     },
     {
-      label: 'Learning Languages',
-      value: demoUser.learningLanguages.map(l => l.language.name).join(', '),
+      label: t('userDashboard.learningLanguages'),
+      value: user.learningLanguages
+        .map((l: LanguageData) => l.language.name)
+        .join(', '),
     },
   ]
 
@@ -99,8 +196,8 @@ function UserDashboard() {
             {/* Avatar Section */}
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
               <Avatar
-                src={demoUser.avatar || ''}
-                alt={`${demoUser.nickname} avatar`}
+                src={user.foto || ''}
+                alt={`${user.nickname} avatar`}
                 sx={{ width: 100, height: 100, p: 2 }}
               />
             </Box>
@@ -134,10 +231,7 @@ function UserDashboard() {
                     <Typography variant="h3" sx={{ mb: 1 }}>
                       {stat.value}
                     </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ color: '#01579b' }}
-                    >
+                    <Typography variant="body1" sx={{ color: '#01579b' }}>
                       {stat.label}
                     </Typography>
                   </Paper>
@@ -148,7 +242,7 @@ function UserDashboard() {
             {/* Personal Information Section */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               <Typography variant="h3" sx={{ padding: '8px 0px' }}>
-                Personal Information
+                {t('userDashboard.personalInformation')}
               </Typography>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -161,53 +255,82 @@ function UserDashboard() {
                     gap: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
-                      Nickname:
+                  <Box
+                    sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ textDecoration: 'underline' }}
+                    >
+                      {t('userDashboard.nickname')}:
                     </Typography>
                     <Typography variant="body1" color="#757575">
-                      {demoUser.nickname}
+                      {user.nickname}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
-                      Name:
+                  <Box
+                    sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ textDecoration: 'underline' }}
+                    >
+                      {t('userDashboard.name')}:
                     </Typography>
                     <Typography variant="body1" color="#757575">
-                      {demoUser.name}
+                      {user.name}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
-                      Surname:
+                  <Box
+                    sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ textDecoration: 'underline' }}
+                    >
+                      {t('userDashboard.surname')}:
                     </Typography>
                     <Typography variant="body1" color="#757575">
-                      {demoUser.surname}
+                      {user.surname}
                     </Typography>
                   </Box>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
-                  <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
-                    Date of birth:
+                  <Typography
+                    variant="body1"
+                    sx={{ textDecoration: 'underline' }}
+                  >
+                    {t('userDashboard.dateOfBirth')}:
                   </Typography>
                   <Typography variant="body1" color="#757575">
-                    {demoUser.birthdayDate}
+                    {user.birthdayDate}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
-                  <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
-                    Email:
+                  <Typography
+                    variant="body1"
+                    sx={{ textDecoration: 'underline' }}
+                  >
+                    {t('userDashboard.email')}:
                   </Typography>
                   <Typography variant="body1" color="#757575">
-                    {demoUser.email}
+                    {user.email}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
-                  <Typography variant="body1" sx={{ textDecoration: 'underline' }}>
-                    Status:
+                  <Typography
+                    variant="body1"
+                    sx={{ textDecoration: 'underline' }}
+                  >
+                    {t('userDashboard.status')}:
                   </Typography>
-                  <Typography variant="body1" sx={{ color: demoUser.status ? '#1A8E0B' : '#B80C0C' }}>
-                    {demoUser.status ? 'Active' : 'Blocked'}
+                  <Typography
+                    variant="body1"
+                    sx={{ color: user.status ? '#1A8E0B' : '#B80C0C' }}
+                  >
+                    {user.status
+                      ? t('userDashboard.active')
+                      : t('userDashboard.blocked')}
                   </Typography>
                 </Box>
               </Box>
@@ -216,16 +339,23 @@ function UserDashboard() {
             {/* Languages Section */}
             <Box>
               <Typography variant="h3" sx={{ padding: '8px 0px' }}>
-                Languages
+                {t('userDashboard.languages')}
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                 {languageInfo.map((info, index) => (
                   <Box key={index} sx={{ width: { xs: '100%', sm: '50%' } }}>
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                      <Typography sx={{ fontFamily: 'Oswald', textDecoration: 'underline' }}>
+                      <Typography
+                        sx={{
+                          fontFamily: 'Oswald',
+                          textDecoration: 'underline',
+                        }}
+                      >
                         {info.label}:
                       </Typography>
-                      <Typography sx={{ fontFamily: 'Oswald', color: '#757575' }}>
+                      <Typography
+                        sx={{ fontFamily: 'Oswald', color: '#757575' }}
+                      >
                         {info.value}
                       </Typography>
                     </Box>
@@ -235,33 +365,70 @@ function UserDashboard() {
             </Box>
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, p: 2 }}>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'center', gap: 2, p: 2 }}
+            >
               <Button
                 variant="contained"
+                onClick={handleSetAdmin}
+                disabled={
+                  isProcessing ||
+                  user?.roles.some(
+                    (role) =>
+                      typeof role === 'object' && role.title === 'ROLE_ADMIN'
+                  )
+                }
                 sx={{
-                  bgcolor: '#01579b',
+                  bgcolor: '#0288d1',
                   padding: '10px 24px',
                   borderRadius: '10px',
                   fontSize: '16px',
                   textTransform: 'none',
-                  '&:hover': { bgcolor: '#014374' },
+                  '&:hover': { bgcolor: '#01579b' },
+                  '&:disabled': { bgcolor: '#757575' },
                 }}
               >
-                Block
+                {isProcessing
+                  ? t('userDashboard.processing')
+                  : t('userDashboard.setAdmin')}
               </Button>
               <Button
                 variant="contained"
-                color="error"
+                onClick={handleBlock}
+                disabled={isProcessing}
                 sx={{
-                  bgcolor: '#b70b0b',
+                  bgcolor: !user?.status ? '#2e7d32' : '#ed6c02',
                   padding: '10px 24px',
                   borderRadius: '10px',
                   fontSize: '16px',
                   textTransform: 'none',
-                  '&:hover': { bgcolor: '#8f0909' },
+                  '&:hover': { bgcolor: !user?.status ? '#1b5e20' : '#c65102' },
+                  '&:disabled': { bgcolor: '#757575' },
                 }}
               >
-                Delete
+                {isProcessing
+                  ? t('userDashboard.processing')
+                  : !user?.status
+                  ? t('userDashboard.unblock')
+                  : t('userDashboard.block')}
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleDelete}
+                disabled={isProcessing}
+                sx={{
+                  bgcolor: '#d32f2f',
+                  padding: '10px 24px',
+                  borderRadius: '10px',
+                  fontSize: '16px',
+                  textTransform: 'none',
+                  '&:hover': { bgcolor: '#9a0007' },
+                  '&:disabled': { bgcolor: '#757575' },
+                }}
+              >
+                {isProcessing
+                  ? t('userDashboard.processing')
+                  : t('userDashboard.delete')}
               </Button>
             </Box>
           </CardContent>

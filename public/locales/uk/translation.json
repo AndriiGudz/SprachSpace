@@ -1,9 +1,46 @@
 {
- "app": {
+  "app": {
     "title": "SprachSpace - Мовна кімната для спілкування та навчання",
     "description": "SprachSpace - платформа для вивчення мов через групове спілкування"
-  }, 
-  "homePage": {
-    
+  },
+  "homePage": {},
+  "adminUsersList": {
+    "searchPlaceholder": "Пошук за ім'ям, email, ID користувача тощо",
+    "status": "Статус",
+    "allUsers": "Всі користувачі",
+    "active": "Активний",
+    "blocked": "Заблокований",
+    "rating": "Рейтинг",
+    "allRatings": "Всі рейтинги",
+    "id": "ID",
+    "nickname": "Нікнейм",
+    "name": "Ім'я",
+    "surname": "Прізвище",
+    "email": "Email"
+  },
+  "userDashboard": {
+    "noData": "Дані користувача недоступні",
+    "points": "Бали",
+    "reviews": "Відгуки",
+    "roomCreated": "Створено кімнат",
+    "roomAttended": "Відвідано кімнат",
+    "rating": "Рейтинг",
+    "nativeLanguages": "Рідні мови",
+    "learningLanguages": "Мови, що вивчаються",
+    "personalInformation": "Особиста інформація",
+    "nickname": "Нікнейм",
+    "name": "Ім'я",
+    "surname": "Прізвище",
+    "dateOfBirth": "Дата народження",
+    "email": "Email",
+    "status": "Статус",
+    "active": "Активний",
+    "blocked": "Заблокований",
+    "languages": "Мови",
+    "block": "Заблокувати",
+    "unblock": "Розблокувати",
+    "delete": "Видалити",
+    "setAdmin": "Призначити адміном",
+    "processing": "Обробка..."
   }
 }

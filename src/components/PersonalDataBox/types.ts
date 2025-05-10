@@ -3,10 +3,7 @@ export interface PersonalData {
   name: string | null
   surname: string | null
   birthdayDate: string | null
-  avatar?: string | null
-  nativeLanguage?: string
-  learningLanguage?: string
-  backupEmail?: string | null
+  foto?: string | null
 }
 
 export interface PersonalDataSectionProps {

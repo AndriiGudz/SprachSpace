@@ -184,13 +184,13 @@ function LanguageSectionBox({
             }
         const updated = [...learningLanguages, newLang]
         onLearningLanguagesChange(updated)
-        toast.success(t("languageSection.learningLanguageAdded"))
+        toast.success(t('languageSection.learningLanguageAdded'))
         setNewLearningLangId('')
         setNewLearningLangLevel('default')
       })
       .catch((error) => {
-        console.error(t("languageSection.learningLanguageAddError"), error)
-        toast.error(t("languageSection.learningLanguageAddError"))
+        console.error(t('languageSection.learningLanguageAddError'), error)
+        toast.error(t('languageSection.learningLanguageAddError'))
       })
   }
 
@@ -211,15 +211,15 @@ function LanguageSectionBox({
             (lang) => lang.language.id !== langId
           )
           onNativeLanguagesChange(updated)
-          toast.success(t("languageSection.nativeLanguageRemoved"))
+          toast.success(t('languageSection.nativeLanguageRemoved'))
         } else {
-          console.error(t("languageSection.nativeLanguageRemoveError"))
-          toast.error(t("languageSection.nativeLanguageRemoveError"))
+          console.error(t('languageSection.nativeLanguageRemoveError'))
+          toast.error(t('languageSection.nativeLanguageRemoveError'))
         }
       })
       .catch((error) => {
-        console.error(t("languageSection.nativeLanguageDeleteError"), error)
-        toast.error(t("languageSection.nativeLanguageDeleteError"))
+        console.error(t('languageSection.nativeLanguageDeleteError'), error)
+        toast.error(t('languageSection.nativeLanguageDeleteError'))
       })
   }
 
@@ -240,27 +240,16 @@ function LanguageSectionBox({
             (lang) => lang.language.id !== langId
           )
           onLearningLanguagesChange(updated)
-          toast.success(t("languageSection.learningLanguageRemoved"))
+          toast.success(t('languageSection.learningLanguageRemoved'))
         } else {
-          console.error(t("languageSection.learningLanguageRemoveError"))
-          toast.error(t("languageSection.learningLanguageRemoveError"))
+          console.error(t('languageSection.learningLanguageRemoveError'))
+          toast.error(t('languageSection.learningLanguageRemoveError'))
         }
       })
       .catch((error) => {
-        console.error(t("languageSection.learningLanguageDeleteError"), error)
-        toast.error(t("languageSection.learningLanguageDeleteError"))
+        console.error(t('languageSection.learningLanguageDeleteError'), error)
+        toast.error(t('languageSection.learningLanguageDeleteError'))
       })
-  }
-
-  // Функция для обновления уровня владения изучаемым языком
-  const handleLearningLevelChange = (langId: number, newLevel: string) => {
-    const updated = learningLanguages.map((lang) => {
-      if (lang.id === langId) {
-        return { ...lang, level: newLevel }
-      }
-      return lang
-    })
-    onLearningLanguagesChange(updated)
   }
 
   return (
@@ -370,16 +359,21 @@ function LanguageSectionBox({
             ))}
           </Box>
           {/* Форма для добавления нового изучаемого языка */}
-          <Box display="flex" gap={1} alignItems="center" justifyContent="space-between">
+          <Box
+            display="flex"
+            gap={1}
+            alignItems="center"
+            justifyContent="space-between"
+          >
             <FormControl
-            variant="outlined"
-            sx={{
-              width: '150px',
-            }}
+              variant="outlined"
+              sx={{
+                width: '150px',
+              }}
             >
               <InputLabel>{t('languageSection.language')}</InputLabel>
               <Select
-              variant="outlined"
+                variant="outlined"
                 value={newLearningLangId}
                 label={t('languageSection.language')}
                 sx={{
@@ -413,7 +407,7 @@ function LanguageSectionBox({
             <FormControl variant="outlined">
               <InputLabel>{t('languageSection.level')}</InputLabel>
               <Select
-              variant="outlined"
+                variant="outlined"
                 value={newLearningLangLevel}
                 label={t('languageSection.level')}
                 sx={{
