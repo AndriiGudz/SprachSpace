@@ -3,7 +3,41 @@
     "title": "SprachSpace - Sprachraum, Raum für Kommunikation und Lernen",
     "description": "SprachSpace - Plattform zum Sprachenlernen durch Gruppenkommunikation"
   },
-  "homePage": {
-    
+  "homePage": {},
+  "adminUsersList": {
+    "searchPlaceholder": "Suche nach Name, E-Mail, Benutzer-ID usw.",
+    "status": "Status",
+    "allUsers": "Alle Benutzer",
+    "active": "Aktiv",
+    "blocked": "Gesperrt",
+    "rating": "Bewertung",
+    "allRatings": "Alle Bewertungen",
+    "id": "ID",
+    "nickname": "Spitzname",
+    "name": "Name",
+    "surname": "Nachname",
+    "email": "E-Mail"
+  },
+  "userDashboard": {
+    "noData": "Keine Benutzerdaten verfügbar",
+    "points": "Punkte",
+    "reviews": "Bewertungen",
+    "roomCreated": "Räume erstellt",
+    "roomAttended": "Räume besucht",
+    "rating": "Bewertung",
+    "nativeLanguages": "Muttersprachen",
+    "learningLanguages": "Lernsprachen",
+    "personalInformation": "Persönliche Informationen",
+    "nickname": "Spitzname",
+    "name": "Name",
+    "surname": "Nachname",
+    "dateOfBirth": "Geburtsdatum",
+    "email": "E-Mail",
+    "status": "Status",
+    "active": "Aktiv",
+    "blocked": "Gesperrt",
+    "languages": "Sprachen",
+    "block": "Sperren",
+    "delete": "Löschen"
   }
 }

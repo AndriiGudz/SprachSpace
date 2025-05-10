@@ -94,7 +94,7 @@ function App() {
                 }
               />
               <Route
-                path="/admin/users/id"
+                path="/admin/users/:userId"
                 element={
                   <AdminRoute>
                     <UserDaschboard />

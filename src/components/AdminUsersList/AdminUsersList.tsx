@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Box,
   Container,
@@ -26,6 +27,7 @@ import { UserSliceState } from '../../store/redux/userSlice/types'
 import Loader from '../Loader/Loader'
 
 function UserList() {
+  const { t } = useTranslation()
   const [users, setUsers] = useState<UserSliceState[]>([])
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -78,7 +80,7 @@ function UserList() {
   }
 
   const handleUserClick = (userId: number) => {
-    navigate(`/user/${userId}`)
+    navigate(`/admin/users/${userId}`)
   }
 
   const displayedUsers = filteredUsers.slice(
@@ -108,7 +110,7 @@ function UserList() {
       <Box sx={{ mb: 4 }}>
         <TextField
           fullWidth
-          placeholder="Search by name, email, user ID, etc."
+          placeholder={t('adminUsersList.searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           InputProps={{
@@ -125,11 +127,11 @@ function UserList() {
         />
         <Box sx={{ display: 'flex', gap: 2, pt: 1 }}>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>{t('adminUsersList.status')}</InputLabel>
             <Select
               variant="outlined"
               value={status}
-              label="Status"
+              label={t('adminUsersList.status')}
               onChange={(e) => setStatus(e.target.value as string)}
               sx={{
                 height: '32px',
@@ -145,17 +147,17 @@ function UserList() {
                 },
               }}
             >
-              <MenuItem value="all">All users</MenuItem>
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="blocked">Blocked</MenuItem>
+              <MenuItem value="all">{t('adminUsersList.allUsers')}</MenuItem>
+              <MenuItem value="active">{t('adminUsersList.active')}</MenuItem>
+              <MenuItem value="blocked">{t('adminUsersList.blocked')}</MenuItem>
             </Select>
           </FormControl>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
-            <InputLabel>Rating</InputLabel>
+            <InputLabel>{t('adminUsersList.rating')}</InputLabel>
             <Select
               variant="outlined"
               value={rating}
-              label="Rating"
+              label={t('adminUsersList.rating')}
               onChange={(e) => setRating(e.target.value as string)}
               sx={{
                 height: '32px',
@@ -171,7 +173,7 @@ function UserList() {
                 },
               }}
             >
-              <MenuItem value="all">All ratings</MenuItem>
+              <MenuItem value="all">{t('adminUsersList.allRatings')}</MenuItem>
               <MenuItem value="4.5">4.5</MenuItem>
               <MenuItem value="4.0">4.0</MenuItem>
               <MenuItem value="3.5">3.5</MenuItem>
@@ -188,13 +190,17 @@ function UserList() {
         <Table>
           <TableHead sx={{ backgroundColor: '#EEE' }}>
             <TableRow>
-              <TableCell>ID</TableCell>
-              {!isMobile && <TableCell>Nickname</TableCell>}
-              {!isMobile && <TableCell>Name</TableCell>}
-              {!isMobile && <TableCell>Surname</TableCell>}
-              <TableCell>Email</TableCell>
-              {!isMobile && <TableCell>Rating</TableCell>}
-              <TableCell>Status</TableCell>
+              <TableCell>{t('adminUsersList.id')}</TableCell>
+              {!isMobile && (
+                <TableCell>{t('adminUsersList.nickname')}</TableCell>
+              )}
+              {!isMobile && <TableCell>{t('adminUsersList.name')}</TableCell>}
+              {!isMobile && (
+                <TableCell>{t('adminUsersList.surname')}</TableCell>
+              )}
+              <TableCell>{t('adminUsersList.email')}</TableCell>
+              {!isMobile && <TableCell>{t('adminUsersList.rating')}</TableCell>}
+              <TableCell>{t('adminUsersList.status')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -243,7 +249,9 @@ function UserList() {
                       color: user.status ? 'success.main' : 'error.main',
                     }}
                   >
-                    {user.status ? 'active' : 'blocked'}
+                    {user.status
+                      ? t('adminUsersList.active')
+                      : t('adminUsersList.blocked')}
                   </Box>
                 </TableCell>
               </TableRow>

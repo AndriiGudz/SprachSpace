@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Avatar,
   Box,
@@ -8,66 +10,71 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import {
-  UserSliceState,
-  LanguageData,
-} from '../../store/redux/userSlice/types'
+import { UserSliceState, LanguageData } from '../../store/redux/userSlice/types'
+import Loader from '../Loader/Loader'
 
-// Демо‑пользователь
-const demoUser: UserSliceState = {
-  id: 123,
-  nickname: 'CoolUser',
-  name: 'John',
-  surname: 'Doe',
-  email: 'john.doe@example.com',
-  birthdayDate: '1990-01-01',
-  foto: 'https://example.com/avatar.png',
-  nativeLanguages: [
-    { id: 1, skillLevel: 'Native', language: { id: 1, name: 'English' } },
-    { id: 4, skillLevel: 'Native', language: { id: 4, name: 'Ukrainish' } },
-  ],
-  learningLanguages: [
-    { id: 2, skillLevel: 'Beginner', language: { id: 2, name: 'German' } },
-    { id: 3, skillLevel: 'Intermediate', language: { id: 3, name: 'Russian' } },
-  ],
-  roles: [
-    {
-      id: 1,
-      title: 'ROLE_USER',
-      authority: '',
-    },
-  ],
-  rating: 4.8,
-  internalCurrency: 150,
-  status: true,
-  createdRooms: [],
-  accessToken: 'ACCESS_TOKEN_EXAMPLE',
-  refreshToken: 'REFRESH_TOKEN_EXAMPLE',
-  isAuthenticated: true,
-  message: null,
+interface UserDashboardProps {
+  userId: string | undefined
 }
 
-function UserDashboard() {
+function UserDashboard({ userId }: UserDashboardProps) {
+  const { t } = useTranslation()
+  const [user, setUser] = useState<UserSliceState | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!userId) {
+      setError('User ID is required')
+      setLoading(false)
+      return
+    }
+
+    fetch(`http://localhost:8080/api/users/${userId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('User not found')
+        }
+        return response.json()
+      })
+      .then((data) => {
+        setUser(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error(err)
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [userId])
+
+  if (loading) return <Loader />
+  if (error) return <Typography color="error">{error}</Typography>
+  if (!user) return <Typography>{t('userDashboard.noData')}</Typography>
+
   // Статистика пользователя
   const userStats = [
-    { label: 'Points', value: demoUser.internalCurrency },
-    { label: 'Reviews', value: '10' },
-    { label: 'Room Created', value: demoUser.createdRooms.length.toString() },
-    { label: 'Room Attended', value: '5' },
-    { label: 'Rating', value: demoUser.rating },
+    { label: t('userDashboard.points'), value: user.internalCurrency || 0 },
+    { label: t('userDashboard.reviews'), value: '10' },
+    {
+      label: t('userDashboard.roomCreated'),
+      value: user.createdRooms.length.toString(),
+    },
+    { label: t('userDashboard.roomAttended'), value: '5' },
+    { label: t('userDashboard.rating'), value: user.rating },
   ]
 
   // Информация о языках
   const languageInfo = [
     {
-      label: 'Native Languages',
-      value: demoUser.nativeLanguages
+      label: t('userDashboard.nativeLanguages'),
+      value: user.nativeLanguages
         .map((l: LanguageData) => l.language.name)
         .join(', '),
     },
     {
-      label: 'Learning Languages',
-      value: demoUser.learningLanguages
+      label: t('userDashboard.learningLanguages'),
+      value: user.learningLanguages
         .map((l: LanguageData) => l.language.name)
         .join(', '),
     },
@@ -93,8 +100,8 @@ function UserDashboard() {
             {/* Avatar Section */}
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
               <Avatar
-                src={demoUser.foto || ''}
-                alt={`${demoUser.nickname} avatar`}
+                src={user.foto || ''}
+                alt={`${user.nickname} avatar`}
                 sx={{ width: 100, height: 100, p: 2 }}
               />
             </Box>
@@ -139,7 +146,7 @@ function UserDashboard() {
             {/* Personal Information Section */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               <Typography variant="h3" sx={{ padding: '8px 0px' }}>
-                Personal Information
+                {t('userDashboard.personalInformation')}
               </Typography>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -159,10 +166,10 @@ function UserDashboard() {
                       variant="body1"
                       sx={{ textDecoration: 'underline' }}
                     >
-                      Nickname:
+                      {t('userDashboard.nickname')}:
                     </Typography>
                     <Typography variant="body1" color="#757575">
-                      {demoUser.nickname}
+                      {user.nickname}
                     </Typography>
                   </Box>
                   <Box
@@ -172,10 +179,10 @@ function UserDashboard() {
                       variant="body1"
                       sx={{ textDecoration: 'underline' }}
                     >
-                      Name:
+                      {t('userDashboard.name')}:
                     </Typography>
                     <Typography variant="body1" color="#757575">
-                      {demoUser.name}
+                      {user.name}
                     </Typography>
                   </Box>
                   <Box
@@ -185,10 +192,10 @@ function UserDashboard() {
                       variant="body1"
                       sx={{ textDecoration: 'underline' }}
                     >
-                      Surname:
+                      {t('userDashboard.surname')}:
                     </Typography>
                     <Typography variant="body1" color="#757575">
-                      {demoUser.surname}
+                      {user.surname}
                     </Typography>
                   </Box>
                 </Box>
@@ -197,10 +204,10 @@ function UserDashboard() {
                     variant="body1"
                     sx={{ textDecoration: 'underline' }}
                   >
-                    Date of birth:
+                    {t('userDashboard.dateOfBirth')}:
                   </Typography>
                   <Typography variant="body1" color="#757575">
-                    {demoUser.birthdayDate}
+                    {user.birthdayDate}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
@@ -208,10 +215,10 @@ function UserDashboard() {
                     variant="body1"
                     sx={{ textDecoration: 'underline' }}
                   >
-                    Email:
+                    {t('userDashboard.email')}:
                   </Typography>
                   <Typography variant="body1" color="#757575">
-                    {demoUser.email}
+                    {user.email}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, padding: '8px 0px' }}>
@@ -219,13 +226,15 @@ function UserDashboard() {
                     variant="body1"
                     sx={{ textDecoration: 'underline' }}
                   >
-                    Status:
+                    {t('userDashboard.status')}:
                   </Typography>
                   <Typography
                     variant="body1"
-                    sx={{ color: demoUser.status ? '#1A8E0B' : '#B80C0C' }}
+                    sx={{ color: user.status ? '#1A8E0B' : '#B80C0C' }}
                   >
-                    {demoUser.status ? 'Active' : 'Blocked'}
+                    {user.status
+                      ? t('userDashboard.active')
+                      : t('userDashboard.blocked')}
                   </Typography>
                 </Box>
               </Box>
@@ -234,7 +243,7 @@ function UserDashboard() {
             {/* Languages Section */}
             <Box>
               <Typography variant="h3" sx={{ padding: '8px 0px' }}>
-                Languages
+                {t('userDashboard.languages')}
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                 {languageInfo.map((info, index) => (
@@ -274,7 +283,7 @@ function UserDashboard() {
                   '&:hover': { bgcolor: '#014374' },
                 }}
               >
-                Block
+                {t('userDashboard.block')}
               </Button>
               <Button
                 variant="contained"
@@ -288,7 +297,7 @@ function UserDashboard() {
                   '&:hover': { bgcolor: '#8f0909' },
                 }}
               >
-                Delete
+                {t('userDashboard.delete')}
               </Button>
             </Box>
           </CardContent>
