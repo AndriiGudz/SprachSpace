@@ -63,12 +63,19 @@ function SignInUp() {
       setSignUpValidationSchema(SignUpSchema)
     } else {
       // Иначе слушаем событие инициализации переводов
-      i18n.on('initialized', () => {
+      const handleInit = () => {
         setSignInValidationSchema(SignInSchema)
         setSignUpValidationSchema(SignUpSchema)
-      })
+      }
+
+      i18n.on('initialized', handleInit)
+
+      // Очистка слушателя при размонтировании
+      return () => {
+        i18n.off('initialized', handleInit)
+      }
     }
-  }, [i18n.isInitialized])
+  }, [i18n])
 
   const handleSignInClick = () => {
     setIsRightPanelActive(false)
@@ -114,14 +121,15 @@ function SignInUp() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            nativeLanguages: data.nativeLanguages,
-            learningLanguages: data.learningLanguages,
-            roles: data.roles,
+            foto: data.foto,
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
-            avatar: data.avatar,
-            backupEmail: data.backupEmail || null,
+            nativeLanguages: data.nativeLanguages || [],
+            learningLanguages: data.learningLanguages || [],
+            roles: data.roles || [],
+            createdRooms: data.createdRooms || [],
+            message: data.message,
           })
         )
 

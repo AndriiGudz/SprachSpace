@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { UserSlaceState } from './types'
+import type { UserSliceState } from './types'
 
-const storedUser = localStorage.getItem('user');
-export const initialState: UserSlaceState = storedUser
+const storedUser = localStorage.getItem('user')
+export const initialState: UserSliceState = storedUser
   ? JSON.parse(storedUser)
   : {
       id: null,
@@ -10,20 +10,20 @@ export const initialState: UserSlaceState = storedUser
       name: null,
       surname: null,
       email: null,
-      backupEmail: null,
       birthdayDate: null,
-      nativeLanguages: [],
-      learningLanguages: [],
-      roles: null,
+      foto: null,
       rating: null,
       internalCurrency: null,
       status: false,
+      nativeLanguages: [],
+      learningLanguages: [],
+      roles: [],
+      createdRooms: [],
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-      avatar: null,
-    };
-
+      message: null,
+    }
 
 export const userSlice = createSlice({
   name: 'user',
@@ -32,25 +32,47 @@ export const userSlice = createSlice({
     setUser: (
       state,
       action: PayloadAction<
-        Omit<UserSlaceState, 'accessToken' | 'refreshToken' | 'isAuthenticated'>
+        Omit<UserSliceState, 'accessToken' | 'refreshToken' | 'isAuthenticated'>
       >
     ) => {
+      const {
+        id,
+        nickname,
+        name,
+        surname,
+        email,
+        birthdayDate,
+        foto,
+        rating,
+        internalCurrency,
+        status,
+        nativeLanguages,
+        learningLanguages,
+        roles,
+        createdRooms,
+        message,
+      } = action.payload
 
-      // Присваиваем поля
-      state.id = action.payload.id
-      state.nickname = action.payload.nickname
-      state.name = action.payload.name
-      state.surname = action.payload.surname
-      state.email = action.payload.email
-      state.birthdayDate = action.payload.birthdayDate
-      state.nativeLanguages = action.payload.nativeLanguages
-      state.learningLanguages = action.payload.learningLanguages
-      state.roles = action.payload.roles
-      state.rating = action.payload.rating
-      state.internalCurrency = action.payload.internalCurrency
-      state.status = action.payload.status
-      state.isAuthenticated = true
+      Object.assign(state, {
+        id,
+        nickname,
+        name,
+        surname,
+        email,
+        birthdayDate,
+        foto,
+        rating,
+        internalCurrency,
+        status,
+        nativeLanguages,
+        learningLanguages,
+        roles,
+        createdRooms,
+        message,
+        isAuthenticated: true,
+      })
 
+      localStorage.setItem('user', JSON.stringify(state))
     },
     setTokens: (
       state,
@@ -58,37 +80,14 @@ export const userSlice = createSlice({
     ) => {
       state.accessToken = action.payload.accessToken
       state.refreshToken = action.payload.refreshToken
+      localStorage.setItem('user', JSON.stringify(state))
     },
     clearUser: (state) => {
-    
-      Object.assign(state, {
-        id: null,
-        nickname: null,
-        name: null,
-        surname: null,
-        email: null,
-        backupEmail: null,
-        birthdayDate: null,
-        nativeLanguages: [],
-        learningLanguages: [],
-        rating: null,
-        internalCurrency: null,
-        status: false,
-        accessToken: null,
-        refreshToken: null,
-        isAuthenticated: false,
-        avatar: null,
-      });
-    
+      Object.assign(state, initialState)
+      localStorage.removeItem('user')
     },
-    updateUser: (
-      state,
-      action: PayloadAction<Partial<UserSlaceState>>
-    ) => {
-
+    updateUser: (state, action: PayloadAction<Partial<UserSliceState>>) => {
       Object.assign(state, action.payload)
-
-      // Сохраняем обновлённое состояние в localStorage
       localStorage.setItem('user', JSON.stringify(state))
     },
   },
