@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   Avatar,
   Box,
@@ -12,6 +14,7 @@ import {
 } from '@mui/material'
 import { UserSliceState, LanguageData } from '../../store/redux/userSlice/types'
 import Loader from '../Loader/Loader'
+import { RootState } from '../../store/store'
 
 interface UserDashboardProps {
   userId: string | undefined
@@ -19,9 +22,12 @@ interface UserDashboardProps {
 
 function UserDashboard({ userId }: UserDashboardProps) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const adminId = useSelector((state: RootState) => state.user.id)
   const [user, setUser] = useState<UserSliceState | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     if (!userId) {
@@ -47,6 +53,96 @@ function UserDashboard({ userId }: UserDashboardProps) {
         setLoading(false)
       })
   }, [userId])
+
+  const handleBlock = async () => {
+    if (!user || isProcessing || !userId || !adminId) return
+    setIsProcessing(true)
+
+    try {
+      const endpoint = user.status
+        ? `http://localhost:8080/api/users/block?admin=${adminId}&user=${userId}`
+        : `http://localhost:8080/api/users/unlock?admin=${adminId}&user=${userId}`
+
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          user.status ? 'Failed to block user' : 'Failed to unblock user'
+        )
+      }
+
+      setUser((prev) => (prev ? { ...prev, status: !prev.status } : null))
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!user || isProcessing || !userId) return
+    setIsProcessing(true)
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/users/delete?id=${userId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to delete user')
+      }
+
+      // После успешного удаления перенаправляем на список пользователей используя React Router
+      navigate('/admin/users')
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleSetAdmin = async () => {
+    if (!user || isProcessing || !userId || !adminId) return
+    setIsProcessing(true)
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/users/setAdmin?admin=${adminId}&user=${userId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to set user as admin')
+      }
+
+      // Получаем обновленные данные пользователя
+      const updatedUser = await response.json()
+      setUser(updatedUser)
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   if (loading) return <Loader />
   if (error) return <Typography color="error">{error}</Typography>
@@ -274,30 +370,65 @@ function UserDashboard({ userId }: UserDashboardProps) {
             >
               <Button
                 variant="contained"
+                onClick={handleSetAdmin}
+                disabled={
+                  isProcessing ||
+                  user?.roles.some(
+                    (role) =>
+                      typeof role === 'object' && role.title === 'ROLE_ADMIN'
+                  )
+                }
                 sx={{
-                  bgcolor: '#01579b',
+                  bgcolor: '#0288d1',
                   padding: '10px 24px',
                   borderRadius: '10px',
                   fontSize: '16px',
                   textTransform: 'none',
-                  '&:hover': { bgcolor: '#014374' },
+                  '&:hover': { bgcolor: '#01579b' },
+                  '&:disabled': { bgcolor: '#757575' },
                 }}
               >
-                {t('userDashboard.block')}
+                {isProcessing
+                  ? t('userDashboard.processing')
+                  : t('userDashboard.setAdmin')}
               </Button>
               <Button
                 variant="contained"
-                color="error"
+                onClick={handleBlock}
+                disabled={isProcessing}
                 sx={{
-                  bgcolor: '#b70b0b',
+                  bgcolor: !user?.status ? '#2e7d32' : '#ed6c02',
                   padding: '10px 24px',
                   borderRadius: '10px',
                   fontSize: '16px',
                   textTransform: 'none',
-                  '&:hover': { bgcolor: '#8f0909' },
+                  '&:hover': { bgcolor: !user?.status ? '#1b5e20' : '#c65102' },
+                  '&:disabled': { bgcolor: '#757575' },
                 }}
               >
-                {t('userDashboard.delete')}
+                {isProcessing
+                  ? t('userDashboard.processing')
+                  : !user?.status
+                  ? t('userDashboard.unblock')
+                  : t('userDashboard.block')}
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleDelete}
+                disabled={isProcessing}
+                sx={{
+                  bgcolor: '#d32f2f',
+                  padding: '10px 24px',
+                  borderRadius: '10px',
+                  fontSize: '16px',
+                  textTransform: 'none',
+                  '&:hover': { bgcolor: '#9a0007' },
+                  '&:disabled': { bgcolor: '#757575' },
+                }}
+              >
+                {isProcessing
+                  ? t('userDashboard.processing')
+                  : t('userDashboard.delete')}
               </Button>
             </Box>
           </CardContent>

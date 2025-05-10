@@ -19,16 +19,16 @@
     "email": "E-Mail"
   },
   "userDashboard": {
-    "noData": "Keine Benutzerdaten verfügbar",
+    "noData": "Benutzerdaten nicht verfügbar",
     "points": "Punkte",
     "reviews": "Bewertungen",
-    "roomCreated": "Räume erstellt",
-    "roomAttended": "Räume besucht",
+    "roomCreated": "Erstellte Räume",
+    "roomAttended": "Besuchte Räume",
     "rating": "Bewertung",
     "nativeLanguages": "Muttersprachen",
     "learningLanguages": "Lernsprachen",
     "personalInformation": "Persönliche Informationen",
-    "nickname": "Spitzname",
+    "nickname": "Nickname",
     "name": "Name",
     "surname": "Nachname",
     "dateOfBirth": "Geburtsdatum",
@@ -38,6 +38,9 @@
     "blocked": "Gesperrt",
     "languages": "Sprachen",
     "block": "Sperren",
-    "delete": "Löschen"
+    "unblock": "Entsperren",
+    "delete": "Löschen",
+    "setAdmin": "Als Admin festlegen",
+    "processing": "Verarbeitung..."
   }
 }

@@ -213,11 +213,11 @@
     "email": "Email"
   },
   "userDashboard": {
-    "noData": "No user data available",
+    "noData": "User data is not available",
     "points": "Points",
     "reviews": "Reviews",
-    "roomCreated": "Room Created",
-    "roomAttended": "Room Attended",
+    "roomCreated": "Rooms Created",
+    "roomAttended": "Rooms Attended",
     "rating": "Rating",
     "nativeLanguages": "Native Languages",
     "learningLanguages": "Learning Languages",
@@ -225,13 +225,16 @@
     "nickname": "Nickname",
     "name": "Name",
     "surname": "Surname",
-    "dateOfBirth": "Date of birth",
+    "dateOfBirth": "Date of Birth",
     "email": "Email",
     "status": "Status",
     "active": "Active",
     "blocked": "Blocked",
     "languages": "Languages",
     "block": "Block",
-    "delete": "Delete"
+    "unblock": "Unblock",
+    "delete": "Delete",
+    "setAdmin": "Set as Admin",
+    "processing": "Processing..."
   }
 }
