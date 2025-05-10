@@ -42,5 +42,38 @@
     "delete": "Löschen",
     "setAdmin": "Als Admin festlegen",
     "processing": "Verarbeitung..."
+  },
+  "createRoomForm": {
+    "createRoom": "Raum erstellen",
+    "roomName": "Raumname",
+    "category": "Kategorie",
+    "roomLanguage": "Raumsprache",
+    "proficiency": "Sprachniveau",
+    "openTime": "Startzeit",
+    "closeTime": "Endzeit",
+    "minParticipants": "Mindestanzahl Teilnehmer",
+    "maxParticipants": "Maximale Teilnehmer",
+    "ageLimit": "Altersbegrenzung",
+    "createRoomButton": "Raum erstellen"
+  },
+  "validation": {
+    "createRoom": {
+      "required": "Dieses Feld ist erforderlich",
+      "nameRequired": "Raumname ist erforderlich",
+      "nameMin": "Raumname muss mindestens 3 Zeichen lang sein",
+      "nameMax": "Raumname darf nicht länger als 50 Zeichen sein",
+      "nameFormat": "Name darf nur Buchstaben, Zahlen, Leerzeichen und Bindestriche enthalten",
+      "categoryRequired": "Bitte wählen Sie eine Kategorie",
+      "languageRequired": "Bitte wählen Sie eine Sprache",
+      "proficiencyRequired": "Bitte wählen Sie ein Sprachniveau",
+      "openTimeRequired": "Startzeit ist erforderlich",
+      "openTimeMin": "Startzeit muss mindestens 5 Minuten in der Zukunft liegen",
+      "closeTimeRequired": "Endzeit ist erforderlich",
+      "closeTimeMin": "Endzeit muss mindestens 15 Minuten nach Startzeit liegen",
+      "minParticipantsRequired": "Mindestanzahl der Teilnehmer ist erforderlich",
+      "minParticipantsMin": "Mindestens 4 Teilnehmer erforderlich",
+      "integer": "Muss eine ganze Zahl sein",
+      "minAge": "Mindestalter ist 1 Jahr"
+    }
   }
 }

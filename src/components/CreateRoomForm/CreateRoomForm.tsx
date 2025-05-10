@@ -8,7 +8,13 @@ import {
   Typography,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { containerStyle, createButtonStyle, filterItemStyle } from './styles'
+import {
+  createRoomSchema,
+  CreateRoomFormData,
+} from '../../validationSchemas/CreateRoomSchema'
 
 const categories = [
   'Разговорный английский',
@@ -39,72 +45,63 @@ type Props = {
 
 const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   const { t } = useTranslation()
-
   const [languages, setLanguages] = useState<{ id: number; name: string }[]>([])
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<CreateRoomFormData>({
+    resolver: yupResolver(createRoomSchema(t)) as any,
+    mode: 'onChange',
+    defaultValues: {
+      category: categories[0],
+      minParticipants: 4,
+      maxParticipants: null,
+      ageLimit: null,
+    },
+  })
 
   // Загружаем список языков с сервера при монтировании компонента
   useEffect(() => {
     fetch('http://localhost:8080/api/language')
-      .then(response => response.json())
-      .then(data => setLanguages(data))
-      .catch(error => console.error("Error fetching languages:", error))
+      .then((response) => response.json())
+      .then((data) => setLanguages(data))
+      .catch((error) => console.error('Error fetching languages:', error))
   }, [])
 
-  const [form, setForm] = useState({
-    name: '',
-    category: categories[0],
-    openAt: '',
-    closeAt: '',
-    minParticipants: 4,
-    maxParticipants: '',
-    ageLimit: '',
-    language: '',
-    proficiency: '',
-  })
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const onSubmit: SubmitHandler<CreateRoomFormData> = (data) => {
     const newRoom: Room = {
       id: `room-${Date.now()}`,
-      name: form.name,
-      category: form.category,
-      openAt: new Date(form.openAt),
-      closeAt: new Date(form.closeAt),
-      minParticipants: Number(form.minParticipants) || 4,
-      maxParticipants: form.maxParticipants
-        ? Number(form.maxParticipants)
-        : undefined,
-      ageLimit: form.ageLimit ? Number(form.ageLimit) : undefined,
+      name: data.name,
+      category: data.category,
+      openAt: new Date(data.openAt),
+      closeAt: new Date(data.closeAt),
+      minParticipants: data.minParticipants,
+      maxParticipants: data.maxParticipants || undefined,
+      ageLimit: data.ageLimit || undefined,
       roomUrl: `https://daily.fake/room-${Date.now()}`,
-      language: form.language,
-      proficiency: form.proficiency,
+      language: data.language,
+      proficiency: data.proficiency,
     }
 
     onRoomCreated(newRoom)
 
-    setForm({
-      name: '',
-      category: categories[0],
-      openAt: '',
-      closeAt: '',
-      minParticipants: 4,
-      maxParticipants: '',
-      ageLimit: '',
-      language: '',
-      proficiency: '',
-    })
+    // Сброс формы
+    setValue('name', '')
+    setValue('category', categories[0])
+    setValue('openAt', '')
+    setValue('closeAt', '')
+    setValue('minParticipants', 4)
+    setValue('maxParticipants', null)
+    setValue('ageLimit', null)
+    setValue('language', '')
+    setValue('proficiency', '')
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={containerStyle}>
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={containerStyle}>
       <Typography variant="h3" gutterBottom>
         {t('createRoomForm.createRoom')}
       </Typography>
@@ -113,21 +110,20 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
         <TextField
           variant="outlined"
           label={t('createRoomForm.roomName')}
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
+          {...register('name')}
+          error={!!errors.name}
+          helperText={errors.name?.message}
           sx={filterItemStyle}
         />
 
         <TextField
           variant="outlined"
           label={t('createRoomForm.category')}
-          name="category"
           select
-          value={form.category}
-          onChange={handleChange}
-          required
+          {...register('category')}
+          error={!!errors.category}
+          helperText={errors.category?.message}
+          defaultValue={categories[0]}
           sx={filterItemStyle}
         >
           {categories.map((cat) => (
@@ -137,7 +133,6 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           ))}
         </TextField>
 
-        {/* Языки */}
         <Box
           sx={{
             width: '100%',
@@ -149,11 +144,10 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           <TextField
             variant="outlined"
             label={t('createRoomForm.roomLanguage')}
-            name="language"
             select
-            value={form.language}
-            onChange={handleChange}
-            required
+            {...register('language')}
+            error={!!errors.language}
+            helperText={errors.language?.message}
             sx={filterItemStyle}
           >
             {languages.map((lang) => (
@@ -166,11 +160,10 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           <TextField
             variant="outlined"
             label={t('createRoomForm.proficiency')}
-            name="proficiency"
             select
-            value={form.proficiency}
-            onChange={handleChange}
-            required
+            {...register('proficiency')}
+            error={!!errors.proficiency}
+            helperText={errors.proficiency?.message}
             sx={filterItemStyle}
           >
             {LEVEL_OPTIONS.map((level) => (
@@ -192,23 +185,22 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           <TextField
             variant="outlined"
             label={t('createRoomForm.openTime')}
-            name="openAt"
             type="datetime-local"
-            value={form.openAt}
-            onChange={handleChange}
+            {...register('openAt')}
+            error={!!errors.openAt}
+            helperText={errors.openAt?.message}
             InputLabelProps={{ shrink: true }}
-            required
             sx={filterItemStyle}
           />
+
           <TextField
             variant="outlined"
             label={t('createRoomForm.closeTime')}
-            name="closeAt"
             type="datetime-local"
-            value={form.closeAt}
-            onChange={handleChange}
+            {...register('closeAt')}
+            error={!!errors.closeAt}
+            helperText={errors.closeAt?.message}
             InputLabelProps={{ shrink: true }}
-            required
             sx={filterItemStyle}
           />
         </Box>
@@ -219,29 +211,25 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             gap: 2,
-            mb: 0,
           }}
         >
           <TextField
             variant="outlined"
             label={t('createRoomForm.minParticipants')}
-            name="minParticipants"
             type="number"
-            inputProps={{ min: 4 }}
-            value={form.minParticipants}
-            onChange={handleChange}
-            required
+            {...register('minParticipants')}
+            error={!!errors.minParticipants}
+            helperText={errors.minParticipants?.message}
             sx={filterItemStyle}
           />
 
           <TextField
             variant="outlined"
             label={t('createRoomForm.maxParticipants')}
-            name="maxParticipants"
             type="number"
-            inputProps={{ min: 1 }}
-            value={form.maxParticipants}
-            onChange={handleChange}
+            {...register('maxParticipants')}
+            error={!!errors.maxParticipants}
+            helperText={errors.maxParticipants?.message}
             sx={filterItemStyle}
           />
         </Box>
@@ -249,11 +237,10 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
         <TextField
           variant="outlined"
           label={t('createRoomForm.ageLimit')}
-          name="ageLimit"
           type="number"
-          inputProps={{ min: 1 }}
-          value={form.ageLimit}
-          onChange={handleChange}
+          {...register('ageLimit')}
+          error={!!errors.ageLimit}
+          helperText={errors.ageLimit?.message}
           sx={filterItemStyle}
         />
 
@@ -266,4 +253,3 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
 }
 
 export default CreateRoomForm
-// Добавить обработку ошибок и валидацию формы

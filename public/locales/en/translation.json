@@ -178,11 +178,11 @@
     "roomName": "Room Name",
     "category": "Category",
     "roomLanguage": "Room Language",
-    "proficiency": "Proficiency",
-    "openTime": "Open Time",
-    "closeTime": "Close Time",
-    "minParticipants": "Min. Participants",
-    "maxParticipants": "Max. Participants",
+    "proficiency": "Proficiency Level",
+    "openTime": "Start Time",
+    "closeTime": "End Time",
+    "minParticipants": "Minimum Participants",
+    "maxParticipants": "Maximum Participants",
     "ageLimit": "Age Limit",
     "createRoomButton": "Create Room"
   },
@@ -236,5 +236,25 @@
     "delete": "Delete",
     "setAdmin": "Set as Admin",
     "processing": "Processing..."
+  },
+  "validation": {
+    "createRoom": {
+      "required": "This field is required",
+      "nameRequired": "Room name is required",
+      "nameMin": "Room name must be at least 3 characters",
+      "nameMax": "Room name must not exceed 50 characters",
+      "nameFormat": "Name can only contain letters, numbers, spaces and hyphens",
+      "categoryRequired": "Please select a category",
+      "languageRequired": "Please select a language",
+      "proficiencyRequired": "Please select proficiency level",
+      "openTimeRequired": "Start time is required",
+      "openTimeMin": "Start time must be at least 5 minutes from now",
+      "closeTimeRequired": "End time is required",
+      "closeTimeMin": "End time must be at least 15 minutes after start time",
+      "minParticipantsRequired": "Minimum participants is required",
+      "minParticipantsMin": "Minimum 4 participants required",
+      "integer": "Must be a whole number",
+      "minAge": "Minimum age is 1 year"
+    }
   }
 }
