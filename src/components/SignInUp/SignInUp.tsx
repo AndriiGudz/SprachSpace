@@ -63,12 +63,19 @@ function SignInUp() {
       setSignUpValidationSchema(SignUpSchema)
     } else {
       // Иначе слушаем событие инициализации переводов
-      i18n.on('initialized', () => {
+      const handleInit = () => {
         setSignInValidationSchema(SignInSchema)
         setSignUpValidationSchema(SignUpSchema)
-      })
+      }
+
+      i18n.on('initialized', handleInit)
+
+      // Очистка слушателя при размонтировании
+      return () => {
+        i18n.off('initialized', handleInit)
+      }
     }
-  }, [i18n.isInitialized])
+  }, [i18n])
 
   const handleSignInClick = () => {
     setIsRightPanelActive(false)
