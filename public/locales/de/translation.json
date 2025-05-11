@@ -54,14 +54,16 @@
     "minParticipants": "Mindestanzahl Teilnehmer",
     "maxParticipants": "Maximale Teilnehmer",
     "ageLimit": "Altersbegrenzung",
-    "createRoomButton": "Raum erstellen"
+    "createRoomButton": "Raum erstellen",
+    "roomCreatedSuccess": "Raum erfolgreich erstellt!",
+    "roomCreationError": "Fehler beim Erstellen des Raums. Bitte versuchen Sie es erneut."
   },
   "validation": {
     "createRoom": {
       "required": "Dieses Feld ist erforderlich",
       "nameRequired": "Raumname ist erforderlich",
       "nameMin": "Raumname muss mindestens 3 Zeichen lang sein",
-      "nameMax": "Raumname darf nicht länger als 50 Zeichen sein",
+      "nameMax": "Raumname darf 50 Zeichen nicht überschreiten",
       "nameFormat": "Name darf nur Buchstaben, Zahlen, Leerzeichen und Bindestriche enthalten",
       "categoryRequired": "Bitte wählen Sie eine Kategorie",
       "languageRequired": "Bitte wählen Sie eine Sprache",
@@ -69,11 +71,16 @@
       "openTimeRequired": "Startzeit ist erforderlich",
       "openTimeMin": "Startzeit muss mindestens 5 Minuten in der Zukunft liegen",
       "closeTimeRequired": "Endzeit ist erforderlich",
-      "closeTimeMin": "Endzeit muss mindestens 15 Minuten nach Startzeit liegen",
+      "closeTimeMin": "Endzeit muss mindestens 15 Minuten nach Startzeit sein",
       "minParticipantsRequired": "Mindestanzahl der Teilnehmer ist erforderlich",
       "minParticipantsMin": "Mindestens 4 Teilnehmer erforderlich",
       "integer": "Muss eine ganze Zahl sein",
       "minAge": "Mindestalter ist 1 Jahr"
     }
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "unauthorized": "Autorisierung erforderlich",
+    "pleaseLogin": "Bitte melden Sie sich an, um einen Raum zu erstellen"
   }
 }

@@ -184,7 +184,9 @@
     "minParticipants": "Minimum Participants",
     "maxParticipants": "Maximum Participants",
     "ageLimit": "Age Limit",
-    "createRoomButton": "Create Room"
+    "createRoomButton": "Create Room",
+    "roomCreatedSuccess": "Room created successfully!",
+    "roomCreationError": "Failed to create room. Please try again."
   },
   "roomFilter": {
     "category": "Category",
@@ -256,5 +258,10 @@
       "integer": "Must be a whole number",
       "minAge": "Minimum age is 1 year"
     }
+  },
+  "common": {
+    "loading": "Loading...",
+    "unauthorized": "Authorization required",
+    "pleaseLogin": "Please log in to create a room"
   }
 }

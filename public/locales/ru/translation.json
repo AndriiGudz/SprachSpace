@@ -54,7 +54,9 @@
     "minParticipants": "Минимум участников",
     "maxParticipants": "Максимум участников",
     "ageLimit": "Возрастное ограничение",
-    "createRoomButton": "Создать комнату"
+    "createRoomButton": "Создать комнату",
+    "roomCreatedSuccess": "Комната успешно создана!",
+    "roomCreationError": "Ошибка при создании комнаты. Попробуйте еще раз."
   },
   "validation": {
     "createRoom": {
@@ -75,5 +77,10 @@
       "integer": "Должно быть целым числом",
       "minAge": "Минимальный возраст - 1 год"
     }
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "unauthorized": "Необходима авторизация",
+    "pleaseLogin": "Пожалуйста, войдите в систему для создания комнаты"
   }
 }
