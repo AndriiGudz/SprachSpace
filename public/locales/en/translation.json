@@ -263,5 +263,10 @@
     "loading": "Loading...",
     "unauthorized": "Authorization required",
     "pleaseLogin": "Please log in to create a room"
+  },
+  "createRoomButton": {
+    "createRoom": "Create room",
+    "qualificationMessage": "Only an authorized user with a rating of 4 or higher can create a new room",
+    "close": "Close"
   }
 }

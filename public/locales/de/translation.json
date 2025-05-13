@@ -82,5 +82,10 @@
     "loading": "Wird geladen...",
     "unauthorized": "Autorisierung erforderlich",
     "pleaseLogin": "Bitte melden Sie sich an, um einen Raum zu erstellen"
+  },
+  "createRoomButton": {
+    "createRoom": "Raum erstellen",
+    "qualificationMessage": "Nur autorisierte Benutzer mit einer Bewertung von 4 oder höher können einen neuen Raum erstellen",
+    "close": "Schließen"
   }
 }
