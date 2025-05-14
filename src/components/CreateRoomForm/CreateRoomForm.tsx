@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   containerStyle,
   createButtonStyle,
@@ -22,9 +22,13 @@ import {
   createRoomSchema,
   CreateRoomFormData,
 } from '../../validationSchemas/CreateRoomSchema'
-import { CreateRoomRequest, RoomResponse } from './room'
-import type { RootState } from '../../store/store'
+import type { RootState, AppDispatch } from '../../store/store'
 import Loader from '../Loader/Loader'
+import {
+  createRoom,
+  clearRoomError,
+} from '../../store/redux/roomSlice/roomSlice'
+import { CreateRoomApiRequest } from '../../store/redux/roomSlice/roomTypes'
 
 const categories = [
   'Разговорный английский',
@@ -55,17 +59,21 @@ type Props = {
 
 const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   const { t } = useTranslation()
-  const { isAuthenticated, id: userId } = useSelector(
+  const dispatch = useDispatch<AppDispatch>()
+  const { isAuthenticated, id: userIdFromAuth } = useSelector(
     (state: RootState) => state.user
   )
+  const { isLoading: isRoomCreating, error: roomCreationError } = useSelector(
+    (state: RootState) => state.rooms
+  )
+
   const [languages, setLanguages] = useState<{ id: number; name: string }[]>([])
-  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
+    reset,
   } = useForm<CreateRoomFormData>({
     resolver: yupResolver(createRoomSchema(t)) as any,
     mode: 'onChange',
@@ -78,8 +86,14 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   })
 
   useEffect(() => {
+    if (roomCreationError) {
+      toast.error(roomCreationError)
+      dispatch(clearRoomError())
+    }
+  }, [roomCreationError, dispatch])
+
+  useEffect(() => {
     if (!isAuthenticated) {
-      toast.error(t('common.unauthorized'))
       return
     }
 
@@ -92,83 +106,57 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
       })
   }, [isAuthenticated, t])
 
-  const createRoom = async (
-    roomData: CreateRoomRequest
-  ): Promise<RoomResponse> => {
-    if (!userId) {
-      throw new Error('User not authenticated')
-    }
-
-    const response = await fetch(
-      `http://localhost:8080/api/room?userId=${userId}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(roomData),
-      }
-    )
-
-    if (!response.ok) {
-      throw new Error('Failed to create room')
-    }
-
-    return response.json()
-  }
-
   const onSubmit: SubmitHandler<CreateRoomFormData> = async (data) => {
-    if (!userId) {
+    if (!userIdFromAuth) {
       toast.error(t('common.unauthorized'))
       return
     }
 
+    const roomApiRequest: CreateRoomApiRequest = {
+      topic: data.name,
+      startTime: new Date(data.openAt).toISOString(),
+      endTime: new Date(data.closeAt).toISOString(),
+      status: true,
+      age: data.ageLimit || 0,
+      language: data.language,
+      minQuantity: data.minParticipants,
+      maxQuantity: data.maxParticipants || data.minParticipants,
+    }
+
     try {
-      setIsLoading(true)
-
-      const roomRequest: CreateRoomRequest = {
-        topic: data.name,
-        startTime: new Date(data.openAt).toISOString(),
-        endTime: new Date(data.closeAt).toISOString(),
-        status: true,
-        age: data.ageLimit || 0,
-        language: data.language,
-        minQuantity: data.minParticipants,
-        maxQuantity: data.maxParticipants || data.minParticipants,
-      }
-
-      const createdRoom = await createRoom(roomRequest)
+      const createdApiRoom = await dispatch(
+        createRoom({ roomData: roomApiRequest, userId: String(userIdFromAuth) })
+      ).unwrap()
 
       toast.success(t('createRoomForm.roomCreatedSuccess'))
+
       onRoomCreated({
-        id: String(createdRoom.id),
-        name: createdRoom.topic,
+        id: createdApiRoom.id,
+        name: createdApiRoom.topic,
         category: data.category,
-        openAt: new Date(createdRoom.startTime),
-        closeAt: new Date(createdRoom.endTime),
-        minParticipants: createdRoom.minQuantity,
-        maxParticipants: createdRoom.maxQuantity,
-        ageLimit: createdRoom.age,
-        roomUrl: createdRoom.roomUrl,
-        language: createdRoom.language,
+        openAt: new Date(createdApiRoom.startTime),
+        closeAt: new Date(createdApiRoom.endTime),
+        minParticipants: createdApiRoom.minQuantity,
+        maxParticipants: createdApiRoom.maxQuantity,
+        ageLimit: createdApiRoom.age,
+        roomUrl: createdApiRoom.roomUrl,
+        language: createdApiRoom.language,
         proficiency: data.proficiency,
       })
 
-      // Reset form
-      setValue('name', '')
-      setValue('category', categories[0])
-      setValue('openAt', '')
-      setValue('closeAt', '')
-      setValue('minParticipants', 4)
-      setValue('maxParticipants', null)
-      setValue('ageLimit', null)
-      setValue('language', '')
-      setValue('proficiency', '')
-    } catch (error) {
-      console.error('Failed to create room:', error)
-      toast.error(t('createRoomForm.roomCreationError'))
-    } finally {
-      setIsLoading(false)
+      reset({
+        name: '',
+        category: categories[0],
+        language: '',
+        proficiency: '',
+        openAt: '',
+        closeAt: '',
+        minParticipants: 4,
+        maxParticipants: null,
+        ageLimit: null,
+      })
+    } catch (error: any) {
+      console.error('Failed to create room (onSubmit):', error)
     }
   }
 
@@ -184,7 +172,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={containerStyle}>
-      {isLoading && (
+      {isRoomCreating && (
         <Box sx={loaderWrapperStyle}>
           <Loader />
         </Box>
@@ -201,6 +189,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           error={!!errors.name}
           helperText={errors.name?.message}
           sx={filterItemStyle}
+          disabled={isRoomCreating}
         />
 
         <TextField
@@ -212,6 +201,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           helperText={errors.category?.message}
           defaultValue={categories[0]}
           sx={filterItemStyle}
+          disabled={isRoomCreating}
         >
           {categories.map((cat) => (
             <MenuItem key={cat} value={cat}>
@@ -236,6 +226,8 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             error={!!errors.language}
             helperText={errors.language?.message}
             sx={filterItemStyle}
+            disabled={isRoomCreating}
+            defaultValue=""
           >
             {languages.map((lang) => (
               <MenuItem key={lang.id} value={lang.name}>
@@ -252,6 +244,8 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             error={!!errors.proficiency}
             helperText={errors.proficiency?.message}
             sx={filterItemStyle}
+            disabled={isRoomCreating}
+            defaultValue=""
           >
             {LEVEL_OPTIONS.map((level) => (
               <MenuItem key={level} value={level}>
@@ -278,6 +272,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             helperText={errors.openAt?.message}
             InputLabelProps={{ shrink: true }}
             sx={filterItemStyle}
+            disabled={isRoomCreating}
           />
 
           <TextField
@@ -289,6 +284,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             helperText={errors.closeAt?.message}
             InputLabelProps={{ shrink: true }}
             sx={filterItemStyle}
+            disabled={isRoomCreating}
           />
         </Box>
 
@@ -308,6 +304,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             error={!!errors.minParticipants}
             helperText={errors.minParticipants?.message}
             sx={filterItemStyle}
+            disabled={isRoomCreating}
           />
 
           <TextField
@@ -318,6 +315,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             error={!!errors.maxParticipants}
             helperText={errors.maxParticipants?.message}
             sx={filterItemStyle}
+            disabled={isRoomCreating}
           />
         </Box>
 
@@ -329,15 +327,16 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           error={!!errors.ageLimit}
           helperText={errors.ageLimit?.message}
           sx={filterItemStyle}
+          disabled={isRoomCreating}
         />
 
         <Button
           type="submit"
           variant="contained"
           sx={createButtonStyle}
-          disabled={isLoading}
+          disabled={isRoomCreating}
         >
-          {isLoading
+          {isRoomCreating
             ? t('common.loading')
             : t('createRoomForm.createRoomButton')}
         </Button>
