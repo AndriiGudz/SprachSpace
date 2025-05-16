@@ -268,5 +268,13 @@
     "createRoom": "Create room",
     "qualificationMessage": "Only an authorized user with a rating of 4 or higher can create a new room",
     "close": "Close"
+  },
+  "meetings": {
+    "title": "Meetings",
+    "subtitle": "Join scheduled meetings or create your own room",
+    "error": {
+      "title": "Failed to load meetings"
+    },
+    "noRooms": "No rooms available yet. Create the first one!"
   }
 }
