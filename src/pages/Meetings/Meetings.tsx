@@ -20,46 +20,66 @@ function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     topic,
     startTime,
     endTime,
+    duration,
     age,
     language,
+    languageLvl,
     minQuantity,
     maxQuantity,
     roomUrl,
+    category,
+    privateRoom,
   } = apiRoom
 
-  // Вычисляем duration
   let durationString: string | undefined = undefined
-  try {
-    durationString = formatDistanceStrict(
-      new Date(endTime),
-      new Date(startTime)
-    )
-  } catch (e) {
-    console.error('Error calculating duration:', e)
+  if (typeof duration === 'number') {
+    const hours = Math.floor(duration / 60)
+    const minutes = duration % 60
+    durationString = ''
+    if (hours > 0) durationString += `${hours}h `
+    if (minutes > 0 || hours === 0) durationString += `${minutes}m`
+    durationString = durationString.trim()
+    if (durationString === '' && duration === 0) durationString = '0m'
+  } else if (startTime && endTime) {
+    try {
+      durationString = formatDistanceStrict(
+        new Date(endTime),
+        new Date(startTime)
+      )
+    } catch (e) {
+      console.error('Error calculating duration:', e)
+    }
   }
 
-  // Генерируем slug из topic (простой пример)
   const slug = topic
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '')
 
-  return {
+  const meetingData: Meeting = {
     id,
     slug,
-    name: topic, // Используем topic как name
-    category: 'General', // Placeholder, т.к. нет в ApiRoom
+    name: topic,
+    category: category.name,
     startTime,
     endTime,
     duration: durationString,
     minParticipants: minQuantity,
     maxParticipants: maxQuantity,
     language,
-    proficiency: 'Any', // Placeholder
-    ageRestriction: age ? `${age}+` : null, // Преобразуем age
-    shareLink: roomUrl, // Используем roomUrl как shareLink (или можно генерировать более сложный)
+    proficiency: languageLvl,
+    ageRestriction: age ? `${age}+` : null,
+    shareLink: roomUrl,
     roomUrl,
+    privateRoom,
+    description: undefined,
+    waitingParticipants: undefined,
+    organizer: undefined,
+    imageUrl: undefined,
+    languageFlagIconUrl: undefined,
+    location: undefined,
   }
+  return meetingData
 }
 
 function Meetings() {

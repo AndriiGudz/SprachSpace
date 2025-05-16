@@ -6,9 +6,12 @@ import {
   Stack,
   TextField,
   Typography,
+  Switch,
+  FormControlLabel,
+  FormHelperText,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-toastify'
 import { useSelector, useDispatch } from 'react-redux'
@@ -28,19 +31,21 @@ import {
   createRoom,
   clearRoomError,
 } from '../../store/redux/roomSlice/roomSlice'
-import { CreateRoomApiRequest } from '../../store/redux/roomSlice/roomTypes'
+import {
+  CreateRoomApiRequest,
+  ApiRoom,
+} from '../../store/redux/roomSlice/roomTypes'
 
-const categories = [
-  'Разговорный английский',
-  'Deutsch lernen',
-  'Business Talks',
-  'Свободная беседа',
+const categories = ['Music', 'Food', 'Tech']
+
+const LEVEL_OPTIONS = [
+  { value: 'beginner', labelKey: 'createRoomForm.levels.beginner' },
+  { value: 'intermediate', labelKey: 'createRoomForm.levels.intermediate' },
+  { value: 'advanced', labelKey: 'createRoomForm.levels.advanced' },
 ]
 
-const LEVEL_OPTIONS = ['beginner', 'intermediate', 'advanced']
-
 export type Room = {
-  id: string
+  id: number
   name: string
   category: string
   openAt: Date
@@ -50,7 +55,8 @@ export type Room = {
   ageLimit?: number
   roomUrl: string
   language: string
-  proficiency: string
+  proficiency: string | null
+  privateRoom: boolean
 }
 
 type Props = {
@@ -72,18 +78,28 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
     reset,
+    control,
+    watch,
   } = useForm<CreateRoomFormData>({
     resolver: yupResolver(createRoomSchema(t)) as any,
     mode: 'onChange',
     defaultValues: {
+      name: '',
       category: categories[0],
+      language: '',
+      proficiency: '',
+      openAt: '',
+      closeAt: '',
       minParticipants: 4,
       maxParticipants: null,
       ageLimit: null,
+      privateRoom: false,
     },
   })
+
+  const isPrivateRoom = watch('privateRoom')
 
   useEffect(() => {
     if (roomCreationError) {
@@ -102,9 +118,9 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
       .then((data) => setLanguages(data))
       .catch((error) => {
         console.error('Error fetching languages:', error)
-        toast.error(t('common.error'))
+        toast.error(t('common.errorFetchingLanguages'))
       })
-  }, [isAuthenticated, t])
+  }, [isAuthenticated, t, dispatch])
 
   const onSubmit: SubmitHandler<CreateRoomFormData> = async (data) => {
     if (!userIdFromAuth) {
@@ -117,23 +133,29 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
       startTime: new Date(data.openAt).toISOString(),
       endTime: new Date(data.closeAt).toISOString(),
       status: true,
-      age: data.ageLimit || 0,
+      age: data.ageLimit === null ? undefined : Number(data.ageLimit),
       language: data.language,
+      languageLvl: data.proficiency,
+      category: data.category,
+      privateRoom: data.privateRoom,
       minQuantity: data.minParticipants,
-      maxQuantity: data.maxParticipants || data.minParticipants,
+      maxQuantity:
+        data.maxParticipants === null
+          ? data.minParticipants
+          : Number(data.maxParticipants),
     }
 
     try {
-      const createdApiRoom = await dispatch(
+      const createdApiRoom = (await dispatch(
         createRoom({ roomData: roomApiRequest, userId: String(userIdFromAuth) })
-      ).unwrap()
+      ).unwrap()) as ApiRoom
 
       toast.success(t('createRoomForm.roomCreatedSuccess'))
 
       onRoomCreated({
         id: createdApiRoom.id,
         name: createdApiRoom.topic,
-        category: data.category,
+        category: createdApiRoom.category.name,
         openAt: new Date(createdApiRoom.startTime),
         closeAt: new Date(createdApiRoom.endTime),
         minParticipants: createdApiRoom.minQuantity,
@@ -141,20 +163,11 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
         ageLimit: createdApiRoom.age,
         roomUrl: createdApiRoom.roomUrl,
         language: createdApiRoom.language,
-        proficiency: data.proficiency,
+        proficiency: createdApiRoom.languageLvl,
+        privateRoom: createdApiRoom.privateRoom,
       })
 
-      reset({
-        name: '',
-        category: categories[0],
-        language: '',
-        proficiency: '',
-        openAt: '',
-        closeAt: '',
-        minParticipants: 4,
-        maxParticipants: null,
-        ageLimit: null,
-      })
+      reset()
     } catch (error: any) {
       console.error('Failed to create room (onSubmit):', error)
     }
@@ -184,7 +197,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
       <Stack spacing={2} sx={{ alignItems: 'center' }}>
         <TextField
           variant="outlined"
-          label={t('createRoomForm.roomName')}
+          label={`${t('createRoomForm.roomName')}*`}
           {...register('name')}
           error={!!errors.name}
           helperText={errors.name?.message}
@@ -194,7 +207,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
 
         <TextField
           variant="outlined"
-          label={t('createRoomForm.category')}
+          label={`${t('createRoomForm.category')}*`}
           select
           {...register('category')}
           error={!!errors.category}
@@ -220,7 +233,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
         >
           <TextField
             variant="outlined"
-            label={t('createRoomForm.roomLanguage')}
+            label={`${t('createRoomForm.roomLanguage')}*`}
             select
             {...register('language')}
             error={!!errors.language}
@@ -238,7 +251,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
 
           <TextField
             variant="outlined"
-            label={t('createRoomForm.proficiency')}
+            label={`${t('createRoomForm.proficiency')}*`}
             select
             {...register('proficiency')}
             error={!!errors.proficiency}
@@ -248,8 +261,8 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             defaultValue=""
           >
             {LEVEL_OPTIONS.map((level) => (
-              <MenuItem key={level} value={level}>
-                {level}
+              <MenuItem key={level.value} value={level.value}>
+                {t(level.labelKey)}
               </MenuItem>
             ))}
           </TextField>
@@ -265,7 +278,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
         >
           <TextField
             variant="outlined"
-            label={t('createRoomForm.openTime')}
+            label={`${t('createRoomForm.openTime')}*`}
             type="datetime-local"
             {...register('openAt')}
             error={!!errors.openAt}
@@ -277,7 +290,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
 
           <TextField
             variant="outlined"
-            label={t('createRoomForm.closeTime')}
+            label={`${t('createRoomForm.closeTime')}*`}
             type="datetime-local"
             {...register('closeAt')}
             error={!!errors.closeAt}
@@ -298,24 +311,26 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
         >
           <TextField
             variant="outlined"
-            label={t('createRoomForm.minParticipants')}
+            label={`${t('createRoomForm.minParticipants')}*`}
             type="number"
             {...register('minParticipants')}
             error={!!errors.minParticipants}
             helperText={errors.minParticipants?.message}
             sx={filterItemStyle}
             disabled={isRoomCreating}
+            inputProps={{ min: 4 }}
           />
 
           <TextField
             variant="outlined"
-            label={t('createRoomForm.maxParticipants')}
+            label={`${t('createRoomForm.maxParticipants')}*`}
             type="number"
             {...register('maxParticipants')}
             error={!!errors.maxParticipants}
             helperText={errors.maxParticipants?.message}
             sx={filterItemStyle}
             disabled={isRoomCreating}
+            inputProps={{ min: 4, max: 100 }}
           />
         </Box>
 
@@ -330,11 +345,49 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           disabled={isRoomCreating}
         />
 
+        <FormControlLabel
+          control={
+            <Controller
+              name="privateRoom"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  {...field}
+                  checked={field.value}
+                  disabled={isRoomCreating}
+                />
+              )}
+            />
+          }
+          labelPlacement="start"
+          label={t('createRoomForm.privateRoomLabel')}
+          sx={{
+            alignSelf: 'flex-start',
+            ml: 0,
+            justifyContent: 'space-between',
+            width: '100%',
+            maxWidth: '500px',
+          }}
+        />
+        <FormHelperText
+          sx={{
+            alignSelf: 'flex-start',
+            mt: -0.5,
+            mb: 1,
+            width: '100%',
+            maxWidth: '500px',
+          }}
+        >
+          {isPrivateRoom
+            ? t('createRoomForm.privateRoomHelperTextPrivate')
+            : t('createRoomForm.privateRoomHelperTextPublic')}
+        </FormHelperText>
+
         <Button
           type="submit"
           variant="contained"
           sx={createButtonStyle}
-          disabled={isRoomCreating}
+          disabled={isRoomCreating || !isValid || !isDirty}
         >
           {isRoomCreating
             ? t('common.loading')

@@ -56,7 +56,15 @@
     "ageLimit": "Altersbegrenzung",
     "createRoomButton": "Raum erstellen",
     "roomCreatedSuccess": "Raum erfolgreich erstellt!",
-    "roomCreationError": "Fehler beim Erstellen des Raums. Bitte versuchen Sie es erneut."
+    "roomCreationError": "Fehler beim Erstellen des Raums. Bitte versuchen Sie es erneut.",
+    "privateRoomLabel": "Privater Raum",
+    "privateRoomHelperTextPublic": "Öffentlich: Für jeden sichtbar, keine Genehmigung zum Beitritt erforderlich.",
+    "privateRoomHelperTextPrivate": "Privat: Nur von Ihnen genehmigte Benutzer können beitreten.",
+    "levels": {
+      "beginner": "Anfänger",
+      "intermediate": "Mittelstufe",
+      "advanced": "Fortgeschritten"
+    }
   },
   "validation": {
     "createRoom": {
@@ -74,6 +82,9 @@
       "closeTimeMin": "Endzeit muss mindestens 15 Minuten nach Startzeit sein",
       "minParticipantsRequired": "Mindestanzahl der Teilnehmer ist erforderlich",
       "minParticipantsMin": "Mindestens 4 Teilnehmer erforderlich",
+      "maxParticipantsRequired": "Maximale Teilnehmerzahl ist erforderlich",
+      "maxParticipantsMin": "Maximale Teilnehmerzahl muss mindestens {{count}} sein",
+      "maxParticipantsMax": "Maximale Teilnehmerzahl darf 100 nicht überschreiten",
       "integer": "Muss eine ganze Zahl sein",
       "minAge": "Mindestalter ist 1 Jahr"
     }
@@ -81,7 +92,8 @@
   "common": {
     "loading": "Wird geladen...",
     "unauthorized": "Autorisierung erforderlich",
-    "pleaseLogin": "Bitte melden Sie sich an, um einen Raum zu erstellen"
+    "pleaseLogin": "Bitte melden Sie sich an, um einen Raum zu erstellen",
+    "errorFetchingLanguages": "Sprachen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
   },
   "createRoomButton": {
     "createRoom": "Raum erstellen",

@@ -1,16 +1,26 @@
+export interface ApiRoomCategory {
+  id: number
+  name: string
+}
+
 export interface ApiRoom {
-  id: string
+  id: number // Changed from string to number
   topic: string
   startTime: string // ISO Date string
   endTime: string // ISO Date string
+  duration?: number // New, from API response (e.g., 50 minutes)
+  category: ApiRoomCategory // Changed from string to object
+  privateRoom: boolean // New
+  languageLvl: string | null // New
   status: boolean
   age: number
   language: string
   minQuantity: number
   maxQuantity: number
   roomUrl: string
+  participants?: any[] // Optional, as per API response
+  creator?: any // Optional, as per API response
   // userId: string; // ID пользователя, создавшего комнату
-  // participants: User[]; // Массив участников, если API его возвращает
   // category?: string; // Категория может быть не основным полем API
   // proficiency?: string; // Уровень владения может быть не основным полем API
 }
@@ -21,8 +31,11 @@ export interface CreateRoomApiRequest {
   startTime: string // ISO string
   endTime: string // ISO string
   status: boolean
-  age: number
+  age?: number // Optional, API shows 0, form might send null/undefined
   language: string
+  languageLvl: string // New: maps from UI's proficiency
+  category: string // API expects string for creation as per example
+  privateRoom: boolean // New
   minQuantity: number
   maxQuantity: number
   // category?: string; // Если это часть запроса на создание

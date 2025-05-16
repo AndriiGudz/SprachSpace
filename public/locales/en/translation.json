@@ -186,7 +186,15 @@
     "ageLimit": "Age Limit",
     "createRoomButton": "Create Room",
     "roomCreatedSuccess": "Room created successfully!",
-    "roomCreationError": "Failed to create room. Please try again."
+    "roomCreationError": "Failed to create room. Please try again.",
+    "privateRoomLabel": "Private Room",
+    "privateRoomHelperTextPublic": "Public: Visible to everyone, no approval needed to join.",
+    "privateRoomHelperTextPrivate": "Private: Only users you approve can join.",
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    }
   },
   "roomFilter": {
     "category": "Category",
@@ -250,11 +258,14 @@
       "languageRequired": "Please select a language",
       "proficiencyRequired": "Please select proficiency level",
       "openTimeRequired": "Start time is required",
-      "openTimeMin": "Start time must be at least 5 minutes from now",
+      "openTimeMin": "Start time must be at least 5 minutes in the future",
       "closeTimeRequired": "End time is required",
       "closeTimeMin": "End time must be at least 15 minutes after start time",
       "minParticipantsRequired": "Minimum participants is required",
       "minParticipantsMin": "Minimum 4 participants required",
+      "maxParticipantsRequired": "Maximum participants is required",
+      "maxParticipantsMin": "Maximum participants must be at least {{count}}",
+      "maxParticipantsMax": "Maximum participants cannot exceed 100",
       "integer": "Must be a whole number",
       "minAge": "Minimum age is 1 year"
     }
@@ -262,7 +273,8 @@
   "common": {
     "loading": "Loading...",
     "unauthorized": "Authorization required",
-    "pleaseLogin": "Please log in to create a room"
+    "pleaseLogin": "Please log in to create a room",
+    "errorFetchingLanguages": "Failed to load languages. Please try again later."
   },
   "createRoomButton": {
     "createRoom": "Create room",

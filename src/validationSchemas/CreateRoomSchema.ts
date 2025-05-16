@@ -15,6 +15,19 @@ const getMinEndTime = (startTime: Date) => {
   return start
 }
 
+export interface CreateRoomFormData {
+  name: string
+  category: string
+  language: string
+  proficiency: string
+  openAt: string
+  closeAt: string
+  minParticipants: number
+  maxParticipants?: number | null
+  ageLimit?: number | null
+  privateRoom: boolean
+}
+
 export const createRoomSchema = (t: TFunction) =>
   yup.object().shape({
     name: yup
@@ -40,9 +53,9 @@ export const createRoomSchema = (t: TFunction) =>
       .required(t('validation.createRoom.openTimeRequired'))
       .test(
         'min-start-time',
-        t('validation.createRoom.openTimeMin'),
+        t('validation.createRoom.openTimeMin') || '',
         (value) => {
-          if (!value) return false
+          if (!value) return true
           return new Date(value) >= getMinStartTime()
         }
       ),
@@ -51,9 +64,9 @@ export const createRoomSchema = (t: TFunction) =>
       .required(t('validation.createRoom.closeTimeRequired'))
       .test(
         'min-end-time',
-        t('validation.createRoom.closeTimeMin'),
+        t('validation.createRoom.closeTimeMin') || '',
         function (value) {
-          if (!value || !this.parent.openAt) return false
+          if (!value || !this.parent.openAt) return true
           const startDate = new Date(this.parent.openAt)
           const endDate = new Date(value)
           const minEnd = getMinEndTime(startDate)
@@ -62,29 +75,33 @@ export const createRoomSchema = (t: TFunction) =>
       ),
     minParticipants: yup
       .number()
+      .transform((value) => (isNaN(value) ? undefined : value))
       .required(t('validation.createRoom.minParticipantsRequired'))
       .min(4, t('validation.createRoom.minParticipantsMin'))
-      .integer(t('validation.createRoom.integer')),
+      .integer(t('validation.createRoom.integer') || ''),
     maxParticipants: yup
       .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .nullable()
-      .optional(),
+      .transform((value) =>
+        isNaN(value) || value === null ? undefined : value
+      )
+      .required(t('validation.createRoom.maxParticipantsRequired'))
+      .integer(t('validation.createRoom.integer') || '')
+      .min(
+        yup.ref('minParticipants'),
+        ({ min }) =>
+          `${
+            t('validation.createRoom.maxParticipantsMin', { count: min }) ||
+            `Max participants must be greater than or equal to min participants (${min})`
+          }`
+      )
+      .max(100, t('validation.createRoom.maxParticipantsMax')),
     ageLimit: yup
       .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
+      .transform((value) =>
+        isNaN(value) || value === null ? undefined : value
+      )
       .nullable()
-      .optional(),
+      .integer(t('validation.createRoom.integer') || '')
+      .min(0, t('validation.createRoom.minAge') || ''),
+    privateRoom: yup.boolean().defined(),
   })
-
-export type CreateRoomFormData = {
-  name: string
-  category: string
-  language: string
-  proficiency: string
-  openAt: string
-  closeAt: string
-  minParticipants: number
-  maxParticipants?: number | null
-  ageLimit?: number | null
-}
