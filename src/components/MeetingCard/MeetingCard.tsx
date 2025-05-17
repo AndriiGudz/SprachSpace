@@ -17,7 +17,6 @@ import {
 import { Share2, Copy } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { useTranslation } from 'react-i18next'
-
 import { Meeting } from './types'
 import {
   cardStyle,
@@ -275,7 +274,12 @@ function MeetingCard({ meeting }: MeetingCardProps) {
             }}
           >
             <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                minWidth: '40px',
+              }}
               title={`${language} - ${
                 proficiency || t('meetingCard.proficiencyNotSet', 'Не указан')
               }`}
@@ -288,6 +292,12 @@ function MeetingCard({ meeting }: MeetingCardProps) {
                 width={36}
                 height={36}
                 effect="blur"
+                style={{
+                  flexShrink: 0,
+                  marginRight: 0,
+                  minWidth: '36px',
+                  minHeight: '36px',
+                }}
               />
               <Box>
                 <Typography variant="body2" color="text.secondary">
@@ -298,53 +308,98 @@ function MeetingCard({ meeting }: MeetingCardProps) {
             </Box>
 
             {organizer && (
-              <Box
-                sx={{ display: 'flex', alignItems: 'center' }}
-                title={organizer.name}
+              <Tooltip
+                title={t(
+                  'meetingCard.organizerTooltip',
+                  `Организатор: ${organizer.nickname} (${organizer.firstName} ${organizer.lastName}) - Рейтинг: ${organizer.rating}`,
+                  {
+                    nickname: organizer.nickname,
+                    firstName: organizer.firstName,
+                    lastName: organizer.lastName,
+                    rating: organizer.rating,
+                  }
+                )}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: '#0288d1',
+                      color: '#fff',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#0288d1',
+                    },
+                  },
+                }}
               >
-                <LazyLoadImage // Используем LazyLoadImage
-                  src={hostAvatarSrc}
-                  alt={t(
-                    'meetingCard.hostAvatarAlt',
-                    `Avatar of ${organizer.name}`,
-                    { name: organizer.name }
-                  )}
-                  width={36}
-                  height={36}
-                  effect="blur" // Эффект при загрузке
-                  style={{ marginRight: 8, borderRadius: '50%' }}
-                />
-                {/* Можно добавить имя организатора, если нужно */}
-                {/* <Typography variant="body2" color="text.secondary">{organizer.name}</Typography> */}
-              </Box>
-            )}
-
-            {ageRestriction && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography
-                  variant="body2"
-                  color="text.primary"
-                  sx={{ textDecoration: 'underline' }}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    minWidth: '40px',
+                  }}
                 >
-                  {t('meetingCard.ageRestrictionLabel', 'Age:')}
-                </Typography>
-                <Typography variant="body1" sx={ageRestrictionStyle}>
-                  {ageRestriction}
-                </Typography>
-              </Box>
+                  <LazyLoadImage
+                    src={hostAvatarSrc}
+                    alt={t(
+                      'meetingCard.hostAvatarAlt',
+                      `Avatar of ${organizer.name}`,
+                      { name: organizer.name }
+                    )}
+                    width={36}
+                    height={36}
+                    effect="blur"
+                    style={{
+                      borderRadius: '50%',
+                      flexShrink: 0,
+                      marginRight: 0,
+                      minWidth: '36px',
+                      minHeight: '36px',
+                    }}
+                  />
+                </Box>
+              </Tooltip>
             )}
-          </Box>
 
-          <Box
-            sx={{
-              ...actionButtonsStyle,
-              justifyContent: isMobile ? 'flex-start' : 'flex-end',
-              width: isMobile ? '100%' : 'auto',
-              mt: isMobile ? 2 : 0,
-            }}
-          >
+            {/* Возрастное ограничение */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography
+                variant="body2"
+                color="text.primary"
+                sx={{ textDecoration: 'underline' }}
+              >
+                {t('meetingCard.ageRestrictionLabel', 'Age:')}
+              </Typography>
+              {ageRestriction && ageRestriction > 0 ? (
+                <Typography variant="body1" sx={ageRestrictionStyle}>
+                  {ageRestriction}+
+                </Typography>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  {t('meetingCard.noAgeRestriction', 'Без ограничений')}
+                </Typography>
+              )}
+            </Box>
+
+            {/* Share */}
             {shareLink && (
-              <Tooltip title={t('meetingCard.shareTooltip', 'Share')}>
+              <Tooltip
+                title={t('meetingCard.shareTooltip', 'Share')}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: '#0288d1',
+                      color: '#fff',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#0288d1',
+                    },
+                  },
+                }}
+              >
                 <IconButton
                   onClick={handleShare}
                   aria-label={t('meetingCard.shareTooltip', 'Share')}
@@ -354,7 +409,22 @@ function MeetingCard({ meeting }: MeetingCardProps) {
               </Tooltip>
             )}
             {shareLink && (
-              <Tooltip title={t('meetingCard.copyLinkTooltip', 'Copy link')}>
+              <Tooltip
+                title={t('meetingCard.copyLinkTooltip', 'Copy link')}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: '#0288d1',
+                      color: '#fff',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#0288d1',
+                    },
+                  },
+                }}
+              >
                 <IconButton
                   onClick={handleCopyLink}
                   aria-label={t('meetingCard.copyLinkTooltip', 'Copy link')}
@@ -363,6 +433,16 @@ function MeetingCard({ meeting }: MeetingCardProps) {
                 </IconButton>
               </Tooltip>
             )}
+          </Box>
+
+          <Box
+            sx={{
+              ...actionButtonsStyle,
+              justifyContent: isMobile ? 'center' : 'flex-end',
+              width: isMobile ? '100%' : 'auto',
+              mt: isMobile ? 2 : 0,
+            }}
+          >
             <Button // MUI Button, который рендерится как ссылка
               component={RouterLink} // Используем RouterLink
               to={roomUrl || cardLink} // Используем 'to'

@@ -107,5 +107,26 @@
       "title": "Meetings konnten nicht geladen werden"
     },
     "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!"
+  },
+  "meetingCard": {
+    "titleLabel": "Titel oder Thema:",
+    "categoryLabel": "Kategorie:",
+    "timeLabel": "Meetingzeit:",
+    "startTimeLabel": "Start:",
+    "endTimeLabel": "Ende:",
+    "durationLabel": "Dauer:",
+    "participantsLabel": "Teilnehmerzahl:",
+    "minParticipantsLabel": "Min:",
+    "maxParticipantsLabel": "Max:",
+    "waitingParticipantsLabel": "Wartend:",
+    "languageFlagAlt": "{{language}} Flagge",
+    "proficiencyNotSet": "Nicht angegeben",
+    "hostAvatarAlt": "Avatar von {{name}}",
+    "ageRestrictionLabel": "Alter:",
+    "noAgeRestriction": "Keine Beschränkungen",
+    "organizerTooltip": "Organisator: {{nickname}} ({{firstName}} {{lastName}}) - Bewertung: {{rating}}",
+    "shareTooltip": "Teilen",
+    "copyLinkTooltip": "Link kopieren",
+    "joinButton": "Beitreten"
   }
 }

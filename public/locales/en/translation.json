@@ -288,5 +288,26 @@
       "title": "Failed to load meetings"
     },
     "noRooms": "No rooms available yet. Create the first one!"
+  },
+  "meetingCard": {
+    "titleLabel": "Title or Subject:",
+    "categoryLabel": "Category:",
+    "timeLabel": "Meeting time:",
+    "startTimeLabel": "Start:",
+    "endTimeLabel": "End:",
+    "durationLabel": "Duration:",
+    "participantsLabel": "Number of participants:",
+    "minParticipantsLabel": "Min:",
+    "maxParticipantsLabel": "Max:",
+    "waitingParticipantsLabel": "Waiting:",
+    "languageFlagAlt": "{{language}} flag",
+    "proficiencyNotSet": "Not set",
+    "hostAvatarAlt": "Avatar of {{name}}",
+    "ageRestrictionLabel": "Age:",
+    "noAgeRestriction": "No restrictions",
+    "organizerTooltip": "Organizer: {{nickname}} ({{firstName}} {{lastName}}) - Rating: {{rating}}",
+    "shareTooltip": "Share",
+    "copyLinkTooltip": "Copy link",
+    "joinButton": "Join"
   }
 }

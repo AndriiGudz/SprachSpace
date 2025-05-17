@@ -1,5 +1,9 @@
 export interface Organizer {
-  name: string
+  name: string // Имя или никнейм для отображения, может быть composite
+  nickname: string
+  firstName?: string
+  lastName?: string
+  rating?: number | string // Рейтинг может быть числом или строкой (например, "N/A")
   avatarUrl?: string // Используется для hostAvatar
   // url?: string; // Ссылка на профиль организатора, если есть
 }
@@ -26,11 +30,11 @@ export interface Meeting {
   language: string // Для Schema.org Language, itemprop="inLanguage"
   proficiency: string | null
   organizer?: Organizer // Для Schema.org Event.organizer (Person)
-  ageRestriction?: string | null
+  location?: MeetingLocation // Для Schema.org Event.location
+  ageRestriction?: number | null
   shareLink: string // Для кнопки "Поделиться"
   roomUrl: string // Для кнопки "Join" и Schema.org Event.location.url или Event.url
   imageUrl?: string // Опциональное основное изображение для карточки (для <Image /> и Schema.org)
   languageFlagIconUrl?: string // Если хотим передавать URL флага вместо логики внутри компонента
-  location?: MeetingLocation // Для Schema.org Event.location
   privateRoom: boolean
 }

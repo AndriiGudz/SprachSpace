@@ -107,5 +107,26 @@
       "title": "Не удалось загрузить встречи"
     },
     "noRooms": "Пока нет доступных комнат. Создайте первую!"
+  },
+  "meetingCard": {
+    "titleLabel": "Название или тема:",
+    "categoryLabel": "Категория:",
+    "timeLabel": "Время встречи:",
+    "startTimeLabel": "Начало:",
+    "endTimeLabel": "Конец:",
+    "durationLabel": "Продолжительность:",
+    "participantsLabel": "Количество участников:",
+    "minParticipantsLabel": "Мин:",
+    "maxParticipantsLabel": "Макс:",
+    "waitingParticipantsLabel": "Ожидают:",
+    "languageFlagAlt": "Флаг {{language}}",
+    "proficiencyNotSet": "Не указан",
+    "hostAvatarAlt": "Аватар {{name}}",
+    "ageRestrictionLabel": "Возраст:",
+    "noAgeRestriction": "Без ограничений",
+    "organizerTooltip": "Организатор: {{nickname}} ({{firstName}} {{lastName}}) - Рейтинг: {{rating}}",
+    "shareTooltip": "Поделиться",
+    "copyLinkTooltip": "Копировать ссылку",
+    "joinButton": "Присоединиться"
   }
 }

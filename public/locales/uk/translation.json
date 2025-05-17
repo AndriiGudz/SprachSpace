@@ -107,5 +107,26 @@
       "title": "Не вдалося завантажити зустрічі"
     },
     "noRooms": "Поки немає доступних кімнат. Створіть першу!"
+  },
+  "meetingCard": {
+    "titleLabel": "Назва або тема:",
+    "categoryLabel": "Категорія:",
+    "timeLabel": "Час зустрічі:",
+    "startTimeLabel": "Початок:",
+    "endTimeLabel": "Кінець:",
+    "durationLabel": "Тривалість:",
+    "participantsLabel": "Кількість учасників:",
+    "minParticipantsLabel": "Мін:",
+    "maxParticipantsLabel": "Макс:",
+    "waitingParticipantsLabel": "Очікують:",
+    "languageFlagAlt": "Прапор {{language}}",
+    "proficiencyNotSet": "Не вказано",
+    "hostAvatarAlt": "Аватар {{name}}",
+    "ageRestrictionLabel": "Вік:",
+    "noAgeRestriction": "Без обмежень",
+    "organizerTooltip": "Організатор: {{nickname}} ({{firstName}} {{lastName}}) - Рейтинг: {{rating}}",
+    "shareTooltip": "Поділитися",
+    "copyLinkTooltip": "Копіювати посилання",
+    "joinButton": "Приєднатися"
   }
 }

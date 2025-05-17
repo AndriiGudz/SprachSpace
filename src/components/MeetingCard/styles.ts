@@ -11,7 +11,10 @@ export const cardStyle: SxProps<Theme> = {
       linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
       url(${bgPhoto}) center / cover no-repeat
     `,
-  boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
+
+  '&:hover': {
+    boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
+  }
 }
 
 // Стиль для контейнера контента (CardContent)

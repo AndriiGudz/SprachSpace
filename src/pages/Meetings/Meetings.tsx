@@ -29,6 +29,7 @@ function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     roomUrl,
     category,
     privateRoom,
+    creator,
   } = apiRoom
 
   let durationString: string | undefined = undefined
@@ -68,13 +69,22 @@ function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     maxParticipants: maxQuantity,
     language,
     proficiency: languageLvl,
-    ageRestriction: age ? `${age}+` : null,
+    ageRestriction: typeof age === 'string' ? parseInt(age, 10) : age,
     shareLink: roomUrl,
     roomUrl,
     privateRoom,
+    organizer: creator
+      ? {
+          name: creator.nickname || creator.name,
+          nickname: creator.nickname,
+          firstName: creator.name,
+          lastName: creator.surname,
+          avatarUrl: creator.foto || undefined,
+          rating: creator.rating,
+        }
+      : undefined,
     description: undefined,
     waitingParticipants: undefined,
-    organizer: undefined,
     imageUrl: undefined,
     languageFlagIconUrl: undefined,
     location: undefined,
