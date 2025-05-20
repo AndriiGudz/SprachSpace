@@ -35,3 +35,16 @@ export const createButtonStyle: SxProps<Theme> = {
     background: 'var(--light-blue-darken-2, #0288D1)',
   },
 }
+
+export const loaderWrapperStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  zIndex: 1000,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}

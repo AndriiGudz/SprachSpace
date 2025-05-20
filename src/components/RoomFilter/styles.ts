@@ -1,10 +1,10 @@
 import { SxProps, Theme } from '@mui/material'
 
-export const containerStyle: SxProps<Theme> = {
-  width: '100%',
-  backgroundColor: '#fff',
-  py: 4,
-  boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+export const containerStyle = {
+  py: 2,
+  backgroundColor: 'white',
+  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+  borderRadius: '8px',
 }
 
 export const filterBoxStyle: SxProps<Theme> = {
@@ -14,28 +14,26 @@ export const filterBoxStyle: SxProps<Theme> = {
   px: 2,
 }
 
-export const filterItemStyle: SxProps<Theme> = {
-  width: '170px',
-  marginBottom: '0',
-
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#E0E0E0', // Цвет обводки в обычном состоянии
-    },
-  },
-}
-
-export const createButtonStyle: SxProps<Theme> = {
+export const filterItemStyle = {
   display: 'flex',
-  padding: '10px 24px',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '10px',
-  borderRadius: '10px',
-  textTransform: 'none',
-  background: 'var(--light-blue-darken-1, #039BE5)',
-
-  '&:hover': {
-    background: 'var(--light-blue-darken-2, #0288D1)',
+  minWidth: 120,
+  flex: '1 1 auto',
+  '& .MuiInputBase-root': {
+    height: '40px',
+    fontSize: '0.875rem',
+  },
+  '& .MuiInputLabel-root': {
+    fontSize: '0.875rem',
+    transform: 'translate(14px, 10px) scale(1)',
+  },
+  '& .MuiInputLabel-shrink': {
+    transform: 'translate(14px, -9px) scale(0.75)',
+  },
+  '& .MuiSelect-select': {
+    paddingTop: '8.5px',
+    paddingBottom: '8.5px',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#E0E0E0',
   },
 }

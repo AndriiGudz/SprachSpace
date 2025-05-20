@@ -42,5 +42,91 @@
     "delete": "Видалити",
     "setAdmin": "Призначити адміном",
     "processing": "Обробка..."
+  },
+  "createRoomForm": {
+    "createRoom": "Створити кімнату",
+    "roomName": "Назва кімнати",
+    "category": "Категорія",
+    "roomLanguage": "Мова кімнати",
+    "proficiency": "Рівень володіння",
+    "openTime": "Час початку",
+    "closeTime": "Час закінчення",
+    "minParticipants": "Мінімум учасників",
+    "maxParticipants": "Максимум учасників",
+    "ageLimit": "Вікове обмеження",
+    "createRoomButton": "Створити кімнату",
+    "roomCreatedSuccess": "Кімнату успішно створено!",
+    "roomCreationError": "Помилка при створенні кімнати. Спробуйте ще раз.",
+    "privateRoomLabel": "Приватна кімната",
+    "privateRoomHelperTextPublic": "Публічна: Видно всім, для входу не потрібне схвалення.",
+    "privateRoomHelperTextPrivate": "Приватна: Увійти зможуть тільки схвалені вами користувачі.",
+    "levels": {
+      "beginner": "Початківець",
+      "intermediate": "Середній",
+      "advanced": "Просунутий"
+    }
+  },
+  "validation": {
+    "createRoom": {
+      "required": "Це поле обов'язкове",
+      "nameRequired": "Назва кімнати обов'язкова",
+      "nameMin": "Назва кімнати має бути не менше 3 символів",
+      "nameMax": "Назва кімнати має бути не більше 50 символів",
+      "nameFormat": "Назва може містити лише літери, цифри, пробіли та дефіс",
+      "categoryRequired": "Оберіть категорію",
+      "languageRequired": "Оберіть мову",
+      "proficiencyRequired": "Оберіть рівень володіння мовою",
+      "openTimeRequired": "Час початку обов'язковий",
+      "openTimeMin": "Час початку має бути не раніше поточного часу + 5 хвилин",
+      "closeTimeRequired": "Час закінчення обов'язковий",
+      "closeTimeMin": "Час закінчення не може бути раніше часу початку + 15 хвилин",
+      "minParticipantsRequired": "Мінімальна кількість учасників обов'язкова",
+      "minParticipantsMin": "Мінімальна кількість учасників - 4",
+      "maxParticipantsRequired": "Максимальна кількість учасників обов'язкова",
+      "maxParticipantsMin": "Максимальна кількість учасників має бути не менше {{count}}",
+      "maxParticipantsMax": "Максимальна кількість учасників не може перевищувати 100",
+      "integer": "Має бути цілим числом",
+      "minAge": "Мінімальний вік - 1 рік"
+    }
+  },
+  "common": {
+    "loading": "Завантаження...",
+    "unauthorized": "Необхідна авторизація",
+    "pleaseLogin": "Будь ласка, увійдіть в систему для створення кімнати",
+    "errorFetchingLanguages": "Не вдалося завантажити мови. Будь ласка, спробуйте пізніше."
+  },
+  "createRoomButton": {
+    "createRoom": "Створити кімнату",
+    "qualificationMessage": "Створити нову кімнату може тільки авторизований користувач з рейтингом 4 і вище",
+    "close": "Закрити"
+  },
+  "meetings": {
+    "title": "Зустрічі",
+    "subtitle": "Приєднуйтесь до запланованих зустрічей або створіть свою кімнату",
+    "error": {
+      "title": "Не вдалося завантажити зустрічі"
+    },
+    "noRooms": "Поки немає доступних кімнат. Створіть першу!"
+  },
+  "meetingCard": {
+    "titleLabel": "Назва або тема:",
+    "categoryLabel": "Категорія:",
+    "timeLabel": "Час зустрічі:",
+    "startTimeLabel": "Початок:",
+    "endTimeLabel": "Кінець:",
+    "durationLabel": "Тривалість:",
+    "participantsLabel": "Кількість учасників:",
+    "minParticipantsLabel": "Мін:",
+    "maxParticipantsLabel": "Макс:",
+    "waitingParticipantsLabel": "Очікують:",
+    "languageFlagAlt": "Прапор {{language}}",
+    "proficiencyNotSet": "Не вказано",
+    "hostAvatarAlt": "Аватар {{name}}",
+    "ageRestrictionLabel": "Вік:",
+    "noAgeRestriction": "Без обмежень",
+    "organizerTooltip": "Організатор: {{nickname}} ({{firstName}} {{lastName}}) - Рейтинг: {{rating}}",
+    "shareTooltip": "Поділитися",
+    "copyLinkTooltip": "Копіювати посилання",
+    "joinButton": "Приєднатися"
   }
 }

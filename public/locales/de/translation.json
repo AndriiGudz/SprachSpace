@@ -42,5 +42,91 @@
     "delete": "Löschen",
     "setAdmin": "Als Admin festlegen",
     "processing": "Verarbeitung..."
+  },
+  "createRoomForm": {
+    "createRoom": "Raum erstellen",
+    "roomName": "Raumname",
+    "category": "Kategorie",
+    "roomLanguage": "Raumsprache",
+    "proficiency": "Sprachniveau",
+    "openTime": "Startzeit",
+    "closeTime": "Endzeit",
+    "minParticipants": "Mindestanzahl Teilnehmer",
+    "maxParticipants": "Maximale Teilnehmer",
+    "ageLimit": "Altersbegrenzung",
+    "createRoomButton": "Raum erstellen",
+    "roomCreatedSuccess": "Raum erfolgreich erstellt!",
+    "roomCreationError": "Fehler beim Erstellen des Raums. Bitte versuchen Sie es erneut.",
+    "privateRoomLabel": "Privater Raum",
+    "privateRoomHelperTextPublic": "Öffentlich: Für jeden sichtbar, keine Genehmigung zum Beitritt erforderlich.",
+    "privateRoomHelperTextPrivate": "Privat: Nur von Ihnen genehmigte Benutzer können beitreten.",
+    "levels": {
+      "beginner": "Anfänger",
+      "intermediate": "Mittelstufe",
+      "advanced": "Fortgeschritten"
+    }
+  },
+  "validation": {
+    "createRoom": {
+      "required": "Dieses Feld ist erforderlich",
+      "nameRequired": "Raumname ist erforderlich",
+      "nameMin": "Raumname muss mindestens 3 Zeichen lang sein",
+      "nameMax": "Raumname darf 50 Zeichen nicht überschreiten",
+      "nameFormat": "Name darf nur Buchstaben, Zahlen, Leerzeichen und Bindestriche enthalten",
+      "categoryRequired": "Bitte wählen Sie eine Kategorie",
+      "languageRequired": "Bitte wählen Sie eine Sprache",
+      "proficiencyRequired": "Bitte wählen Sie ein Sprachniveau",
+      "openTimeRequired": "Startzeit ist erforderlich",
+      "openTimeMin": "Startzeit muss mindestens 5 Minuten in der Zukunft liegen",
+      "closeTimeRequired": "Endzeit ist erforderlich",
+      "closeTimeMin": "Endzeit muss mindestens 15 Minuten nach Startzeit sein",
+      "minParticipantsRequired": "Mindestanzahl der Teilnehmer ist erforderlich",
+      "minParticipantsMin": "Mindestens 4 Teilnehmer erforderlich",
+      "maxParticipantsRequired": "Maximale Teilnehmerzahl ist erforderlich",
+      "maxParticipantsMin": "Maximale Teilnehmerzahl muss mindestens {{count}} sein",
+      "maxParticipantsMax": "Maximale Teilnehmerzahl darf 100 nicht überschreiten",
+      "integer": "Muss eine ganze Zahl sein",
+      "minAge": "Mindestalter ist 1 Jahr"
+    }
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "unauthorized": "Autorisierung erforderlich",
+    "pleaseLogin": "Bitte melden Sie sich an, um einen Raum zu erstellen",
+    "errorFetchingLanguages": "Sprachen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+  },
+  "createRoomButton": {
+    "createRoom": "Raum erstellen",
+    "qualificationMessage": "Nur autorisierte Benutzer mit einer Bewertung von 4 oder höher können einen neuen Raum erstellen",
+    "close": "Schließen"
+  },
+  "meetings": {
+    "title": "Meetings",
+    "subtitle": "Nehmen Sie an geplanten Meetings teil oder erstellen Sie Ihren eigenen Raum",
+    "error": {
+      "title": "Meetings konnten nicht geladen werden"
+    },
+    "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!"
+  },
+  "meetingCard": {
+    "titleLabel": "Titel oder Thema:",
+    "categoryLabel": "Kategorie:",
+    "timeLabel": "Meetingzeit:",
+    "startTimeLabel": "Start:",
+    "endTimeLabel": "Ende:",
+    "durationLabel": "Dauer:",
+    "participantsLabel": "Teilnehmerzahl:",
+    "minParticipantsLabel": "Min:",
+    "maxParticipantsLabel": "Max:",
+    "waitingParticipantsLabel": "Wartend:",
+    "languageFlagAlt": "{{language}} Flagge",
+    "proficiencyNotSet": "Nicht angegeben",
+    "hostAvatarAlt": "Avatar von {{name}}",
+    "ageRestrictionLabel": "Alter:",
+    "noAgeRestriction": "Keine Beschränkungen",
+    "organizerTooltip": "Organisator: {{nickname}} ({{firstName}} {{lastName}}) - Bewertung: {{rating}}",
+    "shareTooltip": "Teilen",
+    "copyLinkTooltip": "Link kopieren",
+    "joinButton": "Beitreten"
   }
 }
