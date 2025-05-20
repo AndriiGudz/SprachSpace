@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Box,
@@ -20,11 +20,47 @@ import {
   InputAdornment,
   FormControl,
   InputLabel,
+  List,
+  ListItemButton,
+  ListItemText,
 } from '@mui/material'
 import { Search } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { UserSliceState } from '../../store/redux/userSlice/types'
 import Loader from '../Loader/Loader'
+
+// Helper component for highlighting text
+function HighlightedText({
+  text,
+  highlight,
+}: {
+  text: string
+  highlight: string
+}) {
+  if (!highlight.trim()) {
+    return <>{text}</>
+  }
+  // Escape regex special characters in highlight string
+  const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&')
+  const parts = text.split(new RegExp(`(${escapedHighlight})`, 'gi'))
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === highlight.toLowerCase() ? (
+          <Box
+            component="strong"
+            key={i}
+            sx={{ color: 'primary.main', fontWeight: 'bold' }}
+          >
+            {part}
+          </Box>
+        ) : (
+          part
+        )
+      )}
+    </>
+  )
+}
 
 function UserList() {
   const { t } = useTranslation()
@@ -35,15 +71,25 @@ function UserList() {
   const [rating, setRating] = useState('all')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const navigate = useNavigate()
 
-  // Запрос данных с сервера при монтировании компонента
-  useEffect(() => {
+  // Функция для выполнения запроса на сервер
+  const fetchUsersFromServer = (searchTerm?: string) => {
     setLoading(true)
-    fetch('http://localhost:8080/api/users')
+    const url = searchTerm
+      ? `http://localhost:8080/api/users/findAnyUsers?keyword=${encodeURIComponent(
+          searchTerm
+        )}`
+      : 'http://localhost:8080/api/users'
+
+    fetch(url)
       .then((response) => response.json())
       .then((data: UserSliceState[]) => {
         setUsers(data)
@@ -54,22 +100,103 @@ function UserList() {
         setError('Ошибка загрузки пользователей')
         setLoading(false)
       })
-  }, [])
+  }
+
+  // Запрос данных с сервера при монтировании компонента (загрузка всех пользователей)
+  useEffect(() => {
+    fetchUsersFromServer() // Загружаем всех пользователей при первом рендере
+  }, []) // Пустой массив зависимостей для выполнения только один раз
+
+  // Effect for generating suggestions based on search input and users list
+  useEffect(() => {
+    if (search.trim() === '') {
+      setSuggestions([])
+      return
+    }
+
+    const newSuggestions: string[] = []
+    const uniqueSuggestions = new Set<string>()
+
+    users.forEach((user) => {
+      const fieldsToSearch: (keyof UserSliceState)[] = [
+        'id',
+        'nickname',
+        'name',
+        'surname',
+        'email',
+      ]
+      fieldsToSearch.forEach((field) => {
+        const value = user[field]
+        if (value !== null && value !== undefined) {
+          const stringValue = String(value).toLowerCase()
+          if (stringValue.includes(search.toLowerCase())) {
+            const originalDisplayValue = String(user[field])
+            if (!uniqueSuggestions.has(originalDisplayValue)) {
+              uniqueSuggestions.add(originalDisplayValue)
+              newSuggestions.push(originalDisplayValue)
+            }
+          }
+        }
+      })
+    })
+
+    setSuggestions(newSuggestions.slice(0, 10)) // Limit to 10 suggestions
+  }, [search, users])
+
+  // Effect to control suggestion visibility based on focus, search text, and available suggestions
+  useEffect(() => {
+    if (isSearchFocused && search.trim() !== '' && suggestions.length > 0) {
+      setShowSuggestions(true)
+    } else {
+      setShowSuggestions(false)
+    }
+  }, [isSearchFocused, search, suggestions])
+
+  // Effect to handle clicks outside the search container to close suggestions
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false)
+        setIsSearchFocused(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [searchContainerRef])
+
+  // Обработчик для запуска поиска
+  const handleSearchSubmit = () => {
+    if (search.trim() === '') {
+      // Если поисковой запрос пуст, загружаем всех пользователей
+      fetchUsersFromServer()
+    } else {
+      // Иначе выполняем поиск
+      fetchUsersFromServer(search)
+    }
+  }
+
+  // Обработчик нажатия Enter в поле поиска
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearchSubmit()
+    }
+  }
 
   const itemsPerPage = 10
 
-  // Фильтрация пользователей по поиску, статусу и рейтингу
+  // Фильтрация пользователей по статусу и рейтингу (поиск теперь на бэкенде)
   const filteredUsers = users.filter((user: UserSliceState) => {
-    const matchesSearch = Object.values(user).some(
-      (value) =>
-        value && value.toString().toLowerCase().includes(search.toLowerCase())
-    )
     const matchesStatus =
       status === 'all' ||
       (status === 'active' && user.status === true) ||
       (status === 'blocked' && user.status === false)
     const matchesRating = rating === 'all' || user.rating?.toString() === rating
-    return matchesSearch && matchesStatus && matchesRating
+    return matchesStatus && matchesRating // Убираем matchesSearch
   })
 
   const handlePageChange = (
@@ -108,23 +235,62 @@ function UserList() {
       }}
     >
       <Box sx={{ mb: 4 }}>
-        <TextField
-          fullWidth
-          placeholder={t('adminUsersList.searchPlaceholder')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton>
-                  <Search />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          className="inputGrey"
-          sx={{ mb: 2 }}
-        />
+        <Box sx={{ position: 'relative', mb: 2 }} ref={searchContainerRef}>
+          <TextField
+            fullWidth
+            placeholder={t('adminUsersList.searchPlaceholder')}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+            }}
+            onKeyPress={handleKeyPress}
+            onFocus={() => {
+              setIsSearchFocused(true)
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSearchSubmit}>
+                    <Search />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            className="inputGrey"
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <Paper
+              elevation={3}
+              sx={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                zIndex: 1300,
+                maxHeight: '300px',
+                overflowY: 'auto',
+              }}
+            >
+              <List dense>
+                {suggestions.map((suggestion, index) => (
+                  <ListItemButton
+                    key={index}
+                    onClick={() => {
+                      setSearch(suggestion)
+                      setShowSuggestions(false)
+                    }}
+                  >
+                    <ListItemText
+                      primary={
+                        <HighlightedText text={suggestion} highlight={search} />
+                      }
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Paper>
+          )}
+        </Box>
         <Box sx={{ display: 'flex', gap: 2, pt: 1 }}>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
             <InputLabel>{t('adminUsersList.status')}</InputLabel>

@@ -2,20 +2,16 @@ import { useState } from 'react'
 import {
   Box,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   TextField,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
-import { containerStyle, filterItemStyle, createButtonStyle } from './styles'
-import CreateRoomForm, { Room } from '../CreateRoomForm/CreateRoomForm'
+import { containerStyle, filterItemStyle } from './styles'
 import { useTranslation } from 'react-i18next'
+import { CreateRoomButton } from '../CreateRoomButton/CreateRoomButton'
+import { Room } from '../CreateRoomForm/CreateRoomForm'
 
 const RoomFilter = () => {
   const { t } = useTranslation()
@@ -24,7 +20,6 @@ const RoomFilter = () => {
   const [language, setLanguage] = useState('')
   const [proficiency, setProficiency] = useState('')
   const [date, setDate] = useState('')
-  const [openDialog, setOpenDialog] = useState(false)
 
   const handleApply = () => {
     console.log(t('applyFilters'), { category, language, date })
@@ -37,17 +32,11 @@ const RoomFilter = () => {
     setDate('')
   }
 
-  const handleCreateRoom = () => {
-    setOpenDialog(true)
-  }
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false)
-  }
-
   const handleRoomCreated = (room: Room) => {
-    console.log(t('roomCreated'), room)
-    setOpenDialog(false)
+    console.log(
+      t('roomFilter.roomCreatedLog', 'Room created in RoomFilter:'),
+      room
+    )
   }
 
   return (
@@ -82,17 +71,14 @@ const RoomFilter = () => {
               }}
             >
               <FormControl variant="outlined" sx={filterItemStyle}>
-                <InputLabel id="category-label">{t('roomFilter.category')}</InputLabel>
+                <InputLabel id="category-label">
+                  {t('roomFilter.category')}
+                </InputLabel>
                 <Select
                   labelId="category-label"
                   value={category}
                   label={t('roomFilter.category')}
                   onChange={(e) => setCategory(e.target.value)}
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#E0E0E0',
-                    },
-                  }}
                 >
                   <MenuItem value="">Not selected</MenuItem>
                   <MenuItem value="food">Food</MenuItem>
@@ -102,17 +88,14 @@ const RoomFilter = () => {
               </FormControl>
 
               <FormControl variant="outlined" sx={filterItemStyle}>
-                <InputLabel id="language-label">{t('roomFilter.language')}</InputLabel>
+                <InputLabel id="language-label">
+                  {t('roomFilter.language')}
+                </InputLabel>
                 <Select
                   labelId="language-label"
                   value={language}
                   label={t('roomFilter.language')}
                   onChange={(e) => setLanguage(e.target.value)}
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#E0E0E0',
-                    },
-                  }}
                 >
                   <MenuItem value="">Not selected</MenuItem>
                   <MenuItem value="ru">Russian</MenuItem>
@@ -131,17 +114,14 @@ const RoomFilter = () => {
               }}
             >
               <FormControl variant="outlined" sx={filterItemStyle}>
-                <InputLabel id="proficiency-label">{t('roomFilter.proficiency')}</InputLabel>
+                <InputLabel id="proficiency-label">
+                  {t('roomFilter.proficiency')}
+                </InputLabel>
                 <Select
                   labelId="proficiency-label"
                   value={proficiency}
                   label={t('roomFilter.proficiency')}
                   onChange={(e) => setProficiency(e.target.value)}
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#E0E0E0',
-                    },
-                  }}
                 >
                   <MenuItem value="">Not selected</MenuItem>
                   <MenuItem value="ru">beginner</MenuItem>
@@ -157,7 +137,7 @@ const RoomFilter = () => {
                 InputLabelProps={{ shrink: true }}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                sx={filterItemStyle}
+                sx={{ ...filterItemStyle, mb: 0 }}
               />
             </Box>
           </Box>
@@ -198,46 +178,12 @@ const RoomFilter = () => {
               textAlign: { xs: 'center', md: 'right' },
             }}
           >
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleCreateRoom}
-              sx={createButtonStyle}
-            >
-              {t('roomFilter.createRoom')}
-            </Button>
+            <CreateRoomButton onRoomCreated={handleRoomCreated} />
           </Box>
         </Box>
       </Box>
-
-      {/* Модальное окно */}
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>
-          <IconButton
-            aria-label={t('close')}
-            onClick={handleCloseDialog}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <CreateRoomForm onRoomCreated={handleRoomCreated} />
-        </DialogContent>
-      </Dialog>
     </>
   )
 }
 
 export default RoomFilter
-// Добавить проверку для кнопки Create room

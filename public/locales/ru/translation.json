@@ -42,5 +42,91 @@
     "delete": "Удалить",
     "setAdmin": "Назначить админом",
     "processing": "Обработка..."
+  },
+  "createRoomForm": {
+    "createRoom": "Создать комнату",
+    "roomName": "Название комнаты",
+    "category": "Категория",
+    "roomLanguage": "Язык комнаты",
+    "proficiency": "Уровень владения",
+    "openTime": "Время начала",
+    "closeTime": "Время окончания",
+    "minParticipants": "Минимальное количество участников",
+    "maxParticipants": "Максимальное количество участников",
+    "ageLimit": "Возрастное ограничение",
+    "createRoomButton": "Создать комнату",
+    "roomCreatedSuccess": "Комната успешно создана!",
+    "roomCreationError": "Ошибка при создании комнаты. Попробуйте еще раз.",
+    "privateRoomLabel": "Приватная комната",
+    "privateRoomHelperTextPublic": "Публичная: Видна всем, для входа не требуется одобрение.",
+    "privateRoomHelperTextPrivate": "Приватная: Войти смогут только одобренные вами пользователи.",
+    "levels": {
+      "beginner": "Начинающий",
+      "intermediate": "Средний",
+      "advanced": "Продвинутый"
+    }
+  },
+  "validation": {
+    "createRoom": {
+      "required": "Это поле обязательно",
+      "nameRequired": "Название комнаты обязательно",
+      "nameMin": "Название комнаты должно быть не менее 3 символов",
+      "nameMax": "Название комнаты должно быть не более 50 символов",
+      "nameFormat": "Название может содержать только буквы, цифры, пробелы и дефис",
+      "categoryRequired": "Выберите категорию",
+      "languageRequired": "Выберите язык",
+      "proficiencyRequired": "Выберите уровень владения языком",
+      "openTimeRequired": "Время начала обязательно",
+      "openTimeMin": "Время начала должно быть не раньше текущего времени + 5 минут",
+      "closeTimeRequired": "Время окончания обязательно",
+      "closeTimeMin": "Время окончания не может быть раньше времени начала + 15 минут",
+      "minParticipantsRequired": "Минимальное количество участников обязательно",
+      "minParticipantsMin": "Минимальное количество участников - 4",
+      "maxParticipantsRequired": "Максимальное количество участников обязательно",
+      "maxParticipantsMin": "Максимальное количество участников должно быть не менее {{count}}",
+      "maxParticipantsMax": "Максимальное количество участников не может превышать 100",
+      "integer": "Должно быть целым числом",
+      "minAge": "Минимальный возраст - 1 год"
+    }
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "unauthorized": "Необходима авторизация",
+    "pleaseLogin": "Пожалуйста, войдите в систему для создания комнаты",
+    "errorFetchingLanguages": "Не удалось загрузить языки. Пожалуйста, попробуйте позже."
+  },
+  "createRoomButton": {
+    "createRoom": "Создать комнату",
+    "qualificationMessage": "Создать новую комнату может только авторизованный пользователь с рейтингом 4 и выше",
+    "close": "Закрыть"
+  },
+  "meetings": {
+    "title": "Встречи",
+    "subtitle": "Присоединяйтесь к запланированным встречам или создайте свою комнату",
+    "error": {
+      "title": "Не удалось загрузить встречи"
+    },
+    "noRooms": "Пока нет доступных комнат. Создайте первую!"
+  },
+  "meetingCard": {
+    "titleLabel": "Название или тема:",
+    "categoryLabel": "Категория:",
+    "timeLabel": "Время встречи:",
+    "startTimeLabel": "Начало:",
+    "endTimeLabel": "Конец:",
+    "durationLabel": "Продолжительность:",
+    "participantsLabel": "Количество участников:",
+    "minParticipantsLabel": "Мин:",
+    "maxParticipantsLabel": "Макс:",
+    "waitingParticipantsLabel": "Ожидают:",
+    "languageFlagAlt": "Флаг {{language}}",
+    "proficiencyNotSet": "Не указан",
+    "hostAvatarAlt": "Аватар {{name}}",
+    "ageRestrictionLabel": "Возраст:",
+    "noAgeRestriction": "Без ограничений",
+    "organizerTooltip": "Организатор: {{nickname}} ({{firstName}} {{lastName}}) - Рейтинг: {{rating}}",
+    "shareTooltip": "Поделиться",
+    "copyLinkTooltip": "Копировать ссылку",
+    "joinButton": "Присоединиться"
   }
 }

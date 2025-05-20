@@ -1,3 +1,7 @@
+import { useMemo, useCallback } from 'react'
+import { Link as RouterLink } from 'react-router-dom' // Импортируем Link как RouterLink
+import { LazyLoadImage } from 'react-lazy-load-image-component'
+import 'react-lazy-load-image-component/src/effects/blur.css'
 import {
   Card,
   CardContent,
@@ -10,8 +14,9 @@ import {
   useMediaQuery,
   Divider,
 } from '@mui/material'
-import { Share2, Copy } from 'lucide-react' // Удалён Flag, так как заменяем на <img>
-import { format } from 'date-fns'
+import { Share2, Copy } from 'lucide-react'
+import { format, parseISO } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import { Meeting } from './types'
 import {
   cardStyle,
@@ -27,139 +32,234 @@ import {
 } from './styles'
 
 import defAvatar from '../../assets/default-avatar.png'
-
 import enFlag from '../../assets/flag/en.png'
 import deFlag from '../../assets/flag/de.png'
 import ukFlag from '../../assets/flag/ua.png'
 import ruFlag from '../../assets/flag/ru.png'
 
-const defaultMeeting: Meeting = {
-  id: '1',
-  title: 'Cooking Master Class',
-  category: 'Food',
-  startTime: '2024-12-24T16:00:00',
-  endTime: '2024-12-24T17:20:00',
-  duration: '1:20',
-  minParticipants: 4,
-  maxParticipants: 12,
-  waitingParticipants: 9,
-  language: 'en',
-  proficiency: 'beginner',
-  hostAvatar: defAvatar,
-  ageRestriction: null,
-  shareLink: 'https://meeting-link.com/cooking-class',
+const languageFlagsFallback: Record<string, string> = {
+  English: enFlag,
+  German: deFlag,
+  Ukrainian: ukFlag,
+  Russian: ruFlag,
 }
 
 interface MeetingCardProps {
-  meeting?: Meeting
+  meeting: Meeting
 }
 
-// Сопоставляем языковой код с нужным файлом флага
-const languageFlags: Record<string, string> = {
-  en: enFlag,
-  de: deFlag,
-  ua: ukFlag,
-  ru: ruFlag,
-}
-
-function MeetingCard({ meeting = defaultMeeting }: MeetingCardProps) {
+function MeetingCard({ meeting }: MeetingCardProps) {
+  const { t } = useTranslation()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'))
 
-  // Выбираем флаг по языку. Если для meeting.language нет записи, используется enFlag
-  const languageFlag = languageFlags[meeting.language] || enFlag
+  const {
+    id,
+    slug,
+    name,
+    description,
+    category,
+    startTime,
+    endTime,
+    duration,
+    minParticipants,
+    maxParticipants,
+    waitingParticipants,
+    language,
+    proficiency,
+    organizer,
+    ageRestriction,
+    shareLink,
+    roomUrl,
+    imageUrl,
+    languageFlagIconUrl,
+    location,
+  } = meeting
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: meeting.title,
-        text: `Join our meeting: ${meeting.title}`,
-        url: meeting.shareLink,
-      })
+  const flagImageSrc = useMemo(
+    () => languageFlagIconUrl || languageFlagsFallback[language] || enFlag,
+    [languageFlagIconUrl, language]
+  )
+
+  const hostAvatarSrc = useMemo(
+    () => organizer?.avatarUrl || defAvatar,
+    [organizer?.avatarUrl]
+  )
+
+  const handleShare = useCallback(() => {
+    if (navigator.share && shareLink) {
+      navigator
+        .share({
+          title: name,
+          text: description || `Join our meeting: ${name}`,
+          url: shareLink,
+        })
+        .catch((error) => console.error('Error sharing:', error))
     }
-  }
+  }, [shareLink, name, description])
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(meeting.shareLink)
-  }
+  const handleCopyLink = useCallback(() => {
+    if (shareLink) {
+      navigator.clipboard
+        .writeText(shareLink)
+        .catch((error) => console.error('Error copying link:', error))
+    }
+  }, [shareLink])
+
+  const formattedStartTime = useMemo(
+    () => format(parseISO(startTime), 'dd.MM.yyyy HH:mm'),
+    [startTime]
+  )
+
+  const formattedEndTime = useMemo(
+    () => format(parseISO(endTime), 'dd.MM.yyyy HH:mm'),
+    [endTime]
+  )
+
+  const cardLink = useMemo(() => `/meetings/${slug || id}`, [slug, id])
 
   return (
-    <Card sx={cardStyle}>
-      <CardContent sx={cardContentStyle}>
-        <Box
-          sx={{
-            ...topSectionBoxStyle,
-            flexDirection: isMobile ? 'column' : 'row',
-          }}
+    <Card sx={cardStyle} itemScope itemType="http://schema.org/Event">
+      {imageUrl && <meta itemProp="image" content={imageUrl} />}
+      <meta itemProp="name" content={name} />
+      {description && <meta itemProp="description" content={description} />}
+      <meta itemProp="startDate" content={startTime} />
+      <meta itemProp="endDate" content={endTime} />
+      {location?.url && <meta itemProp="location" content={location.url} />}
+      {organizer?.name && (
+        <div
+          itemProp="organizer"
+          itemScope
+          itemType="http://schema.org/Person"
+          style={{ display: 'none' }}
         >
-          <Box sx={{ ...participantBoxStyle, width: '50%' }}>
-            <Typography
-              variant="body1"
-              color="text.primary"
-              sx={{ textDecoration: 'underline' }}
-            >
-              Title or Subject:
-            </Typography>
-            <Typography color="text.secondary">{meeting.title}</Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography
-                variant="body1"
-                color="text.primary"
-                sx={{ textDecoration: 'underline', mr: 1 }}
-              >
-                Category:
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                {meeting.category}
-              </Typography>
-            </Box>
-          </Box>
+          <meta itemProp="name" content={organizer.name} />
+          {organizer.avatarUrl && (
+            <meta itemProp="image" content={organizer.avatarUrl} />
+          )}
+        </div>
+      )}
 
+      <CardContent sx={cardContentStyle}>
+        <RouterLink // Используем RouterLink с пропом 'to'
+          to={cardLink}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
           <Box
-            sx={{ ...infoBoxStyle, flexDirection: isMobile ? 'column' : 'row' }}
+            sx={{
+              ...topSectionBoxStyle,
+              flexDirection: isMobile ? 'column' : 'row',
+            }}
           >
-            <Box sx={participantBoxStyle}>
+            <Box
+              sx={{ ...participantBoxStyle, width: isMobile ? '100%' : '50%' }}
+            >
               <Typography
                 variant="body1"
                 color="text.primary"
                 sx={{ textDecoration: 'underline' }}
               >
-                Meeting time:
+                {t('meetingCard.titleLabel', 'Title or Subject:')}
               </Typography>
-              <Typography color="text.secondary">
-                Start: {format(new Date(meeting.startTime), 'dd.MM.yyyy HH:mm')}
+              <Typography
+                component="h2" // Семантический заголовок
+                variant="h6"
+                color="text.secondary"
+                // itemProp="name" // Уже есть в meta тегах, здесь можно убрать для чистоты, но не критично
+              >
+                {name}
               </Typography>
-              <Typography color="text.secondary">
-                End: {format(new Date(meeting.endTime), 'dd.MM.yyyy HH:mm')}
-              </Typography>
-              <Typography color="text.secondary">
-                Duration: {meeting.duration}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                <Typography
+                  variant="body1"
+                  color="text.primary"
+                  sx={{ textDecoration: 'underline', mr: 1 }}
+                >
+                  {t('meetingCard.categoryLabel', 'Category:')}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  itemProp="about" // Для категории
+                >
+                  {category}
+                </Typography>
+              </Box>
             </Box>
 
-            <Box sx={participantBoxStyle}>
-              <Typography
-                variant="body1"
-                color="text.primary"
-                sx={{ textDecoration: 'underline' }}
-              >
-                Number of participants:
-              </Typography>
-              <Typography color="text.secondary">
-                Min: {meeting.minParticipants}
-              </Typography>
-              <Typography color="text.secondary">
-                Max: {meeting.maxParticipants}
-              </Typography>
-              <Typography color="text.secondary">
-                Waiting: {meeting.waitingParticipants}
-              </Typography>
+            <Box
+              sx={{
+                ...infoBoxStyle,
+                flexDirection: isMobile ? 'column' : 'row',
+              }}
+            >
+              <Box sx={participantBoxStyle}>
+                <Typography
+                  variant="body1"
+                  color="text.primary"
+                  sx={{ textDecoration: 'underline' }}
+                >
+                  {t('meetingCard.timeLabel', 'Meeting time:')}
+                </Typography>
+                <Typography color="text.secondary">
+                  {t('meetingCard.startTimeLabel', 'Start:')}{' '}
+                  <time dateTime={startTime}>{formattedStartTime}</time>
+                </Typography>
+                <Typography color="text.secondary">
+                  {t('meetingCard.endTimeLabel', 'End:')}{' '}
+                  <time dateTime={endTime}>{formattedEndTime}</time>
+                </Typography>
+                {duration && (
+                  <Typography color="text.secondary">
+                    {t('meetingCard.durationLabel', 'Duration:')} {duration}
+                  </Typography>
+                )}
+              </Box>
+
+              {(minParticipants !== undefined ||
+                maxParticipants !== undefined ||
+                waitingParticipants !== undefined) && (
+                <Box sx={participantBoxStyle}>
+                  <Typography
+                    variant="body1"
+                    color="text.primary"
+                    sx={{ textDecoration: 'underline' }}
+                  >
+                    {t(
+                      'meetingCard.participantsLabel',
+                      'Number of participants:'
+                    )}
+                  </Typography>
+                  {minParticipants !== undefined && (
+                    <Typography
+                      color="text.secondary"
+                      itemProp="maximumAttendeeCapacity"
+                      content={maxParticipants?.toString()}
+                    >
+                      {' '}
+                      {/* Schema.org для макс. участников, если применимо */}
+                      {t('meetingCard.minParticipantsLabel', 'Min:')}{' '}
+                      {minParticipants}
+                    </Typography>
+                  )}
+                  {maxParticipants !== undefined && (
+                    <Typography color="text.secondary">
+                      {t('meetingCard.maxParticipantsLabel', 'Max:')}{' '}
+                      {maxParticipants}
+                    </Typography>
+                  )}
+                  {waitingParticipants !== undefined && (
+                    <Typography color="text.secondary">
+                      {t('meetingCard.waitingParticipantsLabel', 'Waiting:')}{' '}
+                      {waitingParticipants}
+                    </Typography>
+                  )}
+                </Box>
+              )}
             </Box>
           </Box>
-        </Box>
+        </RouterLink>
 
-        {/* РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ */}
         <Divider sx={{ my: 2 }} />
 
         <Box
@@ -169,87 +269,207 @@ function MeetingCard({ meeting = defaultMeeting }: MeetingCardProps) {
             sx={{
               ...languageContainerStyle,
               flexWrap: isMobile ? 'wrap' : 'nowrap',
+              gap: 2,
+              alignItems: 'center',
             }}
           >
-            {/* Вместо иконки флага и текста – показываем одну фотографию */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                src={languageFlag}
-                alt={`${meeting.language} flag`}
-                style={{ width: 36, height: 36, marginRight: 8 }}
-              />
-            <Typography color="text.secondary">
-              {meeting.proficiency}
-            </Typography>
-            </Box>
-
-
-            {/* Avatar */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                src={meeting.hostAvatar || defAvatar}
-                alt={`Avatar`}
-                style={{ width: 36, height: 36, marginRight: 8 }}
-              />
-            </Box>
-
             <Box
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
+                minWidth: '40px',
               }}
+              title={`${language} - ${
+                proficiency || t('meetingCard.proficiencyNotSet', 'Не указан')
+              }`}
             >
+              <LazyLoadImage
+                src={flagImageSrc}
+                alt={t('meetingCard.languageFlagAlt', `${language} flag`, {
+                  language,
+                })}
+                width={36}
+                height={36}
+                effect="blur"
+                style={{
+                  flexShrink: 0,
+                  marginRight: 0,
+                  minWidth: '36px',
+                  minHeight: '36px',
+                }}
+              />
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  {proficiency ||
+                    t('meetingCard.proficiencyNotSet', 'Не указан')}
+                </Typography>
+              </Box>
+            </Box>
+
+            {organizer && (
+              <Tooltip
+                title={t(
+                  'meetingCard.organizerTooltip',
+                  `Организатор: ${organizer.nickname} (${organizer.firstName} ${organizer.lastName}) - Рейтинг: ${organizer.rating}`,
+                  {
+                    nickname: organizer.nickname,
+                    firstName: organizer.firstName,
+                    lastName: organizer.lastName,
+                    rating: organizer.rating,
+                  }
+                )}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: '#0288d1',
+                      color: '#fff',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#0288d1',
+                    },
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    minWidth: '40px',
+                  }}
+                >
+                  <LazyLoadImage
+                    src={hostAvatarSrc}
+                    alt={t(
+                      'meetingCard.hostAvatarAlt',
+                      `Avatar of ${organizer.name}`,
+                      { name: organizer.name }
+                    )}
+                    width={36}
+                    height={36}
+                    effect="blur"
+                    style={{
+                      borderRadius: '50%',
+                      flexShrink: 0,
+                      marginRight: 0,
+                      minWidth: '36px',
+                      minHeight: '36px',
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            )}
+
+            {/* Возрастное ограничение */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography
-                variant="body1"
+                variant="body2"
                 color="text.primary"
                 sx={{ textDecoration: 'underline' }}
               >
-                Age restriction:
+                {t('meetingCard.ageRestrictionLabel', 'Age:')}
               </Typography>
-
-              {/* Если есть ограничение, показываем его со стилями, иначе - "No" */}
-              {meeting.ageRestriction ? (
+              {ageRestriction && ageRestriction > 0 ? (
                 <Typography variant="body1" sx={ageRestrictionStyle}>
-                  {meeting.ageRestriction}+
+                  {ageRestriction}+
                 </Typography>
               ) : (
-                <Typography variant="body1" color="text.secondary">
-                  No
+                <Typography variant="body2" color="text.secondary">
+                  {t('meetingCard.noAgeRestriction', 'Без ограничений')}
                 </Typography>
               )}
             </Box>
 
-            <Box sx={actionButtonsStyle}>
-              <Tooltip title="Share">
-                <IconButton onClick={handleShare}>
+            {/* Share */}
+            {shareLink && (
+              <Tooltip
+                title={t('meetingCard.shareTooltip', 'Share')}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: '#0288d1',
+                      color: '#fff',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#0288d1',
+                    },
+                  },
+                }}
+              >
+                <IconButton
+                  onClick={handleShare}
+                  aria-label={t('meetingCard.shareTooltip', 'Share')}
+                >
                   <Share2 />
                 </IconButton>
               </Tooltip>
-
-              <Tooltip title="Copy link">
-                <IconButton onClick={handleCopyLink}>
+            )}
+            {shareLink && (
+              <Tooltip
+                title={t('meetingCard.copyLinkTooltip', 'Copy link')}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: '#0288d1',
+                      color: '#fff',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#0288d1',
+                    },
+                  },
+                }}
+              >
+                <IconButton
+                  onClick={handleCopyLink}
+                  aria-label={t('meetingCard.copyLinkTooltip', 'Copy link')}
+                >
                   <Copy />
                 </IconButton>
               </Tooltip>
-            </Box>
+            )}
           </Box>
 
-          <Box sx={actionButtonsStyle}>
-            <Button
+          <Box
+            sx={{
+              ...actionButtonsStyle,
+              justifyContent: isMobile ? 'center' : 'flex-end',
+              width: isMobile ? '100%' : 'auto',
+              mt: isMobile ? 2 : 0,
+            }}
+          >
+            <Button // MUI Button, который рендерится как ссылка
+              component={RouterLink} // Используем RouterLink
+              to={roomUrl || cardLink} // Используем 'to'
               variant="contained"
               color="primary"
-              sx={joinButtonStyle}
-              onClick={() => console.log('Joining meeting:', meeting.id)}
+              sx={joinButtonStyle} // Используем 'sx' для стилей MUI
+              target="_blank"
+              rel="noopener noreferrer"
+              // itemProp="url" // Можно добавить, если roomUrl это прямая ссылка на присоединение
             >
-              Join
+              {t('meetingCard.joinButton', 'Join')}
             </Button>
           </Box>
         </Box>
+        {description && ( // Отображаем описание, если оно есть
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 2 }}
+            itemProp="description" // Убедимся, что описание также есть в Schema.org
+          >
+            {description}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   )
 }
 
 export default MeetingCard
-// Добавить переводы
