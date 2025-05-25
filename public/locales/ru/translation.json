@@ -128,5 +128,14 @@
     "shareTooltip": "Поделиться",
     "copyLinkTooltip": "Копировать ссылку",
     "joinButton": "Присоединиться"
+  },
+  "personalData": {
+    "title": "Личные данные",
+    "nickname": "Никнейм",
+    "name": "Имя",
+    "surname": "Фамилия",
+    "birthdayDate": "Дата рождения",
+    "avatarUploadedSuccess": "Аватар успешно загружен",
+    "avatarUploadError": "Ошибка при загрузке аватара"
   }
 }

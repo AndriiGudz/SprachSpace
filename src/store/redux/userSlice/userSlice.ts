@@ -23,6 +23,7 @@ export const initialState: UserSliceState = storedUser
       refreshToken: null,
       isAuthenticated: false,
       message: null,
+      avatarDisplayUrl: null,
     }
 
 export const userSlice = createSlice({
@@ -90,8 +91,34 @@ export const userSlice = createSlice({
       Object.assign(state, action.payload)
       localStorage.setItem('user', JSON.stringify(state))
     },
+    setAvatarDisplayUrl: (state, action: PayloadAction<string | null>) => {
+      if (
+        state.avatarDisplayUrl &&
+        state.avatarDisplayUrl.startsWith('blob:')
+      ) {
+        URL.revokeObjectURL(state.avatarDisplayUrl)
+      }
+      state.avatarDisplayUrl = action.payload
+    },
+    logoutUser: (state) => {
+      Object.assign(state, initialState)
+      localStorage.removeItem('user')
+      if (
+        state.avatarDisplayUrl &&
+        state.avatarDisplayUrl.startsWith('blob:')
+      ) {
+        URL.revokeObjectURL(state.avatarDisplayUrl)
+      }
+      state.avatarDisplayUrl = null
+    },
   },
 })
 
-export const { setUser, setTokens, clearUser, updateUser } = userSlice.actions
+export const {
+  setUser,
+  setTokens,
+  clearUser,
+  updateUser,
+  setAvatarDisplayUrl,
+} = userSlice.actions
 export default userSlice.reducer

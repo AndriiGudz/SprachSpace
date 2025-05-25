@@ -68,7 +68,9 @@
     "nickname": "Nickname",
     "name": "Name",
     "surname": "Surname",
-    "birthdayDate": "Date of birth"
+    "birthdayDate": "Date of birth",
+    "avatarUploadedSuccess": "Avatar uploaded successfully",
+    "avatarUploadError": "Failed to upload avatar"
   },
   "languageSection": {
     "title": "Language proficiency",

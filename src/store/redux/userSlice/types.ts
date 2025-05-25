@@ -37,4 +37,9 @@ export interface UserSliceState {
   refreshToken: string | null
   isAuthenticated: boolean
   message?: string | null
+  avatarDisplayUrl?: string | null
+}
+
+export interface AuthState {
+  // ... existing code ...
 }

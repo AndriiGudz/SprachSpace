@@ -42,6 +42,7 @@ function LanguageSelector() {
           <img
             src={enFlag}
             alt="English"
+            loading="lazy"
           />
           En
         </Box>
@@ -51,6 +52,7 @@ function LanguageSelector() {
           <img
             src={deFlag}
             alt="Deutsch"
+            loading="lazy"
           />
           De
         </Box>
@@ -60,6 +62,7 @@ function LanguageSelector() {
           <img
             src={ukFlag}
             alt="Українська"
+            loading="lazy"
           />
           Uk
         </Box>
@@ -69,6 +72,7 @@ function LanguageSelector() {
           <img
             src={ruFlag}
             alt="Русский"
+            loading="lazy"
           />
           Ru
         </Box>
