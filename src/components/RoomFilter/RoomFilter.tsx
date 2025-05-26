@@ -17,13 +17,26 @@ import { Room } from '../CreateRoomForm/CreateRoomForm'
 import { getAllCategories, Category } from '../../api/categoryApi'
 import { getAllLanguages, Language } from '../../api/languageApi'
 
-const RoomFilter = () => {
+export interface RoomFilters {
+  category: string
+  language: string
+  proficiency: string
+  date: string
+}
+
+interface RoomFilterProps {
+  onFiltersChange: (filters: RoomFilters) => void
+}
+
+const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
   const { t } = useTranslation()
 
-  const [category, setCategory] = useState('')
-  const [language, setLanguage] = useState('')
-  const [proficiency, setProficiency] = useState('')
-  const [date, setDate] = useState('')
+  const [filters, setFilters] = useState<RoomFilters>({
+    category: '',
+    language: '',
+    proficiency: '',
+    date: '',
+  })
 
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true)
@@ -89,19 +102,67 @@ const RoomFilter = () => {
     }
   }, [t])
 
+  const handleFilterChange = (field: keyof RoomFilters, value: string) => {
+    // Если значение пустое, сбрасываем фильтр
+    if (!value) {
+      const newFilters = { ...filters, [field]: '' }
+      setFilters(newFilters)
+      onFiltersChange(newFilters)
+      return
+    }
+
+    let newFilters = { ...filters }
+
+    if (field === 'language') {
+      const selectedLanguage = languages.find(
+        (lang) => lang.id.toString() === value
+      )
+      if (selectedLanguage) {
+        newFilters.language = value // Сохраняем ID
+      }
+    } else if (field === 'category') {
+      const selectedCategory = categories.find(
+        (cat) => cat.id.toString() === value
+      )
+      if (selectedCategory) {
+        newFilters.category = value // Сохраняем ID
+      }
+    } else {
+      newFilters[field] = value
+    }
+
+    setFilters(newFilters)
+  }
+
   const handleApply = () => {
-    console.log('Applying filters:', { category, language, proficiency, date })
+    // При применении фильтров преобразуем ID в имена
+    const appliedFilters = {
+      ...filters,
+      category: filters.category
+        ? categories.find((cat) => cat.id.toString() === filters.category)
+            ?.name || ''
+        : '',
+      language: filters.language
+        ? languages.find((lang) => lang.id.toString() === filters.language)
+            ?.name || ''
+        : '',
+    }
+    onFiltersChange(appliedFilters)
   }
 
   const handleReset = () => {
-    setCategory('')
-    setLanguage('')
-    setProficiency('')
-    setDate('')
+    const resetFilters = {
+      category: '',
+      language: '',
+      proficiency: '',
+      date: '',
+    }
+    setFilters(resetFilters)
+    onFiltersChange(resetFilters)
   }
 
   const handleRoomCreated = (room: Room) => {
-    console.log('Room created:', room)
+    // Обработка создания комнаты может быть добавлена позже
   }
 
   return (
@@ -144,9 +205,9 @@ const RoomFilter = () => {
               </InputLabel>
               <Select
                 labelId="category-label"
-                value={category}
+                value={filters.category}
                 label={t('roomFilter.category')}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => handleFilterChange('category', e.target.value)}
                 disabled={isLoadingCategories}
               >
                 <MenuItem value="">
@@ -165,7 +226,7 @@ const RoomFilter = () => {
                   </MenuItem>
                 ) : (
                   categories.map((cat) => (
-                    <MenuItem key={cat.id} value={cat.id}>
+                    <MenuItem key={cat.id} value={cat.id.toString()}>
                       {cat.name}
                     </MenuItem>
                   ))
@@ -182,9 +243,9 @@ const RoomFilter = () => {
               </InputLabel>
               <Select
                 labelId="language-label"
-                value={language}
+                value={filters.language}
                 label={t('roomFilter.language')}
-                onChange={(e) => setLanguage(e.target.value)}
+                onChange={(e) => handleFilterChange('language', e.target.value)}
                 disabled={isLoadingLanguages}
               >
                 <MenuItem value="">
@@ -203,7 +264,7 @@ const RoomFilter = () => {
                   </MenuItem>
                 ) : (
                   languages.map((lang) => (
-                    <MenuItem key={lang.id} value={lang.id}>
+                    <MenuItem key={lang.id} value={lang.id.toString()}>
                       {lang.name}
                     </MenuItem>
                   ))
@@ -230,9 +291,11 @@ const RoomFilter = () => {
               </InputLabel>
               <Select
                 labelId="proficiency-label"
-                value={proficiency}
+                value={filters.proficiency}
                 label={t('roomFilter.proficiency')}
-                onChange={(e) => setProficiency(e.target.value)}
+                onChange={(e) =>
+                  handleFilterChange('proficiency', e.target.value)
+                }
               >
                 <MenuItem value="">
                   <em>{t('roomFilter.notSelected')}</em>
@@ -254,8 +317,8 @@ const RoomFilter = () => {
               label={t('roomFilter.date')}
               type="date"
               InputLabelProps={{ shrink: true }}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={filters.date}
+              onChange={(e) => handleFilterChange('date', e.target.value)}
               sx={{ ...filterItemStyle, m: 0, flex: 1 }}
             />
           </Box>

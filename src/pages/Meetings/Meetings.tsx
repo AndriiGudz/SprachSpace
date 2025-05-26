@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Meeting } from '../../components/MeetingCard/types'
 import MeetingCard from '../../components/MeetingCard/MeetingCard'
-import RoomFilter from '../../components/RoomFilter/RoomFilter'
+import RoomFilter, { RoomFilters } from '../../components/RoomFilter/RoomFilter'
 import { boxTitleStyle, containerStyle, meetingCardStyle } from './styles'
 import { fetchRooms } from '../../store/redux/roomSlice/roomSlice'
 import { RootState, AppDispatch } from '../../store/store'
@@ -115,49 +115,81 @@ function Meetings() {
   const [page, setPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(8)
 
+  // Filter state
+  const [activeFilters, setActiveFilters] = useState<RoomFilters>({
+    category: '',
+    language: '',
+    proficiency: '',
+    date: '',
+  })
+
   useEffect(() => {
     dispatch(fetchRooms())
   }, [dispatch])
 
-  const meetings: Meeting[] = useMemo(() => {
+  const filteredMeetings = useMemo(() => {
     if (!apiRooms) return []
 
-    const now = new Date()
     const mappedMeetings = apiRooms.map(mapApiRoomToMeeting)
 
-    // Сортируем встречи:
-    // 1. Предстоящие встречи сначала (сортируются по времени начала)
-    // 2. Прошедшие встречи в конце (сортируются по времени окончания)
-    return mappedMeetings.sort((a, b) => {
-      const aEndTime = new Date(a.endTime)
-      const bEndTime = new Date(b.endTime)
-      const aStartTime = new Date(a.startTime)
-      const bStartTime = new Date(b.startTime)
+    return mappedMeetings
+      .filter((meeting) => {
+        const meetingDate = new Date(meeting.startTime)
+          .toISOString()
+          .split('T')[0]
 
-      // Проверяем, прошла ли встреча
-      const aIsPast = aEndTime < now
-      const bIsPast = bEndTime < now
+        // Сравниваем значения, приводя их к нижнему регистру
+        const categoryMatch =
+          !activeFilters.category ||
+          meeting.category.toLowerCase() ===
+            activeFilters.category.toLowerCase()
 
-      // Если обе встречи прошли или обе предстоящие
-      if (aIsPast === bIsPast) {
-        if (aIsPast) {
-          // Для прошедших встреч сортируем по времени окончания (более поздние сначала)
-          return bEndTime.getTime() - aEndTime.getTime()
-        } else {
-          // Для предстоящих встреч сортируем по времени начала
-          return aStartTime.getTime() - bStartTime.getTime()
+        const languageMatch =
+          !activeFilters.language ||
+          meeting.language.toLowerCase() ===
+            activeFilters.language.toLowerCase()
+
+        const proficiencyMatch =
+          !activeFilters.proficiency ||
+          meeting.proficiency?.toLowerCase() ===
+            activeFilters.proficiency.toLowerCase()
+
+        const dateMatch =
+          !activeFilters.date || meetingDate === activeFilters.date
+
+        return categoryMatch && languageMatch && proficiencyMatch && dateMatch
+      })
+      .sort((a, b) => {
+        const now = new Date()
+        const aEndTime = new Date(a.endTime)
+        const bEndTime = new Date(b.endTime)
+        const aStartTime = new Date(a.startTime)
+        const bStartTime = new Date(b.startTime)
+
+        // Проверяем, прошла ли встреча
+        const aIsPast = aEndTime < now
+        const bIsPast = bEndTime < now
+
+        // Если обе встречи прошли или обе предстоящие
+        if (aIsPast === bIsPast) {
+          if (aIsPast) {
+            // Для прошедших встреч сортируем по времени окончания (более поздние сначала)
+            return bEndTime.getTime() - aEndTime.getTime()
+          } else {
+            // Для предстоящих встреч сортируем по времени начала
+            return aStartTime.getTime() - bStartTime.getTime()
+          }
         }
-      }
 
-      // Если одна встреча прошла, а другая нет
-      return aIsPast ? 1 : -1
-    })
-  }, [apiRooms])
+        // Если одна встреча прошла, а другая нет
+        return aIsPast ? 1 : -1
+      })
+  }, [apiRooms, activeFilters])
 
   // Pagination calculations
-  const totalPages = Math.ceil(meetings.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredMeetings.length / itemsPerPage)
   const startIndex = (page - 1) * itemsPerPage
-  const paginatedMeetings = meetings.slice(
+  const paginatedMeetings = filteredMeetings.slice(
     startIndex,
     startIndex + itemsPerPage
   )
@@ -172,6 +204,11 @@ function Meetings() {
   const handleItemsPerPageChange = (event: any) => {
     const newItemsPerPage = parseInt(event.target.value)
     setItemsPerPage(newItemsPerPage)
+    setPage(1)
+  }
+
+  const handleFiltersChange = (filters: RoomFilters) => {
+    setActiveFilters(filters)
     setPage(1)
   }
 
@@ -215,10 +252,10 @@ function Meetings() {
         </Typography>
       </Box>
 
-      <RoomFilter />
+      <RoomFilter onFiltersChange={handleFiltersChange} />
 
       <Box sx={meetingCardStyle}>
-        {meetings.length > 0 ? (
+        {filteredMeetings.length > 0 ? (
           <>
             <Stack spacing={3} mt={3}>
               {paginatedMeetings.map((meeting) => {
