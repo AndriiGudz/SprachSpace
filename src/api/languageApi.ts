@@ -6,14 +6,11 @@ export interface Language {
   // Добавь другие поля, если они есть в ответе API
 }
 
-export async function getAllLanguages(
-  accessToken: string
-): Promise<Language[]> {
+export async function getAllLanguages(): Promise<Language[]> {
   const response = await fetch(`${API_ROOT_URL}/language`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
     },
   })
 

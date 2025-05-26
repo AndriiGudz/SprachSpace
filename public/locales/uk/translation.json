@@ -206,14 +206,15 @@
   "roomFilter": {
     "category": "Категорія",
     "language": "Мова",
-    "proficiency": "Рівень володіння",
+    "proficiency": "Рівень",
     "date": "Дата",
     "apply": "Застосувати",
     "reset": "Скинути",
     "createRoom": "Створити кімнату",
     "close": "Закрити",
     "applyFilters": "Застосувати фільтри",
-    "roomCreated": "Кімната створена:"
+    "roomCreated": "Кімнату створено:",
+    "notSelected": "Не вибрано"
   },
   "adminUsersList": {
     "searchPlaceholder": "Пошук за ім'ям, email, ID користувача тощо",

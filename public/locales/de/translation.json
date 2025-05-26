@@ -213,7 +213,8 @@
     "createRoom": "Raum erstellen",
     "close": "Schließen",
     "applyFilters": "Filter anwenden",
-    "roomCreated": "Raum erstellt:"
+    "roomCreated": "Raum erstellt:",
+    "notSelected": "Nicht ausgewählt"
   },
   "adminUsersList": {
     "searchPlaceholder": "Suche nach Name, E-Mail, Benutzer-ID usw.",

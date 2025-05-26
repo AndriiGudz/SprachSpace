@@ -8,16 +8,13 @@ export interface Category {
   name: string
 }
 
-export async function getAllCategories(
-  accessToken: string
-): Promise<Category[]> {
+export async function getAllCategories(): Promise<Category[]> {
   const response = await fetch(
     `${CATEGORY_API_BASE_URL}/category/allCategory`,
     {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
       },
     }
   )

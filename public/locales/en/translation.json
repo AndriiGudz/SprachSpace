@@ -212,8 +212,9 @@
     "reset": "Reset",
     "createRoom": "Create Room",
     "close": "Close",
-    "applyFilters": "Apply filters",
-    "roomCreated": "Room created:"
+    "applyFilters": "Apply Filters",
+    "roomCreated": "Room created:",
+    "notSelected": "Not selected"
   },
   "adminUsersList": {
     "searchPlaceholder": "Search by name, email, user ID, etc.",

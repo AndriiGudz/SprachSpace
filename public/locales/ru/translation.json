@@ -113,6 +113,19 @@
     },
     "noRooms": "Пока нет доступных комнат. Создайте первую!"
   },
+  "roomFilter": {
+    "category": "Категория",
+    "language": "Язык",
+    "proficiency": "Уровень",
+    "date": "Дата",
+    "apply": "Применить",
+    "reset": "Сбросить",
+    "createRoom": "Создать комнату",
+    "close": "Закрыть",
+    "applyFilters": "Применить фильтры",
+    "roomCreated": "Комната создана:",
+    "notSelected": "Не выбрано"
+  },
   "meetingCard": {
     "titleLabel": "Название или тема:",
     "categoryLabel": "Категория:",

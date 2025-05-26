@@ -71,7 +71,6 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   const {
     isAuthenticated,
     id: userIdFromAuth,
-    accessToken,
   } = useSelector((state: RootState) => state.user)
   const { isLoading: isRoomCreating, error: roomCreationError } = useSelector(
     (state: RootState) => state.rooms
@@ -118,7 +117,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   }, [roomCreationError, dispatch])
 
   useEffect(() => {
-    if (!isAuthenticated || !accessToken) {
+    if (!isAuthenticated) {
       setLanguageError(t('common.unauthorized'))
       setIsLoadingLanguages(false)
       return
@@ -127,7 +126,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
     async function fetchLanguages() {
       try {
         setIsLoadingLanguages(true)
-        const fetchedLanguages = await getAllLanguages(accessToken  as string)
+        const fetchedLanguages = await getAllLanguages()
         setLanguages(fetchedLanguages)
         setLanguageError(null)
       } catch (error) {
@@ -143,18 +142,18 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
     }
 
     fetchLanguages()
-  }, [isAuthenticated, accessToken, t])
+  }, [isAuthenticated, t])
 
   useEffect(() => {
     async function fetchCategories() {
-      if (!accessToken) {
+      if (!isAuthenticated) {
         setCategoryError(t('common.unauthorized'))
         setIsLoadingCategories(false)
         return
       }
       try {
         setIsLoadingCategories(true)
-        const fetchedCategories = await getAllCategories(accessToken)
+        const fetchedCategories = await getAllCategories()
         setCategories(fetchedCategories)
         setCategoryError(null)
       } catch (error) {
@@ -174,7 +173,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
       }
     }
     fetchCategories()
-  }, [accessToken, t])
+  }, [isAuthenticated, t])
 
   const onSubmit: SubmitHandler<CreateRoomFormData> = async (data) => {
     if (!userIdFromAuth) {
