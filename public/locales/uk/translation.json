@@ -322,6 +322,10 @@
     "shareTooltip": "Поділитися",
     "copyLinkTooltip": "Копіювати посилання",
     "joinButton": "Приєднатися",
-    "meetingEnded": "Зустріч завершена"
+    "meetingEnded": "Зустріч завершена",
+    "privateRoomLabel": "Приватна",
+    "publicRoomLabel": "Публічна",
+    "privateRoomTooltip": "Потрібне схвалення організатора для приєднання",
+    "publicRoomTooltip": "Відкрито для всіх учасників"
   }
 }

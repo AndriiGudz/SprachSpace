@@ -322,6 +322,10 @@
     "shareTooltip": "Share",
     "copyLinkTooltip": "Copy link",
     "joinButton": "Join",
-    "meetingEnded": "Meeting has ended"
+    "meetingEnded": "Meeting has ended",
+    "privateRoomLabel": "Private",
+    "publicRoomLabel": "Public",
+    "privateRoomTooltip": "Requires host approval to join",
+    "publicRoomTooltip": "Open for all participants"
   }
 }

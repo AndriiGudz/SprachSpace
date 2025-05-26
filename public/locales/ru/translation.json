@@ -151,7 +151,11 @@
     "shareTooltip": "Поделиться",
     "copyLinkTooltip": "Копировать ссылку",
     "joinButton": "Присоединиться",
-    "meetingEnded": "Встреча завершена"
+    "meetingEnded": "Встреча завершена",
+    "privateRoomLabel": "Приватная",
+    "publicRoomLabel": "Публичная",
+    "privateRoomTooltip": "Требуется одобрение организатора для присоединения",
+    "publicRoomTooltip": "Открыто для всех участников"
   },
   "personalData": {
     "title": "Личные данные",

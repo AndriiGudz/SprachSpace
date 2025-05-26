@@ -14,7 +14,7 @@ export const cardStyle: SxProps<Theme> = {
 
   '&:hover': {
     boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
-  }
+  },
 }
 
 // Стиль для контейнера контента (CardContent)
@@ -61,25 +61,25 @@ export const participantBoxStyle: SxProps<Theme> = {
 // Стиль для контейнера нижней части карточки, где расположены информация о языке, аватар и кнопки действий.
 export const bottomSectionStyle: SxProps<Theme> = {
   display: 'flex',
-  alignItems: 'center', // Вертикальное центрирование элементов
-  justifyContent: 'space-between', // Размещение элементов по краям контейнера
-  mt: 2, // Отступ сверху
-  gap: { xs: 2, md: 4 }, // для телефонов gap = 2, для больших экранов = 4
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  mt: 2,
+  gap: { xs: 2, md: 4 },
 }
 
 // Контейнер для языка и иконки флага
 export const languageContainerStyle: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
-  gap: { xs: 2, md: 4 }, // Расстояние между иконкой и текстом языка
+  gap: { xs: 2, md: 4 },
 }
 
 // Стиль для ограничения по возрасту (если задано)
 export const ageRestrictionStyle: SxProps<Theme> = {
-  bgcolor: 'error.main', // Цвет фона в соответствии с темой (например, для ошибки или предупреждения)
-  color: 'white', // Цвет текста
-  p: 1, // Горизонтальные отступы
-  borderRadius: 1, // Скругление углов
+  bgcolor: 'error.main',
+  color: 'white',
+  p: 1,
+  borderRadius: 1,
 }
 
 // Контейнер для кнопок действий (поделиться, копировать, присоединиться)
@@ -102,5 +102,35 @@ export const joinButtonStyle: SxProps<Theme> = {
 
   '&:hover': {
     background: 'var(--light-blue-darken-2, #0288D1)',
+  },
+}
+
+export const privacyLabelStyle: SxProps<Theme> = {
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  borderRadius: '16px',
+  px: 2,
+  py: 0.5,
+  fontSize: '0.875rem',
+  fontWeight: 500,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1,
+  zIndex: 1,
+  backdropFilter: 'blur(8px)',
+  transition: 'all 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+  },
+  '&.private': {
+    backgroundColor: 'rgba(211, 47, 47, 0.1)',
+    color: '#d32f2f',
+    border: '1px solid rgba(211, 47, 47, 0.2)',
+  },
+  '&.public': {
+    backgroundColor: 'rgba(46, 125, 50, 0.1)',
+    color: '#2e7d32',
+    border: '1px solid rgba(46, 125, 50, 0.2)',
   },
 }

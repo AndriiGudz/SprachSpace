@@ -14,7 +14,7 @@ import {
   useMediaQuery,
   Divider,
 } from '@mui/material'
-import { Share2, Copy } from 'lucide-react'
+import { Share2, Copy, Lock, Globe } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { Meeting } from './types'
@@ -29,6 +29,7 @@ import {
   actionButtonsStyle,
   joinButtonStyle,
   participantBoxStyle,
+  privacyLabelStyle,
 } from './styles'
 
 import defAvatar from '../../assets/default-avatar.png'
@@ -45,7 +46,9 @@ const languageFlagsFallback: Record<string, string> = {
 }
 
 interface MeetingCardProps {
-  meeting: Meeting
+  meeting: Meeting & {
+    privateRoom: boolean
+  }
   isPast?: boolean
 }
 
@@ -75,6 +78,7 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     imageUrl,
     languageFlagIconUrl,
     location,
+    privateRoom,
   } = meeting
 
   const flagImageSrc = useMemo(
@@ -130,7 +134,7 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
       '&:hover': isPast
         ? {}
         : {
-          boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
+            boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
           },
     }),
     [isPast]
@@ -156,6 +160,62 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
 
   return (
     <Card sx={modifiedCardStyle} itemScope itemType="http://schema.org/Event">
+      <Box sx={{ position: 'relative' }}>
+        <Tooltip
+          title={
+            <Typography variant="body2" sx={{ color: 'white', p: 0.5 }}>
+              {privateRoom
+                ? t('meetingCard.privateRoomTooltip')
+                : t('meetingCard.publicRoomTooltip')}
+            </Typography>
+          }
+          placement="top"
+          arrow
+          componentsProps={{
+            tooltip: {
+              sx: {
+                backgroundColor: privateRoom ? '#d32f2f' : '#2e7d32',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+              },
+            },
+            arrow: {
+              sx: {
+                color: privateRoom ? '#d32f2f' : '#2e7d32',
+              },
+            },
+          }}
+        >
+          <Box
+            component="div"
+            sx={{
+              ...privacyLabelStyle,
+              cursor: 'help',
+              display: 'inline-flex',
+              alignItems: 'center',
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              zIndex: 2,
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                opacity: 0.95,
+              },
+            }}
+            className={privateRoom ? 'private' : 'public'}
+          >
+            {privateRoom ? (
+              <Lock size={16} style={{ marginRight: '4px' }} />
+            ) : (
+              <Globe size={16} style={{ marginRight: '4px' }} />
+            )}
+            <Typography variant="body2" component="span">
+              {privateRoom
+                ? t('meetingCard.privateRoomLabel')
+                : t('meetingCard.publicRoomLabel')}
+            </Typography>
+          </Box>
+        </Tooltip>
+      </Box>
       {imageUrl && <meta itemProp="image" content={imageUrl} />}
       <meta itemProp="name" content={name} />
       {description && <meta itemProp="description" content={description} />}
