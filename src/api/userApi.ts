@@ -1,4 +1,7 @@
-const API_BASE_URL = 'http://localhost:8080/api/users'
+import { API_ROOT_URL } from '../config/apiConfig' // Import from new config
+
+// Construct the base URL for user-specific endpoints
+export const API_BASE_URL = `${API_ROOT_URL}/users`
 
 interface UploadAvatarResponse {
   foto: string // Теперь здесь будет только имя файла, например, '796d67b6-f380-4fd7-a09e-bbec03a595c8.png'

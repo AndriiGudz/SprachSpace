@@ -192,6 +192,11 @@
     "privateRoomLabel": "Private Room",
     "privateRoomHelperTextPublic": "Public: Visible to everyone, no approval needed to join.",
     "privateRoomHelperTextPrivate": "Private: Only users you approve can join.",
+    "errorFetchingCategories": "Error fetching categories",
+    "noCategoriesAvailable": "No categories available",
+    "selectCategoryPlaceholder": "Select a category",
+    "noLanguagesAvailable": "No languages available",
+    "selectLanguagePlaceholder": "Select a language",
     "levels": {
       "beginner": "Beginner",
       "intermediate": "Intermediate",
