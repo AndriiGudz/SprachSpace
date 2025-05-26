@@ -24,7 +24,7 @@ import { ApiRoom } from '../../store/redux/roomSlice/roomTypes'
 import Loader from '../../components/Loader/Loader'
 
 // Функция для маппинга ApiRoom в Meeting
-function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
+export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
   const {
     id,
     topic,

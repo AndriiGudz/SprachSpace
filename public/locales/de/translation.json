@@ -293,7 +293,7 @@
     "title": "Treffen",
     "subtitle": "Nehmen Sie an geplanten Treffen teil oder erstellen Sie Ihren eigenen Raum",
     "error": {
-      "title": "Fehler beim Laden der Treffen"
+      "title": "Fehler beim Laden des Treffens"
     },
     "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!",
     "pagination": {
@@ -327,5 +327,13 @@
     "publicRoomLabel": "Öffentlich",
     "privateRoomTooltip": "Erfordert die Genehmigung des Gastgebers zum Beitritt",
     "publicRoomTooltip": "Offen für alle Teilnehmer"
+  },
+  "videoChat": {
+    "error": {
+      "general": "Verbindung zum Videochat fehlgeschlagen",
+      "connection": "Verbindungsfehler im Videochat",
+      "camera": "Kein Zugriff auf die Kamera möglich",
+      "microphone": "Kein Zugriff auf das Mikrofon möglich"
+    }
   }
 }

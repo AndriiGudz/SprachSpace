@@ -21,6 +21,7 @@ import LoadingScreen from './components/LoadingScreen/LoadingScreen'
 import Meetings from './pages/Meetings/Meetings'
 import Admin from './pages/Admin/PageAdminUsersList'
 import UserDaschboard from './pages/Admin/PageUserDaschboard'
+import MeetingChat from './pages/MeetingChat/MeetingChat'
 
 function App() {
   const dispatch = useDispatch()
@@ -85,6 +86,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="/meetings" element={<Meetings />} />
+              <Route path="/meetings/:meetingId" element={<MeetingChat />} />
               <Route
                 path="/admin/users"
                 element={
