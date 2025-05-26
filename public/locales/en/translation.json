@@ -295,7 +295,12 @@
     "error": {
       "title": "Failed to load meetings"
     },
-    "noRooms": "No rooms available yet. Create the first one!"
+    "noRooms": "No rooms available yet. Create the first one!",
+    "pagination": {
+      "itemsPerPage": "Items per page:",
+      "page": "Page",
+      "of": "of"
+    }
   },
   "meetingCard": {
     "titleLabel": "Title or Subject:",
@@ -316,6 +321,7 @@
     "organizerTooltip": "Organizer: {{nickname}} ({{firstName}} {{lastName}}) - Rating: {{rating}}",
     "shareTooltip": "Share",
     "copyLinkTooltip": "Copy link",
-    "joinButton": "Join"
+    "joinButton": "Join",
+    "meetingEnded": "Meeting has ended"
   }
 }

@@ -111,7 +111,12 @@
     "error": {
       "title": "Не удалось загрузить встречи"
     },
-    "noRooms": "Пока нет доступных комнат. Создайте первую!"
+    "noRooms": "Пока нет доступных комнат. Создайте первую!",
+    "pagination": {
+      "itemsPerPage": "Карточек на странице:",
+      "page": "Страница",
+      "of": "из"
+    }
   },
   "roomFilter": {
     "category": "Категория",
@@ -145,7 +150,8 @@
     "organizerTooltip": "Организатор: {{nickname}} ({{firstName}} {{lastName}}) - Рейтинг: {{rating}}",
     "shareTooltip": "Поделиться",
     "copyLinkTooltip": "Копировать ссылку",
-    "joinButton": "Присоединиться"
+    "joinButton": "Присоединиться",
+    "meetingEnded": "Встреча завершена"
   },
   "personalData": {
     "title": "Личные данные",

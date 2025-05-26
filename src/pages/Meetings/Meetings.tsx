@@ -1,5 +1,15 @@
-import { useEffect, useMemo } from 'react'
-import { Container, Typography, Box, Stack } from '@mui/material'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  Container,
+  Typography,
+  Box,
+  Stack,
+  Pagination,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+} from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { formatDistanceStrict } from 'date-fns'
 import { useTranslation } from 'react-i18next'
@@ -101,14 +111,69 @@ function Meetings() {
     error,
   } = useSelector((state: RootState) => state.rooms)
 
+  // Pagination state
+  const [page, setPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(8)
+
   useEffect(() => {
     dispatch(fetchRooms())
   }, [dispatch])
 
   const meetings: Meeting[] = useMemo(() => {
     if (!apiRooms) return []
-    return apiRooms.map(mapApiRoomToMeeting)
+
+    const now = new Date()
+    const mappedMeetings = apiRooms.map(mapApiRoomToMeeting)
+
+    // Сортируем встречи:
+    // 1. Предстоящие встречи сначала (сортируются по времени начала)
+    // 2. Прошедшие встречи в конце (сортируются по времени окончания)
+    return mappedMeetings.sort((a, b) => {
+      const aEndTime = new Date(a.endTime)
+      const bEndTime = new Date(b.endTime)
+      const aStartTime = new Date(a.startTime)
+      const bStartTime = new Date(b.startTime)
+
+      // Проверяем, прошла ли встреча
+      const aIsPast = aEndTime < now
+      const bIsPast = bEndTime < now
+
+      // Если обе встречи прошли или обе предстоящие
+      if (aIsPast === bIsPast) {
+        if (aIsPast) {
+          // Для прошедших встреч сортируем по времени окончания (более поздние сначала)
+          return bEndTime.getTime() - aEndTime.getTime()
+        } else {
+          // Для предстоящих встреч сортируем по времени начала
+          return aStartTime.getTime() - bStartTime.getTime()
+        }
+      }
+
+      // Если одна встреча прошла, а другая нет
+      return aIsPast ? 1 : -1
+    })
   }, [apiRooms])
+
+  // Pagination calculations
+  const totalPages = Math.ceil(meetings.length / itemsPerPage)
+  const startIndex = (page - 1) * itemsPerPage
+  const paginatedMeetings = meetings.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  )
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value)
+  }
+
+  const handleItemsPerPageChange = (event: any) => {
+    const newItemsPerPage = parseInt(event.target.value)
+    setItemsPerPage(newItemsPerPage)
+    setPage(1)
+  }
 
   if (isLoading) {
     return (
@@ -154,11 +219,104 @@ function Meetings() {
 
       <Box sx={meetingCardStyle}>
         {meetings.length > 0 ? (
-          <Stack spacing={3} mt={3}>
-            {meetings.map((meeting) => (
-              <MeetingCard key={meeting.id} meeting={meeting} />
-            ))}
-          </Stack>
+          <>
+            <Stack spacing={3} mt={3}>
+              {paginatedMeetings.map((meeting) => {
+                const isPast = new Date(meeting.endTime) < new Date()
+                return (
+                  <Box
+                    key={meeting.id}
+                    sx={{
+                      opacity: isPast ? 0.7 : 1,
+                      backgroundColor: isPast
+                        ? 'rgba(0, 0, 0, 0.04)'
+                        : 'transparent',
+                      transition: 'all 0.3s ease',
+                      cursor: isPast ? 'default' : 'pointer',
+                      '&:hover': {
+                        transform: isPast ? 'none' : 'translateY(-2px)',
+                        boxShadow: isPast
+                          ? 'none'
+                          : '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      },
+                    }}
+                  >
+                    <MeetingCard meeting={meeting} isPast={isPast} />
+                  </Box>
+                )
+              })}
+            </Stack>
+            <Box
+              sx={{
+                mt: 4,
+                mb: 2,
+                px: 2,
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'stretch', md: 'center' },
+                gap: { xs: 2, md: 0 },
+              }}
+            >
+              <FormControl
+                variant="outlined"
+                size="small"
+                sx={{
+                  minWidth: 200,
+                  alignSelf: { xs: 'stretch', md: 'flex-end' },
+                  order: { xs: 1, md: 2 },
+                }}
+              >
+                <InputLabel
+                  id="items-per-page-label"
+                  sx={{ fontSize: '0.875rem' }}
+                >
+                  {t('meetings.pagination.itemsPerPage')}
+                </InputLabel>
+                <Select
+                  labelId="items-per-page-label"
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                  label={t('meetings.pagination.itemsPerPage')}
+                  sx={{ fontSize: '0.875rem' }}
+                >
+                  <MenuItem value={8}>8</MenuItem>
+                  <MenuItem value={16}>16</MenuItem>
+                </Select>
+              </FormControl>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center' },
+                  gap: 1,
+                  order: { xs: 2, md: 1 },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: { xs: 'center', md: 'left' } }}
+                >
+                  {t('meetings.pagination.page')} {page}{' '}
+                  {t('meetings.pagination.of')} {totalPages}
+                </Typography>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  color="primary"
+                  size="small"
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      fontSize: '0.875rem',
+                    },
+                  }}
+                />
+              </Box>
+            </Box>
+          </>
         ) : (
           <Box textAlign="center" mt={4}>
             <Typography variant="body1" color="text.secondary">

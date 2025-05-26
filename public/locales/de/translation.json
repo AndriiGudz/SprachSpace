@@ -295,7 +295,12 @@
     "error": {
       "title": "Fehler beim Laden der Treffen"
     },
-    "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!"
+    "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!",
+    "pagination": {
+      "itemsPerPage": "Einträge pro Seite:",
+      "page": "Seite",
+      "of": "von"
+    }
   },
   "meetingCard": {
     "titleLabel": "Titel oder Thema:",
@@ -304,7 +309,7 @@
     "startTimeLabel": "Start:",
     "endTimeLabel": "Ende:",
     "durationLabel": "Dauer:",
-    "participantsLabel": "Teilnehmeranzahl:",
+    "participantsLabel": "Teilnehmerzahl:",
     "minParticipantsLabel": "Min:",
     "maxParticipantsLabel": "Max:",
     "waitingParticipantsLabel": "Wartend:",
@@ -312,10 +317,11 @@
     "proficiencyNotSet": "Nicht festgelegt",
     "hostAvatarAlt": "Avatar von {{name}}",
     "ageRestrictionLabel": "Alter:",
-    "noAgeRestriction": "Keine Beschränkungen",
+    "noAgeRestriction": "Keine Einschränkungen",
     "organizerTooltip": "Organisator: {{nickname}} ({{firstName}} {{lastName}}) - Bewertung: {{rating}}",
     "shareTooltip": "Teilen",
     "copyLinkTooltip": "Link kopieren",
-    "joinButton": "Beitreten"
+    "joinButton": "Beitreten",
+    "meetingEnded": "Meeting ist beendet"
   }
 }
