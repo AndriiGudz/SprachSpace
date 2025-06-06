@@ -85,11 +85,12 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     privateRoom,
     organizer: creator
       ? {
-          name: creator.nickname || creator.name,
+          id: creator.id,
+          name: creator.name,
           nickname: creator.nickname,
           firstName: creator.name,
           lastName: creator.surname,
-          avatarUrl: creator.foto || undefined,
+          avatarFileName: creator.avatar || undefined,
           rating: creator.rating,
         }
       : undefined,

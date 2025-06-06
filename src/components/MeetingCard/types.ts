@@ -1,10 +1,11 @@
 export interface Organizer {
-  name: string // Имя или никнейм для отображения, может быть composite
+  id: number
   nickname: string
+  name: string // Имя или никнейм для отображения, может быть composite
   firstName?: string
   lastName?: string
   rating?: number | string // Рейтинг может быть числом или строкой (например, "N/A")
-  avatarUrl?: string // Используется для hostAvatar
+  avatarFileName?: string // Используется для hostAvatar, имя файла
   // url?: string; // Ссылка на профиль организатора, если есть
 }
 

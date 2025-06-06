@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react'
-import { Link as RouterLink } from 'react-router-dom' // Импортируем Link как RouterLink
+import { Link as RouterLink } from 'react-router-dom'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import {
@@ -37,6 +37,7 @@ import enFlag from '../../assets/flag/en.png'
 import deFlag from '../../assets/flag/de.png'
 import ukFlag from '../../assets/flag/ua.png'
 import ruFlag from '../../assets/flag/ru.png'
+import { API_ROOT_URL } from '../../config/apiConfig'
 
 const languageFlagsFallback: Record<string, string> = {
   English: enFlag,
@@ -86,9 +87,17 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     [languageFlagIconUrl, language]
   )
 
+  const hostAvatarUrl = useMemo(
+    () =>
+      organizer?.avatarFileName
+        ? `${API_ROOT_URL}/users/file/avatar/${organizer.avatarFileName}`
+        : null,
+    [organizer?.avatarFileName]
+  )
+
   const hostAvatarSrc = useMemo(
-    () => organizer?.avatarUrl || defAvatar,
-    [organizer?.avatarUrl]
+    () => hostAvatarUrl || defAvatar,
+    [hostAvatarUrl]
   )
 
   const handleShare = useCallback(() => {
@@ -123,7 +132,6 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
 
   const cardLink = useMemo(() => `/meetings/${slug || id}`, [slug, id])
 
-  // Модифицированные стили с учетом состояния встречи
   const modifiedCardStyle = useMemo(
     () => ({
       ...cardStyle,
@@ -156,6 +164,116 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
       },
     }),
     [isPast]
+  )
+
+  const meetingDetails = (
+    <Box
+      sx={{
+        ...topSectionBoxStyle,
+        flexDirection: isMobile ? 'column' : 'row',
+      }}
+    >
+      <Box
+        sx={{
+          ...participantBoxStyle,
+          width: isMobile ? '100%' : '50%',
+        }}
+      >
+        <Typography
+          variant="body1"
+          color="text.primary"
+          sx={{ textDecoration: 'underline' }}
+        >
+          {t('meetingCard.titleLabel', 'Title or Subject:')}
+        </Typography>
+        <Typography component="h2" variant="h6" color="text.secondary">
+          {name}
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+          <Typography
+            variant="body1"
+            color="text.primary"
+            sx={{ textDecoration: 'underline', mr: 1 }}
+          >
+            {t('meetingCard.categoryLabel', 'Category:')}
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            color="text.secondary"
+            itemProp="about"
+          >
+            {category}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          ...infoBoxStyle,
+          flexDirection: isMobile ? 'column' : 'row',
+        }}
+      >
+        <Box sx={participantBoxStyle}>
+          <Typography
+            variant="body1"
+            color="text.primary"
+            sx={{ textDecoration: 'underline' }}
+          >
+            {t('meetingCard.timeLabel', 'Meeting time:')}
+          </Typography>
+          <Typography color="text.secondary">
+            {t('meetingCard.startTimeLabel', 'Start:')}{' '}
+            <time dateTime={startTime}>{formattedStartTime}</time>
+          </Typography>
+          <Typography color="text.secondary">
+            {t('meetingCard.endTimeLabel', 'End:')}{' '}
+            <time dateTime={endTime}>{formattedEndTime}</time>
+          </Typography>
+          {duration && (
+            <Typography color="text.secondary">
+              {t('meetingCard.durationLabel', 'Duration:')} {duration}
+            </Typography>
+          )}
+        </Box>
+
+        {(minParticipants !== undefined ||
+          maxParticipants !== undefined ||
+          waitingParticipants !== undefined) && (
+          <Box sx={participantBoxStyle}>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ textDecoration: 'underline' }}
+            >
+              {t('meetingCard.participantsLabel', 'Number of participants:')}
+            </Typography>
+            {minParticipants !== undefined && (
+              <Typography
+                color="text.secondary"
+                itemProp="maximumAttendeeCapacity"
+                content={maxParticipants?.toString()}
+              >
+                {' '}
+                {t('meetingCard.minParticipantsLabel', 'Min:')}{' '}
+                {minParticipants}
+              </Typography>
+            )}
+            {maxParticipants !== undefined && (
+              <Typography color="text.secondary">
+                {t('meetingCard.maxParticipantsLabel', 'Max:')}{' '}
+                {maxParticipants}
+              </Typography>
+            )}
+            {waitingParticipants !== undefined && (
+              <Typography color="text.secondary">
+                {t('meetingCard.waitingParticipantsLabel', 'Waiting:')}{' '}
+                {waitingParticipants}
+              </Typography>
+            )}
+          </Box>
+        )}
+      </Box>
+    </Box>
   )
 
   return (
@@ -230,254 +348,20 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
           style={{ display: 'none' }}
         >
           <meta itemProp="name" content={organizer.name} />
-          {organizer.avatarUrl && (
-            <meta itemProp="image" content={organizer.avatarUrl} />
-          )}
+          {hostAvatarUrl && <meta itemProp="image" content={hostAvatarUrl} />}
         </div>
       )}
 
       <CardContent sx={cardContentStyle}>
-        {!isPast ? (
+        {isPast ? (
+          meetingDetails
+        ) : (
           <RouterLink
             to={cardLink}
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <Box
-              sx={{
-                ...topSectionBoxStyle,
-                flexDirection: isMobile ? 'column' : 'row',
-              }}
-            >
-              <Box
-                sx={{
-                  ...participantBoxStyle,
-                  width: isMobile ? '100%' : '50%',
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  sx={{ textDecoration: 'underline' }}
-                >
-                  {t('meetingCard.titleLabel', 'Title or Subject:')}
-                </Typography>
-                <Typography
-                  component="h2" // Семантический заголовок
-                  variant="h6"
-                  color="text.secondary"
-                  // itemProp="name" // Уже есть в meta тегах, здесь можно убрать для чистоты, но не критично
-                >
-                  {name}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ textDecoration: 'underline', mr: 1 }}
-                  >
-                    {t('meetingCard.categoryLabel', 'Category:')}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    itemProp="about" // Для категории
-                  >
-                    {category}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box
-                sx={{
-                  ...infoBoxStyle,
-                  flexDirection: isMobile ? 'column' : 'row',
-                }}
-              >
-                <Box sx={participantBoxStyle}>
-                  <Typography
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ textDecoration: 'underline' }}
-                  >
-                    {t('meetingCard.timeLabel', 'Meeting time:')}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    {t('meetingCard.startTimeLabel', 'Start:')}{' '}
-                    <time dateTime={startTime}>{formattedStartTime}</time>
-                  </Typography>
-                  <Typography color="text.secondary">
-                    {t('meetingCard.endTimeLabel', 'End:')}{' '}
-                    <time dateTime={endTime}>{formattedEndTime}</time>
-                  </Typography>
-                  {duration && (
-                    <Typography color="text.secondary">
-                      {t('meetingCard.durationLabel', 'Duration:')} {duration}
-                    </Typography>
-                  )}
-                </Box>
-
-                {(minParticipants !== undefined ||
-                  maxParticipants !== undefined ||
-                  waitingParticipants !== undefined) && (
-                  <Box sx={participantBoxStyle}>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      sx={{ textDecoration: 'underline' }}
-                    >
-                      {t(
-                        'meetingCard.participantsLabel',
-                        'Number of participants:'
-                      )}
-                    </Typography>
-                    {minParticipants !== undefined && (
-                      <Typography
-                        color="text.secondary"
-                        itemProp="maximumAttendeeCapacity"
-                        content={maxParticipants?.toString()}
-                      >
-                        {' '}
-                        {/* Schema.org для макс. участников, если применимо */}
-                        {t('meetingCard.minParticipantsLabel', 'Min:')}{' '}
-                        {minParticipants}
-                      </Typography>
-                    )}
-                    {maxParticipants !== undefined && (
-                      <Typography color="text.secondary">
-                        {t('meetingCard.maxParticipantsLabel', 'Max:')}{' '}
-                        {maxParticipants}
-                      </Typography>
-                    )}
-                    {waitingParticipants !== undefined && (
-                      <Typography color="text.secondary">
-                        {t('meetingCard.waitingParticipantsLabel', 'Waiting:')}{' '}
-                        {waitingParticipants}
-                      </Typography>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            </Box>
+            {meetingDetails}
           </RouterLink>
-        ) : (
-          <Box>
-            <Box
-              sx={{
-                ...topSectionBoxStyle,
-                flexDirection: isMobile ? 'column' : 'row',
-              }}
-            >
-              <Box
-                sx={{
-                  ...participantBoxStyle,
-                  width: isMobile ? '100%' : '50%',
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  sx={{ textDecoration: 'underline' }}
-                >
-                  {t('meetingCard.titleLabel', 'Title or Subject:')}
-                </Typography>
-                <Typography
-                  component="h2" // Семантический заголовок
-                  variant="h6"
-                  color="text.secondary"
-                  // itemProp="name" // Уже есть в meta тегах, здесь можно убрать для чистоты, но не критично
-                >
-                  {name}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ textDecoration: 'underline', mr: 1 }}
-                  >
-                    {t('meetingCard.categoryLabel', 'Category:')}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    itemProp="about" // Для категории
-                  >
-                    {category}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box
-                sx={{
-                  ...infoBoxStyle,
-                  flexDirection: isMobile ? 'column' : 'row',
-                }}
-              >
-                <Box sx={participantBoxStyle}>
-                  <Typography
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ textDecoration: 'underline' }}
-                  >
-                    {t('meetingCard.timeLabel', 'Meeting time:')}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    {t('meetingCard.startTimeLabel', 'Start:')}{' '}
-                    <time dateTime={startTime}>{formattedStartTime}</time>
-                  </Typography>
-                  <Typography color="text.secondary">
-                    {t('meetingCard.endTimeLabel', 'End:')}{' '}
-                    <time dateTime={endTime}>{formattedEndTime}</time>
-                  </Typography>
-                  {duration && (
-                    <Typography color="text.secondary">
-                      {t('meetingCard.durationLabel', 'Duration:')} {duration}
-                    </Typography>
-                  )}
-                </Box>
-
-                {(minParticipants !== undefined ||
-                  maxParticipants !== undefined ||
-                  waitingParticipants !== undefined) && (
-                  <Box sx={participantBoxStyle}>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      sx={{ textDecoration: 'underline' }}
-                    >
-                      {t(
-                        'meetingCard.participantsLabel',
-                        'Number of participants:'
-                      )}
-                    </Typography>
-                    {minParticipants !== undefined && (
-                      <Typography
-                        color="text.secondary"
-                        itemProp="maximumAttendeeCapacity"
-                        content={maxParticipants?.toString()}
-                      >
-                        {' '}
-                        {/* Schema.org для макс. участников, если применимо */}
-                        {t('meetingCard.minParticipantsLabel', 'Min:')}{' '}
-                        {minParticipants}
-                      </Typography>
-                    )}
-                    {maxParticipants !== undefined && (
-                      <Typography color="text.secondary">
-                        {t('meetingCard.maxParticipantsLabel', 'Max:')}{' '}
-                        {maxParticipants}
-                      </Typography>
-                    )}
-                    {waitingParticipants !== undefined && (
-                      <Typography color="text.secondary">
-                        {t('meetingCard.waitingParticipantsLabel', 'Waiting:')}{' '}
-                        {waitingParticipants}
-                      </Typography>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          </Box>
         )}
 
         <Divider sx={{ my: 2 }} />
