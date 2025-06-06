@@ -8,9 +8,12 @@ import dayjs from 'dayjs'
 import EditableSection from '../EditableSection/EditableSection'
 import { useRef, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUser } from '../../store/redux/userSlice/userSlice'
-import { uploadAvatar, getAvatarUrl } from '../../api/userApi'
-import { RootState } from '../../store/store'
+import {
+  updateUser,
+  loadUserAvatar,
+} from '../../store/redux/userSlice/userSlice'
+import { uploadAvatar } from '../../api/userApi'
+import { RootState, AppDispatch } from '../../store/store'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -22,7 +25,7 @@ function PersonalDataBox({
   onChange,
 }: PersonalDataSectionProps) {
   const { t } = useTranslation()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const userData = useSelector((state: RootState) => state.user)
 
@@ -33,28 +36,48 @@ function PersonalDataBox({
   useEffect(() => {
     let currentObjectURL: string | undefined
 
-    async function fetchAndSetAvatar() {
-      if (userData.id && userData.accessToken) {
-        const url = await getAvatarUrl(userData.id, userData.accessToken)
-        if (url) {
-          currentObjectURL = url
-          setAvatarDisplayUrl(url)
-        } else {
-          setAvatarDisplayUrl(undefined)
-        }
-      } else {
-        setAvatarDisplayUrl(undefined)
-      }
+    // Если не редактируем, используем avatarDisplayUrl из store
+    if (!isEditing && userData.avatarDisplayUrl) {
+      setAvatarDisplayUrl(userData.avatarDisplayUrl)
+      return
     }
 
-    fetchAndSetAvatar()
+    // Для режима редактирования загружаем аватар через Redux
+    if (
+      isEditing &&
+      userData.id &&
+      userData.foto &&
+      userData.accessToken &&
+      !userData.avatarDisplayUrl
+    ) {
+      dispatch(
+        loadUserAvatar({
+          userId: userData.id,
+          accessToken: userData.accessToken,
+        })
+      )
+    }
+
+    // Обновляем локальное состояние когда avatarDisplayUrl изменяется в store
+    if (userData.avatarDisplayUrl) {
+      setAvatarDisplayUrl(userData.avatarDisplayUrl)
+    } else if (!userData.foto) {
+      setAvatarDisplayUrl(undefined)
+    }
 
     return () => {
-      if (currentObjectURL) {
+      if (currentObjectURL && currentObjectURL.startsWith('blob:')) {
         URL.revokeObjectURL(currentObjectURL)
       }
     }
-  }, [userData.id, userData.foto, userData.accessToken])
+  }, [
+    dispatch,
+    userData.id,
+    userData.foto,
+    userData.accessToken,
+    userData.avatarDisplayUrl,
+    isEditing,
+  ])
 
   const isEmpty =
     !userData.nickname ||
@@ -78,6 +101,15 @@ function PersonalDataBox({
           userData.accessToken
         )
         dispatch(updateUser({ foto: response.foto }))
+        // После обновления foto загружаем новый аватар
+        if (userData.id && userData.accessToken) {
+          dispatch(
+            loadUserAvatar({
+              userId: userData.id,
+              accessToken: userData.accessToken,
+            })
+          )
+        }
         toast.success(t('personalData.avatarUploadedSuccess'))
       } catch (error) {
         if (error instanceof Error) {

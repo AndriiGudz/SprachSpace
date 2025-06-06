@@ -121,7 +121,7 @@ function SignInUp() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            foto: data.foto,
+            foto: data.avatar, // Используем avatar из ответа сервера
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,

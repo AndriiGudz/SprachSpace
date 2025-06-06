@@ -19,51 +19,39 @@ import {
   UserMenuWrapper,
 } from './styles'
 import NavLinks from '../NavLinks/NavLinks'
-import { RootState } from '../../store/store'
-import { getAvatarUrl } from '../../api/userApi'
-import { setAvatarDisplayUrl } from '../../store/redux/userSlice/userSlice'
+import { RootState, AppDispatch } from '../../store/store'
+import { loadUserAvatar } from '../../store/redux/userSlice/userSlice'
 
 function Header() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const user = useSelector((state: RootState) => state.user)
   const isAuthenticated = user.isAuthenticated
   const menuRef = useRef<HTMLDivElement | null>(null)
 
+  // Загружаем аватар когда пользователь авторизован и есть foto
   useEffect(() => {
-    let currentObjectURL: string | undefined
-
-    async function fetchAndSetAvatar() {
-      if (user.id && user.foto && user.accessToken) {
-        try {
-          const url = await getAvatarUrl(user.id, user.accessToken)
-          if (url) {
-            currentObjectURL = url
-            dispatch(setAvatarDisplayUrl(url))
-          } else {
-            dispatch(setAvatarDisplayUrl(null))
-          }
-        } catch (error) {
-          console.error('Failed to fetch avatar:', error)
-          dispatch(setAvatarDisplayUrl(null))
-        }
-      } else if (!user.foto) {
-        dispatch(setAvatarDisplayUrl(null))
-      }
+    if (
+      isAuthenticated &&
+      user.id &&
+      user.foto &&
+      user.accessToken &&
+      !user.avatarDisplayUrl
+    ) {
+      dispatch(
+        loadUserAvatar({ userId: user.id, accessToken: user.accessToken })
+      )
     }
-
-    if (isAuthenticated) {
-      fetchAndSetAvatar()
-    }
-
-    return () => {
-      if (currentObjectURL && currentObjectURL.startsWith('blob:')) {
-        // URL.revokeObjectURL(currentObjectURL);
-      }
-    }
-  }, [user.id, user.foto, user.accessToken, isAuthenticated, dispatch])
+  }, [
+    dispatch,
+    isAuthenticated,
+    user.id,
+    user.foto,
+    user.accessToken,
+    user.avatarDisplayUrl,
+  ])
 
   const handleSignInClick = () => {
     navigate('/signin')
@@ -114,7 +102,14 @@ function Header() {
                 <Avatar
                   src={user.avatarDisplayUrl}
                   alt="User Avatar"
-                  sx={{ width: 36, height: 36, marginLeft: '16px' }}
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    marginLeft: '16px',
+                    '& .MuiAvatar-img': {
+                      marginRight: '0 !important',
+                    },
+                  }}
                 />
               ) : (
                 <AccountCircleIcon
@@ -153,19 +148,25 @@ function Header() {
               <Avatar
                 src={user.avatarDisplayUrl}
                 alt="User Avatar"
-                sx={{ width: 36, height: 36 }}
+                sx={{
+                  width: 36,
+                  height: 36,
+                  '& .MuiAvatar-img': {
+                    marginRight: '0 !important',
+                  },
+                }}
               />
             ) : (
               <AccountCircleIcon
-              sx={{
-                color: '#ffffff',
-                backgroundColor: '#01579b',
-                borderRadius: '50%',
-                width: 36,
-                height: 36,
-                marginLeft: '16px',
-                cursor: 'pointer',
-              }}
+                sx={{
+                  color: '#ffffff',
+                  backgroundColor: '#01579b',
+                  borderRadius: '50%',
+                  width: 36,
+                  height: 36,
+                  marginLeft: '16px',
+                  cursor: 'pointer',
+                }}
               />
             )}
           </MobileAvatar>
