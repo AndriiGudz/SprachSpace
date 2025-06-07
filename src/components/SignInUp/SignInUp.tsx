@@ -106,8 +106,6 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json()
 
-        console.log('Login successful:', data)
-
         // Сначала устанавливаем токены
         dispatch(
           setTokens({
@@ -163,7 +161,6 @@ function SignInUp() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Registration successful:', data)
         dispatch(setUser(data))
         toast.success(t('signinUp.registrationSuccess'))
         navigate('/')

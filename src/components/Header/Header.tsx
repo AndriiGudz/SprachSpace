@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { useAvatarLoader } from '../../hooks/useAvatarLoader'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Avatar } from '@mui/material'
@@ -25,8 +24,7 @@ function Header() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const user = useSelector((state: RootState) => state.user)
-  const isAuthenticated = user.isAuthenticated
+  const { avatarUrl, isAuthenticated } = useAvatarLoader()
   const menuRef = useRef<HTMLDivElement | null>(null)
 
   const handleSignInClick = () => {
@@ -64,6 +62,40 @@ function Header() {
     setIsMenuOpen(false)
   }
 
+  // Рендер аватара с fallback логикой
+  const renderAvatar = () => {
+    if (avatarUrl) {
+      return (
+        <Avatar
+          src={avatarUrl}
+          alt="User Avatar"
+          sx={{
+            width: 36,
+            height: 36,
+            marginLeft: '16px',
+            '& .MuiAvatar-img': {
+              marginRight: '0 !important',
+            },
+          }}
+        />
+      )
+    }
+
+    return (
+      <AccountCircleIcon
+        sx={{
+          color: '#ffffff',
+          backgroundColor: '#01579b',
+          borderRadius: '50%',
+          width: 36,
+          height: 36,
+          marginLeft: '16px',
+          cursor: 'pointer',
+        }}
+      />
+    )
+  }
+
   return (
     <HeaderBox>
       <LogoContainer onClick={() => navigate('/')}>
@@ -74,32 +106,7 @@ function Header() {
         {isAuthenticated ? (
           <>
             <AvatarContainer onClick={toggleUserMenu}>
-              {user.avatarDisplayUrl ? (
-                <Avatar
-                  src={user.avatarDisplayUrl}
-                  alt="User Avatar"
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    marginLeft: '16px',
-                    '& .MuiAvatar-img': {
-                      marginRight: '0 !important',
-                    },
-                  }}
-                />
-              ) : (
-                <AccountCircleIcon
-                  sx={{
-                    color: '#ffffff',
-                    backgroundColor: '#01579b',
-                    borderRadius: '50%',
-                    width: 36,
-                    height: 36,
-                    marginLeft: '16px',
-                    cursor: 'pointer',
-                  }}
-                />
-              )}
+              {renderAvatar()}
             </AvatarContainer>
             {isMenuOpen && (
               <UserMenuWrapper ref={menuRef}>
@@ -120,33 +127,7 @@ function Header() {
       {/* Мобильная версия */}
       {isAuthenticated ? (
         <>
-          <MobileAvatar onClick={toggleUserMenu}>
-            {user.avatarDisplayUrl ? (
-              <Avatar
-                src={user.avatarDisplayUrl}
-                alt="User Avatar"
-                sx={{
-                  width: 36,
-                  height: 36,
-                  '& .MuiAvatar-img': {
-                    marginRight: '0 !important',
-                  },
-                }}
-              />
-            ) : (
-              <AccountCircleIcon
-                sx={{
-                  color: '#ffffff',
-                  backgroundColor: '#01579b',
-                  borderRadius: '50%',
-                  width: 36,
-                  height: 36,
-                  marginLeft: '16px',
-                  cursor: 'pointer',
-                }}
-              />
-            )}
-          </MobileAvatar>
+          <MobileAvatar onClick={toggleUserMenu}>{renderAvatar()}</MobileAvatar>
           {isMenuOpen && (
             <UserMenuWrapper ref={menuRef}>
               <UserMenu onMenuItemClick={handleMenuItemClick} />

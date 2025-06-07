@@ -52,7 +52,7 @@ function PersonalDataBox({
     ) {
       dispatch(
         loadUserAvatar({
-          userId: userData.id,
+          fotoFileName: userData.foto,
           accessToken: userData.accessToken,
         })
       )
@@ -102,10 +102,10 @@ function PersonalDataBox({
         )
         dispatch(updateUser({ foto: response.foto }))
         // После обновления foto загружаем новый аватар
-        if (userData.id && userData.accessToken) {
+        if (response.foto && userData.accessToken) {
           dispatch(
             loadUserAvatar({
-              userId: userData.id,
+              fotoFileName: response.foto,
               accessToken: userData.accessToken,
             })
           )

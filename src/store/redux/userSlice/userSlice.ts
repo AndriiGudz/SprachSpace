@@ -5,24 +5,31 @@ import { validateAndRefreshTokens } from '../../../api/authApi'
 
 // Функция для получения blob URL аватара
 async function fetchAvatarBlobUrl(
-  userId: number,
+  fotoFileName: string,
   accessToken: string
 ): Promise<string | null> {
   try {
-    const response = await fetch(`${API_ROOT_URL}/users/avatar/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    const response = await fetch(
+      `${API_ROOT_URL}/users/file/avatar/${fotoFileName}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
 
     if (!response.ok) {
       return null
     }
 
     const imageBlob = await response.blob()
+
+    if (imageBlob.size === 0) {
+      return null
+    }
+
     return URL.createObjectURL(imageBlob)
   } catch (error) {
-    console.error('Failed to fetch avatar:', error)
     return null
   }
 }
@@ -30,8 +37,21 @@ async function fetchAvatarBlobUrl(
 // Асинхронный action для загрузки аватара
 export const loadUserAvatar = createAsyncThunk(
   'user/loadAvatar',
-  async ({ userId, accessToken }: { userId: number; accessToken: string }) => {
-    return await fetchAvatarBlobUrl(userId, accessToken)
+  async (
+    {
+      fotoFileName,
+      accessToken,
+    }: { fotoFileName: string; accessToken: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const avatarUrl = await fetchAvatarBlobUrl(fotoFileName, accessToken)
+      return avatarUrl
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Unknown error'
+      )
+    }
   }
 )
 
@@ -59,12 +79,23 @@ try {
   localStorage.removeItem('user') // Удаляем поврежденные данные
 }
 
+// Очищаем старые blob URL если они есть в сохраненных данных
+if (parsedUser?.avatarDisplayUrl?.startsWith('blob:')) {
+  try {
+    URL.revokeObjectURL(parsedUser.avatarDisplayUrl)
+  } catch (error) {
+    // Игнорируем ошибки при отзыве blob URL
+  }
+  // Принудительно очищаем поле
+  delete parsedUser.avatarDisplayUrl
+}
+
 export const initialState: UserSliceState =
   parsedUser && parsedUser.accessToken
     ? {
         ...parsedUser,
         isAuthenticated: true, // Устанавливаем true если есть токен
-        avatarDisplayUrl: null, // Обнуляем blob URL при инициализации
+        avatarDisplayUrl: null, // Принудительно обнуляем blob URL при инициализации
       }
     : {
         id: null,
@@ -278,6 +309,10 @@ export const userSlice = createSlice({
           URL.revokeObjectURL(state.avatarDisplayUrl)
         }
         state.avatarDisplayUrl = action.payload
+      })
+      .addCase(loadUserAvatar.rejected, (state, action) => {
+        // При ошибке оставляем avatarDisplayUrl как null
+        state.avatarDisplayUrl = null
       })
       .addCase(validateTokens.fulfilled, (state, action) => {
         if (action.payload) {

@@ -36,7 +36,10 @@ function AuthGuard({ children }: AuthGuardProps) {
       !user.avatarDisplayUrl
     ) {
       dispatch(
-        loadUserAvatar({ userId: user.id, accessToken: user.accessToken })
+        loadUserAvatar({
+          fotoFileName: user.foto,
+          accessToken: user.accessToken,
+        })
       )
     }
   }, [

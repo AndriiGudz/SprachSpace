@@ -42,7 +42,6 @@ function VideoChat({ roomUrl }: VideoChatProps) {
         // Обработчики событий
         callFrame
           .on('left-meeting', (evt: DailyEventObjectNoPayload) => {
-            console.log('User left the meeting')
           })
           .on('error', (evt: DailyEventObjectFatalError) => {
             console.error('Daily.co error:', evt)
