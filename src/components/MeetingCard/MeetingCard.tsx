@@ -100,25 +100,69 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     [hostAvatarUrl]
   )
 
+  const cardLink = useMemo(() => `/meetings/${slug || id}`, [slug, id])
+
+  // Вспомогательная функция для безопасного добавления параметров
+  const addUrlParam = (url: URL, key: string, value: string | undefined) => {
+    if (value && value.trim()) {
+      url.searchParams.set(key, value.trim())
+    }
+  }
+
+  const fullCardUrl = useMemo(() => {
+    if (typeof window !== 'undefined' && cardLink) {
+      const baseUrl = `${window.location.origin}${cardLink}`
+
+      // Создаём URL с дополнительными параметрами
+      const url = new URL(baseUrl)
+
+      // Добавляем информацию о встрече
+      addUrlParam(url, 'title', name)
+      addUrlParam(url, 'description', description)
+      addUrlParam(url, 'category', category)
+      addUrlParam(url, 'start', startTime)
+
+      return url.toString()
+    }
+    return cardLink
+  }, [cardLink, name, description, category, startTime])
+
+  // Создаём более краткую версию для копирования
+  const shareableUrl = useMemo(() => {
+    if (typeof window !== 'undefined' && cardLink) {
+      const baseUrl = `${window.location.origin}${cardLink}`
+      const url = new URL(baseUrl)
+
+      // Добавляем только самое важное
+      addUrlParam(url, 'title', name?.substring(0, 50)) // Ограничиваем длину
+      addUrlParam(url, 'cat', category)
+
+      return url.toString()
+    }
+    return cardLink
+  }, [cardLink, name, category])
+
   const handleShare = useCallback(() => {
-    if (navigator.share && shareLink) {
+    if (navigator.share && shareableUrl) {
       navigator
         .share({
           title: name,
           text: description || `Join our meeting: ${name}`,
-          url: shareLink,
+          url: shareableUrl, // Используем краткую версию для мобильного шаринга
         })
         .catch((error) => console.error('Error sharing:', error))
     }
-  }, [shareLink, name, description])
+  }, [shareableUrl, name, description])
 
   const handleCopyLink = useCallback(() => {
-    if (shareLink) {
+    if (fullCardUrl) {
       navigator.clipboard
-        .writeText(shareLink)
+        .writeText(fullCardUrl) // Используем полную версию со всей информацией
+        .then(() => {
+        })
         .catch((error) => console.error('Error copying link:', error))
     }
-  }, [shareLink])
+  }, [fullCardUrl])
 
   const formattedStartTime = useMemo(
     () => format(parseISO(startTime), 'dd.MM.yyyy HH:mm'),
@@ -129,8 +173,6 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     () => format(parseISO(endTime), 'dd.MM.yyyy HH:mm'),
     [endTime]
   )
-
-  const cardLink = useMemo(() => `/meetings/${slug || id}`, [slug, id])
 
   const modifiedCardStyle = useMemo(
     () => ({
