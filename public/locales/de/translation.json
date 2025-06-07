@@ -329,11 +329,15 @@
     "publicRoomTooltip": "Offen für alle Teilnehmer"
   },
   "videoChat": {
+    "activeParticipants": "Aktiv: {{count}}",
+    "waitingParticipants": "Wartend: {{count}}",
+    "minRequired": "Min: {{min}}",
+    "maxAllowed": "Max: {{max}}",
     "error": {
-      "general": "Verbindung zum Videochat fehlgeschlagen",
-      "connection": "Verbindungsfehler im Videochat",
-      "camera": "Kein Zugriff auf die Kamera möglich",
-      "microphone": "Kein Zugriff auf das Mikrofon möglich"
+      "connection": "Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung.",
+      "microphone": "Mikrofon-Zugriff ist deaktiviert. Aktivieren Sie ihn zur Teilnahme.",
+      "camera": "Kamera-Zugriff ist deaktiviert. Sie können nur mit Audio teilnehmen.",
+      "general": "Fehler beim Beitritt zum Videoanruf. Bitte versuchen Sie es erneut."
     }
   }
 }

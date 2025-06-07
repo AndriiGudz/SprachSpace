@@ -158,8 +158,7 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     if (fullCardUrl) {
       navigator.clipboard
         .writeText(fullCardUrl) // Используем полную версию со всей информацией
-        .then(() => {
-        })
+        .then(() => {})
         .catch((error) => console.error('Error copying link:', error))
     }
   }, [fullCardUrl])
@@ -306,7 +305,7 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
                 {maxParticipants}
               </Typography>
             )}
-            {waitingParticipants !== undefined && (
+            {waitingParticipants !== undefined && waitingParticipants > 0 && (
               <Typography color="text.secondary">
                 {t('meetingCard.waitingParticipantsLabel', 'Waiting:')}{' '}
                 {waitingParticipants}

@@ -122,6 +122,12 @@ function MeetingChat() {
                 {meeting.maxParticipants}
               </Typography>
             )}
+            {meeting.waitingParticipants && (
+              <Typography color="text.secondary">
+                {t('meetingCard.waitingParticipantsLabel')}{' '}
+                {meeting.waitingParticipants}
+              </Typography>
+            )}
           </Box>
 
           <Box flex={1}>

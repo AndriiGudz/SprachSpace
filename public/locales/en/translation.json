@@ -327,5 +327,17 @@
     "publicRoomLabel": "Public",
     "privateRoomTooltip": "Requires host approval to join",
     "publicRoomTooltip": "Open for all participants"
+  },
+  "videoChat": {
+    "activeParticipants": "Active: {{count}}",
+    "waitingParticipants": "Waiting: {{count}}",
+    "minRequired": "Min: {{min}}",
+    "maxAllowed": "Max: {{max}}",
+    "error": {
+      "connection": "Connection error. Please check your internet connection.",
+      "microphone": "Microphone access is disabled. Please enable it to participate.",
+      "camera": "Camera access is disabled. You can still participate with audio only.",
+      "general": "Failed to join the video call. Please try again."
+    }
   }
 }

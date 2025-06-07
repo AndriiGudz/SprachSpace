@@ -41,8 +41,7 @@ function VideoChat({ roomUrl }: VideoChatProps) {
 
         // Обработчики событий
         callFrame
-          .on('left-meeting', (evt: DailyEventObjectNoPayload) => {
-          })
+          .on('left-meeting', (evt: DailyEventObjectNoPayload) => {})
           .on('error', (evt: DailyEventObjectFatalError) => {
             console.error('Daily.co error:', evt)
             setError(t('videoChat.error.connection'))
@@ -89,6 +88,7 @@ function VideoChat({ roomUrl }: VideoChatProps) {
           {error}
         </Alert>
       )}
+
       <Box
         ref={videoRef}
         sx={{

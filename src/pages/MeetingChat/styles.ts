@@ -27,7 +27,7 @@ export const videoAreaStyle: SxProps<Theme> = {
   width: '100%',
   height: '100%',
   bgcolor: 'background.paper',
-  borderRadius: 1,
+  borderRadius: 2,
   overflow: 'hidden',
   boxShadow: 1,
 }
