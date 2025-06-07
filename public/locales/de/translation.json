@@ -1,9 +1,221 @@
 {
   "app": {
-    "title": "SprachSpace - Sprachraum, Raum für Kommunikation und Lernen",
+    "title": "SprachSpace - Sprachraum für Kommunikation und Lernen",
     "description": "SprachSpace - Plattform zum Sprachenlernen durch Gruppenkommunikation"
   },
-  "homePage": {},
+  "header": {
+    "signIn": "Anmelden",
+    "signUp": "Registrieren"
+  },
+  "nav": {
+    "meet": "Treffen",
+    "about": "Über uns"
+  },
+  "signinUp": {
+    "signInTitle": "Anmelden",
+    "signUpTitle": "Konto erstellen",
+    "googleSignIn": "Mit Google anmelden",
+    "orUseAccount": "oder nutzen Sie Ihr Konto",
+    "orUseEmail": "oder nutzen Sie Ihre E-Mail für die Registrierung",
+    "forgotPassword": "Passwort vergessen?",
+    "welcomeBack": "Willkommen zurück!",
+    "welcomeBackText": "Bitte melden Sie sich mit Ihren persönlichen Daten an",
+    "helloFriend": "Hallo, Freund!",
+    "helloFriendText": "Geben Sie Ihre persönlichen Daten ein und beginnen Sie Ihre Reise mit uns",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "E-Mail",
+    "passwordPlaceholder": "Passwort",
+    "acceptTerms": "Ich akzeptiere die Nutzungsbedingungen",
+    "registrationSuccess": "Sie haben sich erfolgreich registriert!",
+    "loginSuccess": "Sie haben sich erfolgreich angemeldet!",
+    "loginFailed": "Anmeldung fehlgeschlagen",
+    "registrationFailed": "Registrierung fehlgeschlagen",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+    "emailRequired": "E-Mail ist erforderlich",
+    "invalidEmail": "Ungültige E-Mail",
+    "notAcceptableEmail": "Diese E-Mail ist nicht akzeptabel",
+    "passwordRequired": "Passwort ist erforderlich",
+    "shortPassword": "Passwort ist zu kurz",
+    "smallLetter": "Passwort muss mindestens einen Kleinbuchstaben enthalten",
+    "capitalLetter": "Passwort muss mindestens einen Großbuchstaben enthalten",
+    "numberRequired": "Passwort muss mindestens eine Zahl enthalten",
+    "specialSymbol": "Passwort muss mindestens ein Sonderzeichen enthalten",
+    "termsAcceptance": "Sie müssen die Nutzungsbedingungen akzeptieren"
+  },
+  "userMenu": {
+    "profile": "Profil",
+    "notifications": "Benachrichtigungen",
+    "scheduledMeetings": "Geplante Treffen",
+    "friends": "Freunde",
+    "reviews": "Bewertungen",
+    "signOut": "Abmelden",
+    "signIn": "Anmelden",
+    "meetings": "Treffen",
+    "about": "Über uns",
+    "logoutSuccess": "Sie wurden erfolgreich abgemeldet.",
+    "logoutError": "Beim Abmelden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "userList": "Benutzerliste"
+  },
+  "profile": {
+    "alert": "Füllen Sie Ihre persönlichen Daten aus, um Zugang zu den Funktionen der Anwendung zu erhalten.",
+    "updatedSuccess": "Profil erfolgreich aktualisiert",
+    "updateFailed": "Profilaktualisierung fehlgeschlagen",
+    "networkError": "Netzwerkfehler aufgetreten. Bitte überprüfen Sie Ihre Verbindung.",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
+  },
+  "personalData": {
+    "title": "Persönliche Daten",
+    "nickname": "Spitzname",
+    "name": "Name",
+    "surname": "Nachname",
+    "birthdayDate": "Geburtsdatum",
+    "avatarUploadedSuccess": "Avatar erfolgreich hochgeladen",
+    "avatarUploadError": "Fehler beim Hochladen des Avatars"
+  },
+  "languageSection": {
+    "title": "Sprachkenntnisse",
+    "addLanguage": "Sprache hinzufügen",
+    "speakFluently": "Ich spreche fließend:",
+    "learning": "Ich lerne:",
+    "language": "Sprache",
+    "level": "Niveau",
+    "add": "Hinzufügen",
+    "nativeLanguageAdded": "Muttersprache erfolgreich hinzugefügt",
+    "nativeLanguageAddError": "Fehler beim Hinzufügen der Muttersprache",
+    "learningLanguageAdded": "Lernsprache erfolgreich hinzugefügt",
+    "learningLanguageAddError": "Fehler beim Hinzufügen der Lernsprache",
+    "nativeLanguageRemoved": "Muttersprache erfolgreich entfernt",
+    "nativeLanguageRemoveError": "Fehler beim Entfernen der Muttersprache",
+    "learningLanguageRemoved": "Lernsprache erfolgreich entfernt",
+    "learningLanguageRemoveError": "Fehler beim Entfernen der Lernsprache",
+    "noLanguageSelected": "Noch keine Sprache ausgewählt",
+    "learningLanguageDeleteError": "Fehler beim Löschen der Lernsprache",
+    "nativeLanguageDeleteError": "Fehler beim Löschen der Muttersprache"
+  },
+  "securitySection": {
+    "title": "Sicherheit",
+    "emailLabel": "E-Mail",
+    "backupEmailLabel": "Backup-E-Mail",
+    "addBackupEmail": "Backup-E-Mail hinzufügen",
+    "changePassword": "Passwort ändern",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountDialogTitle": "Kontolöschung bestätigen",
+    "deleteAccountDialogMessage": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Es kann nicht wiederhergestellt werden.",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "accountDeleted": "Konto erfolgreich gelöscht",
+    "accountDeleteError": "Fehler beim Löschen des Kontos"
+  },
+  "headerBanner": {
+    "title": "Verbessern Sie Ihre Sprachkenntnisse mit Menschen aus aller Welt",
+    "description": "Verbinden Sie sich mit Menschen für spannende Gespräche in verschiedenen Sprachen. Nehmen Sie an Video-Meetings teil und lernen Sie eine Sprache in natürlicher Umgebung.",
+    "join": "Loslegen"
+  },
+  "whySprachSpace": {
+    "titleBox": "Warum SprachSpace?",
+    "title1": "Live-Kommunikation in Echtzeit",
+    "title2": "Gemeinschaft Gleichgesinnter",
+    "title3": "Wählen Sie Sprache und Niveau",
+    "title4": "Keine Lehrbücher - nur Praxis",
+    "buttonFree": "Kostenlos beitreten"
+  },
+  "howItWorks": {
+    "titleBox": "Wie funktioniert es?",
+    "subtitleBox": "Diese Schritte helfen Ihnen, schnell zu verstehen, wie Sie die Plattform nutzen können.",
+    "title1": "Registrierung:",
+    "title2": "Raumauswahl:",
+    "title3": "Beginnen Sie zu chatten:",
+    "description1": "Registrieren Sie sich und erstellen Sie ein Profil.",
+    "description2": "Wählen oder erstellen Sie einen Raum basierend auf Ihren Interessen und der Sprache, die Sie lernen.",
+    "description3": "Nehmen Sie an Meetings teil und lernen Sie durch Konversation.",
+    "buttonBegin": "Beginnen"
+  },
+  "facts": {
+    "title": "Interessante Fakten über die Vorteile des Fremdsprachenlernens",
+    "items": {
+      "0": {
+        "title": "Verbessert kognitive Fähigkeiten",
+        "content": "Sprachenlernen stimuliert das Gehirn und verbessert Gedächtnis, Aufmerksamkeit und Problemlösungsfähigkeiten."
+      },
+      "1": {
+        "title": "Verlangsamt die Gehirnalterung",
+        "content": "Zweisprachigkeit wird mit einem späteren Einsetzen von Demenz und Alzheimer in Verbindung gebracht."
+      },
+      "2": {
+        "title": "Erweitert Karrieremöglichkeiten",
+        "content": "Fremdsprachenkenntnisse erhöhen die Chancen auf gut bezahlte Jobs oder Karrierefortschritte."
+      },
+      "3": {
+        "title": "Verbessert Multitasking-Fähigkeiten",
+        "content": "Menschen, die mehrere Sprachen sprechen, sind besser darin, mehrere Aufgaben gleichzeitig zu bewältigen."
+      },
+      "4": {
+        "title": "Kulturelles Verständnis",
+        "content": "Sprachenlernen vermittelt Einblicke in verschiedene Kulturen und Denkweisen."
+      },
+      "5": {
+        "title": "Verbessert Entscheidungsfindung",
+        "content": "Zweisprachige Menschen treffen oft rationalere Entscheidungen, wenn sie in ihrer zweiten Sprache denken."
+      },
+      "6": {
+        "title": "Steigert Kreativität",
+        "content": "Sprachenlernen fördert kreatives Denken und Problemlösungsfähigkeiten."
+      },
+      "7": {
+        "title": "Bessere Erstsprache",
+        "content": "Das Lernen einer zweiten Sprache verbessert das Verständnis und die Nutzung der Muttersprache."
+      },
+      "8": {
+        "title": "Reisevorteile",
+        "content": "Mehrsprachigkeit macht Reisen angenehmer und bedeutungsvoller."
+      },
+      "9": {
+        "title": "Soziale Verbindungen",
+        "content": "Sprachkenntnisse helfen beim Aufbau bedeutungsvoller Beziehungen mit Menschen aus verschiedenen Kulturen."
+      }
+    }
+  },
+  "createRoomForm": {
+    "createRoom": "Raum erstellen",
+    "roomName": "Raumname",
+    "category": "Kategorie",
+    "roomLanguage": "Raumsprache",
+    "proficiency": "Kenntnisstand",
+    "openTime": "Startzeit",
+    "closeTime": "Endzeit",
+    "minParticipants": "Min. Teilnehmer",
+    "maxParticipants": "Max. Teilnehmer",
+    "ageLimit": "Altersgrenze",
+    "createRoomButton": "Raum erstellen",
+    "roomCreatedSuccess": "Raum erfolgreich erstellt!",
+    "roomCreationError": "Fehler beim Erstellen des Raums. Bitte versuchen Sie es erneut.",
+    "privateRoomLabel": "Privater Raum",
+    "privateRoomHelperTextPublic": "Öffentlich: Für jeden sichtbar, keine Genehmigung zum Beitreten erforderlich.",
+    "privateRoomHelperTextPrivate": "Privat: Nur von Ihnen genehmigte Benutzer können beitreten.",
+    "errorFetchingCategories": "Fehler beim Abrufen der Kategorien",
+    "noCategoriesAvailable": "Keine Kategorien verfügbar",
+    "selectCategoryPlaceholder": "Kategorie auswählen",
+    "noLanguagesAvailable": "Keine Sprachen verfügbar",
+    "selectLanguagePlaceholder": "Sprache auswählen",
+    "levels": {
+      "beginner": "Anfänger",
+      "intermediate": "Mittelstufe",
+      "advanced": "Fortgeschritten"
+    }
+  },
+  "roomFilter": {
+    "category": "Kategorie",
+    "language": "Sprache",
+    "proficiency": "Niveau",
+    "date": "Datum",
+    "apply": "Anwenden",
+    "reset": "Zurücksetzen",
+    "createRoom": "Raum erstellen",
+    "close": "Schließen",
+    "applyFilters": "Filter anwenden",
+    "roomCreated": "Raum erstellt:",
+    "notSelected": "Nicht ausgewählt"
+  },
   "adminUsersList": {
     "searchPlaceholder": "Suche nach Name, E-Mail, Benutzer-ID usw.",
     "status": "Status",
@@ -22,13 +234,13 @@
     "noData": "Benutzerdaten nicht verfügbar",
     "points": "Punkte",
     "reviews": "Bewertungen",
-    "roomCreated": "Erstellte Räume",
-    "roomAttended": "Besuchte Räume",
+    "roomCreated": "Räume erstellt",
+    "roomAttended": "Räume besucht",
     "rating": "Bewertung",
     "nativeLanguages": "Muttersprachen",
     "learningLanguages": "Lernsprachen",
     "personalInformation": "Persönliche Informationen",
-    "nickname": "Nickname",
+    "nickname": "Spitzname",
     "name": "Name",
     "surname": "Nachname",
     "dateOfBirth": "Geburtsdatum",
@@ -43,35 +255,12 @@
     "setAdmin": "Als Admin festlegen",
     "processing": "Verarbeitung..."
   },
-  "createRoomForm": {
-    "createRoom": "Raum erstellen",
-    "roomName": "Raumname",
-    "category": "Kategorie",
-    "roomLanguage": "Raumsprache",
-    "proficiency": "Sprachniveau",
-    "openTime": "Startzeit",
-    "closeTime": "Endzeit",
-    "minParticipants": "Mindestanzahl Teilnehmer",
-    "maxParticipants": "Maximale Teilnehmer",
-    "ageLimit": "Altersbegrenzung",
-    "createRoomButton": "Raum erstellen",
-    "roomCreatedSuccess": "Raum erfolgreich erstellt!",
-    "roomCreationError": "Fehler beim Erstellen des Raums. Bitte versuchen Sie es erneut.",
-    "privateRoomLabel": "Privater Raum",
-    "privateRoomHelperTextPublic": "Öffentlich: Für jeden sichtbar, keine Genehmigung zum Beitritt erforderlich.",
-    "privateRoomHelperTextPrivate": "Privat: Nur von Ihnen genehmigte Benutzer können beitreten.",
-    "levels": {
-      "beginner": "Anfänger",
-      "intermediate": "Mittelstufe",
-      "advanced": "Fortgeschritten"
-    }
-  },
   "validation": {
     "createRoom": {
       "required": "Dieses Feld ist erforderlich",
       "nameRequired": "Raumname ist erforderlich",
       "nameMin": "Raumname muss mindestens 3 Zeichen lang sein",
-      "nameMax": "Raumname darf 50 Zeichen nicht überschreiten",
+      "nameMax": "Raumname darf nicht länger als 50 Zeichen sein",
       "nameFormat": "Name darf nur Buchstaben, Zahlen, Leerzeichen und Bindestriche enthalten",
       "categoryRequired": "Bitte wählen Sie eine Kategorie",
       "languageRequired": "Bitte wählen Sie eine Sprache",
@@ -80,7 +269,7 @@
       "openTimeMin": "Startzeit muss mindestens 5 Minuten in der Zukunft liegen",
       "closeTimeRequired": "Endzeit ist erforderlich",
       "closeTimeMin": "Endzeit muss mindestens 15 Minuten nach Startzeit sein",
-      "minParticipantsRequired": "Mindestanzahl der Teilnehmer ist erforderlich",
+      "minParticipantsRequired": "Mindestanzahl Teilnehmer ist erforderlich",
       "minParticipantsMin": "Mindestens 4 Teilnehmer erforderlich",
       "maxParticipantsRequired": "Maximale Teilnehmerzahl ist erforderlich",
       "maxParticipantsMin": "Maximale Teilnehmerzahl muss mindestens {{count}} sein",
@@ -90,23 +279,28 @@
     }
   },
   "common": {
-    "loading": "Wird geladen...",
+    "loading": "Laden...",
     "unauthorized": "Autorisierung erforderlich",
     "pleaseLogin": "Bitte melden Sie sich an, um einen Raum zu erstellen",
-    "errorFetchingLanguages": "Sprachen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+    "errorFetchingLanguages": "Fehler beim Laden der Sprachen. Bitte versuchen Sie es später erneut."
   },
   "createRoomButton": {
     "createRoom": "Raum erstellen",
-    "qualificationMessage": "Nur autorisierte Benutzer mit einer Bewertung von 4 oder höher können einen neuen Raum erstellen",
+    "qualificationMessage": "Nur ein autorisierter Benutzer mit einer Bewertung von 4 oder höher kann einen neuen Raum erstellen",
     "close": "Schließen"
   },
   "meetings": {
-    "title": "Meetings",
-    "subtitle": "Nehmen Sie an geplanten Meetings teil oder erstellen Sie Ihren eigenen Raum",
+    "title": "Treffen",
+    "subtitle": "Nehmen Sie an geplanten Treffen teil oder erstellen Sie Ihren eigenen Raum",
     "error": {
-      "title": "Meetings konnten nicht geladen werden"
+      "title": "Fehler beim Laden des Treffens"
     },
-    "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!"
+    "noRooms": "Noch keine Räume verfügbar. Erstellen Sie den ersten!",
+    "pagination": {
+      "itemsPerPage": "Einträge pro Seite:",
+      "page": "Seite",
+      "of": "von"
+    }
   },
   "meetingCard": {
     "titleLabel": "Titel oder Thema:",
@@ -120,13 +314,26 @@
     "maxParticipantsLabel": "Max:",
     "waitingParticipantsLabel": "Wartend:",
     "languageFlagAlt": "{{language}} Flagge",
-    "proficiencyNotSet": "Nicht angegeben",
+    "proficiencyNotSet": "Nicht festgelegt",
     "hostAvatarAlt": "Avatar von {{name}}",
     "ageRestrictionLabel": "Alter:",
-    "noAgeRestriction": "Keine Beschränkungen",
+    "noAgeRestriction": "Keine Einschränkungen",
     "organizerTooltip": "Organisator: {{nickname}} ({{firstName}} {{lastName}}) - Bewertung: {{rating}}",
     "shareTooltip": "Teilen",
     "copyLinkTooltip": "Link kopieren",
-    "joinButton": "Beitreten"
+    "joinButton": "Beitreten",
+    "meetingEnded": "Meeting ist beendet",
+    "privateRoomLabel": "Privat",
+    "publicRoomLabel": "Öffentlich",
+    "privateRoomTooltip": "Erfordert die Genehmigung des Gastgebers zum Beitritt",
+    "publicRoomTooltip": "Offen für alle Teilnehmer"
+  },
+  "videoChat": {
+    "error": {
+      "general": "Verbindung zum Videochat fehlgeschlagen",
+      "connection": "Verbindungsfehler im Videochat",
+      "camera": "Kein Zugriff auf die Kamera möglich",
+      "microphone": "Kein Zugriff auf das Mikrofon möglich"
+    }
   }
 }

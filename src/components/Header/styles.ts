@@ -38,7 +38,7 @@ export const LogoContainer = styled.a`
 export const DesktopOnly = styled.div`
   display: flex;
   width: 100%;
-  gap: 42px;
+  gap: 24px;
 
   @media (max-width: 900px) {
     display: none;

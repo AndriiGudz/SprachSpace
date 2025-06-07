@@ -10,23 +10,75 @@ button {
   padding: 0;
   font-family: Oswald;
   font-size: 16px;
+  font-weight: 400;
 }
+
 button.learn-more {
-  width: 7rem;
-  height: auto;
+  min-width: 120px;
+  width: auto;
+  height: 36px;
+  padding: 0 20px 0 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50px;
+  transition: all 0.3s ease;
 }
+
+button.learn-more.btn-small {
+  height: 32px;
+  min-width: 100px;
+  padding: 0 16px 0 0;
+  font-size: 14px;
+}
+
+button.learn-more.btn-small .circle {
+  width: 32px;
+  height: 32px;
+}
+
+button.learn-more.btn-small .button-text {
+  margin-left: 42px;
+  padding: 0.45rem 0;
+}
+
+button.learn-more.btn-medium {
+  height: 36px;
+  min-width: 120px;
+  padding: 0 20px 0 0;
+  font-size: 16px;
+}
+
+button.learn-more.btn-large {
+  height: 44px;
+  min-width: 140px;
+  padding: 0 24px 0 0;
+  font-size: 18px;
+}
+
+button.learn-more.btn-large .circle {
+  width: 44px;
+  height: 44px;
+}
+
+button.learn-more.btn-large .button-text {
+  margin-left: 58px;
+  padding: 0.65rem 0;
+}
+
 button.learn-more .circle {
   transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-  position: relative;
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
   margin: 0;
   width: 36px;
   height: 36px;
   border-radius: 50px;
+  z-index: 1;
 }
 
 button.learn-more.light .circle {
-  background: #01579B;
+  background: #01579b;
 }
 
 button.learn-more.dark .circle {
@@ -49,6 +101,7 @@ button.learn-more .circle .icon.arrow {
   height: 0.125rem;
   background: none;
 }
+
 button.learn-more .circle .icon.arrow::before {
   position: absolute;
   content: '';
@@ -64,23 +117,21 @@ button.learn-more.light .circle .icon.arrow::before {
 }
 
 button.learn-more.dark .circle .icon.arrow::before {
-  border-top: 0.125rem solid #01579B;
-  border-right: 0.125rem solid #01579B;
+  border-top: 0.125rem solid #01579b;
+  border-right: 0.125rem solid #01579b;
 }
 
 button.learn-more .button-text {
   transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
+  display: inline-block;
   padding: 0.55rem 0;
-  margin: 0 0 0 2.15rem;
+  margin-left: 50px;
   font-weight: 400;
   line-height: 100%;
   letter-spacing: 0.32px;
-  text-align: center;
+  white-space: nowrap;
+  z-index: 2;
 }
 
 button.learn-more.light .button-text {
@@ -91,22 +142,64 @@ button.learn-more.dark .button-text {
   color: #fff;
 }
 
-button:hover .circle {
-  width: 100%;
+button.learn-more:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-button.light:hover .circle .icon.arrow {
-  background: #fff;
-  transform: translate(1rem, 0);
+button.learn-more:disabled .circle {
+  background: #cccccc !important;
 }
-button.light:hover .button-text {
+
+button.learn-more:disabled .button-text {
+  color: #999999 !important;
+}
+
+button.learn-more:disabled .circle .icon.arrow::before {
+  border-top: 0.125rem solid #999999 !important;
+  border-right: 0.125rem solid #999999 !important;
+}
+
+button.learn-more:disabled:hover .circle {
+  width: 36px !important;
+}
+
+button.learn-more:disabled:hover .circle .icon.arrow {
+  left: 0.125rem !important;
+}
+
+button.learn-more:not(:disabled):hover .circle {
+  width: 100%;
+  border-radius: 50px;
+}
+
+button.learn-more:not(:disabled):hover .circle .icon.arrow {
+  /* Стрелка остается в левой части кнопки */
+  left: 0.75rem;
+}
+
+button.learn-more.light:not(:disabled):hover .circle .icon.arrow {
+  background: #fff;
+}
+
+button.learn-more.light:not(:disabled):hover .button-text {
   color: #fff;
 }
 
-button.dark:hover .circle .icon.arrow {
-  background: #01579B;
-  transform: translate(1rem, 0);
+button.learn-more.dark:not(:disabled):hover .circle .icon.arrow {
+  background: #01579b;
 }
-button.dark:hover .button-text {
-  color: #01579B;
+
+button.learn-more.dark:not(:disabled):hover .button-text {
+  color: #01579b;
+}
+
+@media (max-width: 767px) {
+  button.learn-more {
+    max-width: calc(100vw - 40px);
+  }
+
+  button.learn-more .button-text {
+    font-size: 14px;
+  }
 }

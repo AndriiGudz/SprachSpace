@@ -12,7 +12,7 @@ export const UserMenuContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
-  width: 220px;
+  width: auto;
   padding: 14px 16px;
   border-radius: var(--none, 0px) var(--none, 0px) var(--none, 0px) 4px;
   /* border: var(--none, 1px) solid var(--grey-darken-1, #757575); */
@@ -49,7 +49,7 @@ export const MenuItemStyled = styled(MenuItem)`
 `
 
 export const DividerStyled = styled(Divider)`
-  width: 188px;
+  width: 100%;
   height: 1px;
   background: var(--divider, rgba(0, 0, 0, 0.12));
 `
@@ -68,6 +68,7 @@ export const MobOnly = styled.div`
   display: none;
 
   @media (max-width: 900px) {
+    width: 100%;
     display: block;
     display: flex;
     flex-direction: column;
@@ -78,6 +79,7 @@ export const MobLangSel = styled.div`
   display: none;
 
   @media (max-width: 900px) {
+    width: 100%;
     display: block;
     display: flex;
     flex-direction: column;

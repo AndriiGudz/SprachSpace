@@ -26,6 +26,7 @@ export interface ApiRoom {
 }
 
 export interface ApiCreator {
+  avatar: undefined
   id: number // Из JSON видно, что это number
   nickname: string
   name: string // Это firstName из JSON

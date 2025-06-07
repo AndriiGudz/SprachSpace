@@ -106,13 +106,15 @@ function SignInUp() {
       if (response.ok) {
         const data = await response.json()
 
-        console.log('Login successful:', data)
-        console.log('Data passed to setUser:', {
-          ...data,
-          nativeLanguages: data.nativeLanguages,
-          learningLanguages: data.learningLanguages,
-        })
+        // Сначала устанавливаем токены
+        dispatch(
+          setTokens({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          })
+        )
 
+        // Затем устанавливаем данные пользователя (без токенов, они уже установлены)
         dispatch(
           setUser({
             id: data.id,
@@ -121,7 +123,8 @@ function SignInUp() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            foto: data.foto,
+            avatar: data.avatar,
+            foto: data.avatar, // Используем avatar из ответа сервера
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
@@ -133,17 +136,6 @@ function SignInUp() {
           })
         )
 
-        console.log('dispatch setUsers:', setUser)
-        console.log('Roles:', data.roles)
-
-        dispatch(
-          setTokens({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-          })
-        )
-
-        localStorage.setItem('user', JSON.stringify(data))
         toast.success(t('signinUp.loginSuccess'))
         navigate('/')
       } else {
@@ -169,7 +161,6 @@ function SignInUp() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Registration successful:', data)
         dispatch(setUser(data))
         toast.success(t('signinUp.registrationSuccess'))
         navigate('/')

@@ -10,64 +10,38 @@ import PageSignInUp from './pages/PageSignInUp/PageSignInUp'
 import Profile from './pages/Profile/Profile'
 import ProtectedRoute from '../src/components/ProtectedRoute/ProtectedRoute'
 import AdminRoute from '../src/components/ProtectedRoute/AdminRoute'
+import AuthGuard from './components/AuthGuard/AuthGuard'
 import theme from './theme'
 import { ThemeProvider } from '@mui/material/styles'
 import Notifications from './components/Notifications/Notifications'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useDispatch } from 'react-redux'
-import { setTokens, setUser } from './store/redux/userSlice/userSlice'
 import LoadingScreen from './components/LoadingScreen/LoadingScreen'
 import Meetings from './pages/Meetings/Meetings'
 import Admin from './pages/Admin/PageAdminUsersList'
 import UserDaschboard from './pages/Admin/PageUserDaschboard'
+import MeetingChat from './pages/MeetingChat/MeetingChat'
 
 function App() {
-  const dispatch = useDispatch()
   const { t, i18n } = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
 
-  // Используем один useEffect для инициализации состояния загрузки и загрузки данных пользователя
+  // Простая инициализация приложения
   useEffect(() => {
     // Симуляция загрузки (убери, если не нужен)
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 4500)
 
-    // Загружаем данные из localStorage
-    const storedUser = localStorage.getItem('user')
-
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser)
-
-        // Проверяем, есть ли в данных токены и пользователь не разлогинен
-        if (userData && userData.accessToken) {
-          dispatch(setUser(userData))
-          dispatch(
-            setTokens({
-              accessToken: userData.accessToken,
-              refreshToken: userData.refreshToken,
-            })
-          )
-        }
-      } catch (error) {
-        console.error(
-          'Ошибка при загрузке пользователя из localStorage:',
-          error
-        )
-      }
-    }
-
     return () => clearTimeout(timer)
-  }, [dispatch])
+  }, [])
 
   // Обновление title страницы при изменении языка
   useEffect(() => {
     if (i18n.isInitialized) {
       document.title = t('app.title')
     }
-  }, [i18n.isInitialized, t]) // Используем `i18n.isInitialized` и `t` для корректного обновления переводов
+  }, [i18n.isInitialized, t])
 
   if (isLoading) {
     return <LoadingScreen />
@@ -79,38 +53,41 @@ function App() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <CssBaseline />
           <GlobalStyles />
-          <Notifications />
-          <Routes>
-            <Route path="/signin" element={<PageSignInUp />} />
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="/meetings" element={<Meetings />} />
-              <Route
-                path="/admin/users"
-                element={
-                  <AdminRoute>
-                    <Admin />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/users/:userId"
-                element={
-                  <AdminRoute>
-                    <UserDaschboard />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-          </Routes>
+          <AuthGuard>
+            <Notifications />
+            <Routes>
+              <Route path="/signin" element={<PageSignInUp />} />
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="/meetings" element={<Meetings />} />
+                <Route path="/meetings/:meetingId" element={<MeetingChat />} />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <AdminRoute>
+                      <Admin />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users/:userId"
+                  element={
+                    <AdminRoute>
+                      <UserDaschboard />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+            </Routes>
+          </AuthGuard>
         </LocalizationProvider>
       </ThemeProvider>
     </BrowserRouter>

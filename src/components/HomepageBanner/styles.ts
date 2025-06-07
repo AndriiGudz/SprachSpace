@@ -1,16 +1,4 @@
 import styled from '@emotion/styled'
-// import bannerImage from '../../assets/hp-banner.webp'
-import bannerImage from '../../assets/banner.png'
-
-export const BannerBox = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 700px;
-  background-image: url(${bannerImage});
-  background-size: cover;
-  background-position: center;
-`
 
 export const ContentBox = styled.div`
   display: flex;
