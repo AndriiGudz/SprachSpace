@@ -44,7 +44,7 @@ function LanguageSelector() {
             alt="English"
             loading="lazy"
           />
-          En
+          <span className="language-title">En</span>
         </Box>
       </MenuItem>
       <MenuItem value="de">
@@ -54,7 +54,7 @@ function LanguageSelector() {
             alt="Deutsch"
             loading="lazy"
           />
-          De
+          <span className="language-title">De</span>
         </Box>
       </MenuItem>
       <MenuItem value="uk">
@@ -64,7 +64,7 @@ function LanguageSelector() {
             alt="Українська"
             loading="lazy"
           />
-          Uk
+          <span className="language-title">Uk</span>
         </Box>
       </MenuItem>
       <MenuItem value="ru">
@@ -74,7 +74,7 @@ function LanguageSelector() {
             alt="Русский"
             loading="lazy"
           />
-          Ru
+          <span className="language-title">Ru</span>
         </Box>
       </MenuItem>
     </Select>
