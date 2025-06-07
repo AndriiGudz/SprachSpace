@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -15,6 +15,7 @@ import {
 import { UserSliceState, LanguageData } from '../../store/redux/userSlice/types'
 import Loader from '../Loader/Loader'
 import { RootState } from '../../store/store'
+import { API_ROOT_URL } from '../../config/apiConfig'
 
 interface UserDashboardProps {
   userId: string | undefined
@@ -53,6 +54,12 @@ function UserDashboard({ userId }: UserDashboardProps) {
         setLoading(false)
       })
   }, [userId])
+
+  const srcAvatarUrl = useMemo(
+    () =>
+      user?.avatar ? `${API_ROOT_URL}/users/file/avatar/${user.avatar}` : null,
+    [user?.avatar]
+  )
 
   const handleBlock = async () => {
     if (!user || isProcessing || !userId || !adminId) return
@@ -196,9 +203,9 @@ function UserDashboard({ userId }: UserDashboardProps) {
             {/* Avatar Section */}
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
               <Avatar
-                src={user.foto || ''}
+                src={srcAvatarUrl || ''}
                 alt={`${user.nickname} avatar`}
-                sx={{ width: 100, height: 100, p: 2 }}
+                sx={{ width: 100, height: 100 }}
               />
             </Box>
 

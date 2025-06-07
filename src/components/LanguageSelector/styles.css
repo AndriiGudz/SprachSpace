@@ -1,8 +1,7 @@
 img {
-    width: 36px;
-    margin-right: 10px;
+  width: 36px;
 
-    @media (max-width: 900px) {
-        width: 24px;
-    }
+  @media (max-width: 900px) {
+    width: 24px;
+  }
 }

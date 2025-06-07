@@ -25,6 +25,7 @@ export interface UserSliceState {
   surname: string | null
   email: string | null
   birthdayDate: string | null
+  avatar: string | null
   foto: string | null
   rating: number | null
   internalCurrency: number | null

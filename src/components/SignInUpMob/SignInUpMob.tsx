@@ -86,6 +86,7 @@ function SignInUpMob() {
               surname: data.surname,
               email: data.email,
               birthdayDate: data.birthdayDate,
+              avatar: data.avatar,
               foto: data.avatar,
               rating: data.rating,
               internalCurrency: data.internalCurrency,
@@ -111,6 +112,7 @@ function SignInUpMob() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
+            avatar: data.avatar,
             foto: data.avatar, // Используем avatar из ответа сервера
             rating: data.rating,
             internalCurrency: data.internalCurrency,
