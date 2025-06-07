@@ -1,57 +1,33 @@
-import { useTranslation } from 'react-i18next'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { useState, useEffect, useRef } from 'react'
-import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
-import MenuIcon from '@mui/icons-material/Menu'
+import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import MenuIcon from '@mui/icons-material/Menu'
 import { Avatar } from '@mui/material'
-import ButtonSign from '../ButtonSign/ButtonSign'
-import LanguageSelector from '../LanguageSelector/LanguageSelector'
-import UserMenu from '../UserMenu/UserMenu'
+import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
 import {
   HeaderBox,
   LogoContainer,
-  MenuButton,
   DesktopOnly,
+  UserMenuWrapper,
   AvatarContainer,
   MobileAvatar,
-  UserMenuWrapper,
+  MenuButton,
 } from './styles'
 import NavLinks from '../NavLinks/NavLinks'
-import { RootState, AppDispatch } from '../../store/store'
-import { loadUserAvatar } from '../../store/redux/userSlice/userSlice'
+import ButtonSign from '../ButtonSign/ButtonSign'
+import UserMenu from '../UserMenu/UserMenu'
+import LanguageSelector from '../LanguageSelector/LanguageSelector'
 
 function Header() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const user = useSelector((state: RootState) => state.user)
   const isAuthenticated = user.isAuthenticated
   const menuRef = useRef<HTMLDivElement | null>(null)
-
-  // Загружаем аватар когда пользователь авторизован и есть foto
-  useEffect(() => {
-    if (
-      isAuthenticated &&
-      user.id &&
-      user.foto &&
-      user.accessToken &&
-      !user.avatarDisplayUrl
-    ) {
-      dispatch(
-        loadUserAvatar({ userId: user.id, accessToken: user.accessToken })
-      )
-    }
-  }, [
-    dispatch,
-    isAuthenticated,
-    user.id,
-    user.foto,
-    user.accessToken,
-    user.avatarDisplayUrl,
-  ])
 
   const handleSignInClick = () => {
     navigate('/signin')
@@ -141,6 +117,7 @@ function Header() {
         )}
         <LanguageSelector />
       </DesktopOnly>
+      {/* Мобильная версия */}
       {isAuthenticated ? (
         <>
           <MobileAvatar onClick={toggleUserMenu}>

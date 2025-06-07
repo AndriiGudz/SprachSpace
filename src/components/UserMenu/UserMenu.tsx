@@ -20,7 +20,7 @@ import { ReactComponent as SignoutIcon } from '../../assets/icon/LogoutFilled.sv
 import { ReactComponent as AdminIcon } from '../../assets/icon/AdminIcon.svg'
 import LanguageSelector from '../LanguageSelector/LanguageSelector'
 import { useDispatch, useSelector } from 'react-redux'
-import { clearUser } from '../../store/redux/userSlice/userSlice'
+import { logoutUser } from '../../store/redux/userSlice/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../store/store'
 import { toast } from 'react-toastify'
@@ -46,13 +46,10 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
     navigate('/signin')
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      // Очищаем состояние Redux
-      dispatch(clearUser())
-
-      // Очищаем localStorage
-      localStorage.removeItem('user')
+      // Используем logoutUser для полной очистки состояния
+      dispatch(logoutUser())
 
       // Закрываем меню
       onMenuItemClick()

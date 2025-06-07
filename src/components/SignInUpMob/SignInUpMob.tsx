@@ -104,6 +104,15 @@ function SignInUpMob() {
         console.log('=== Конец данных авторизации ===')
 
         // Сохраняем информацию о пользователе в глобальном хранилище
+        // Сначала устанавливаем токены
+        dispatch(
+          setTokens({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          })
+        )
+
+        // Затем устанавливаем данные пользователя (без токенов, они уже установлены)
         dispatch(
           setUser({
             id: data.id,
@@ -124,17 +133,6 @@ function SignInUpMob() {
             message: data.message,
           })
         )
-
-        // Сохраняем токены
-        dispatch(
-          setTokens({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-          })
-        )
-
-        // Сохраняем данные в localStorage
-        localStorage.setItem('user', JSON.stringify(data))
 
         toast.success(t('signinUp.loginSuccess'))
         navigate('/')
