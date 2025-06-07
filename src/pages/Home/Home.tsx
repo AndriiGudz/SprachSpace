@@ -5,12 +5,14 @@ import WhySprachSpace from '../../components/WhySprachSpace/WhySprachSpace'
 import { PageBox } from './styles'
 
 function Home() {
-  return <PageBox>
-    <HomepageBanner />
-    <WhySprachSpace />
-    <CardSlider />
-    <HowItWorks />
-  </PageBox>
+  return (
+    <PageBox>
+      <HomepageBanner />
+      <WhySprachSpace />
+      <CardSlider />
+      <HowItWorks />
+    </PageBox>
+  )
 }
 
 export default Home
