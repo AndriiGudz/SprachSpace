@@ -12,6 +12,7 @@ export interface ApiRoom {
   category: ApiRoomCategory // Changed from string to object
   privateRoom: boolean // New
   languageLvl: string | null // New
+  quantityParticipant: number // Количество участников ожидающих встречу
   status: boolean
   age: number
   language: string

@@ -36,6 +36,7 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     languageLvl,
     minQuantity,
     maxQuantity,
+    quantityParticipant,
     roomUrl,
     category,
     privateRoom,
@@ -77,6 +78,7 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     duration: durationString,
     minParticipants: minQuantity,
     maxParticipants: maxQuantity,
+    waitingParticipants: quantityParticipant,
     language,
     proficiency: languageLvl,
     ageRestriction: typeof age === 'string' ? parseInt(age, 10) : age,
@@ -95,7 +97,6 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
         }
       : undefined,
     description: undefined,
-    waitingParticipants: undefined,
     imageUrl: undefined,
     languageFlagIconUrl: undefined,
     location: undefined,
