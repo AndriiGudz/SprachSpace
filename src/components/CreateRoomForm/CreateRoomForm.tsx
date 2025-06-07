@@ -9,6 +9,8 @@ import {
   Switch,
   FormControlLabel,
   FormHelperText,
+  CircularProgress,
+  Alert,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
@@ -35,8 +37,8 @@ import {
   CreateRoomApiRequest,
   ApiRoom,
 } from '../../store/redux/roomSlice/roomTypes'
-
-const categories = ['Music', 'Food', 'Tech']
+import { getAllCategories, Category } from '../../api/categoryApi'
+import { getAllLanguages, Language } from '../../api/languageApi'
 
 const LEVEL_OPTIONS = [
   { value: 'beginner', labelKey: 'createRoomForm.levels.beginner' },
@@ -66,14 +68,20 @@ type Props = {
 const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
-  const { isAuthenticated, id: userIdFromAuth } = useSelector(
-    (state: RootState) => state.user
-  )
+  const {
+    isAuthenticated,
+    id: userIdFromAuth,
+  } = useSelector((state: RootState) => state.user)
   const { isLoading: isRoomCreating, error: roomCreationError } = useSelector(
     (state: RootState) => state.rooms
   )
 
-  const [languages, setLanguages] = useState<{ id: number; name: string }[]>([])
+  const [languages, setLanguages] = useState<Language[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true)
+  const [categoryError, setCategoryError] = useState<string | null>(null)
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState<boolean>(true)
+  const [languageError, setLanguageError] = useState<string | null>(null)
 
   const {
     register,
@@ -87,7 +95,7 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
     mode: 'onChange',
     defaultValues: {
       name: '',
-      category: categories[0],
+      category: '',
       language: '',
       proficiency: '',
       openAt: '',
@@ -110,17 +118,62 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      setLanguageError(t('common.unauthorized'))
+      setIsLoadingLanguages(false)
       return
     }
 
-    fetch('http://localhost:8080/api/language')
-      .then((response) => response.json())
-      .then((data) => setLanguages(data))
-      .catch((error) => {
+    async function fetchLanguages() {
+      try {
+        setIsLoadingLanguages(true)
+        const fetchedLanguages = await getAllLanguages()
+        setLanguages(fetchedLanguages)
+        setLanguageError(null)
+      } catch (error) {
         console.error('Error fetching languages:', error)
-        toast.error(t('common.errorFetchingLanguages'))
-      })
-  }, [isAuthenticated, t, dispatch])
+        if (error instanceof Error) {
+          setLanguageError(error.message)
+        } else {
+          setLanguageError(String(t('common.errorFetchingLanguages')))
+        }
+      } finally {
+        setIsLoadingLanguages(false)
+      }
+    }
+
+    fetchLanguages()
+  }, [isAuthenticated, t])
+
+  useEffect(() => {
+    async function fetchCategories() {
+      if (!isAuthenticated) {
+        setCategoryError(t('common.unauthorized'))
+        setIsLoadingCategories(false)
+        return
+      }
+      try {
+        setIsLoadingCategories(true)
+        const fetchedCategories = await getAllCategories()
+        setCategories(fetchedCategories)
+        setCategoryError(null)
+      } catch (error) {
+        console.error('Failed to fetch categories:', error)
+        if (error instanceof Error) {
+          setCategoryError(error.message)
+        } else {
+          setCategoryError(
+            t(
+              'createRoomForm.errorFetchingCategories',
+              'Error fetching categories'
+            )
+          )
+        }
+      } finally {
+        setIsLoadingCategories(false)
+      }
+    }
+    fetchCategories()
+  }, [isAuthenticated, t])
 
   const onSubmit: SubmitHandler<CreateRoomFormData> = async (data) => {
     if (!userIdFromAuth) {
@@ -205,23 +258,70 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           disabled={isRoomCreating}
         />
 
-        <TextField
-          variant="outlined"
-          label={`${t('createRoomForm.category')}*`}
-          select
-          {...register('category')}
-          error={!!errors.category}
-          helperText={errors.category?.message}
-          defaultValue={categories[0]}
-          sx={filterItemStyle}
-          disabled={isRoomCreating}
-        >
-          {categories.map((cat) => (
-            <MenuItem key={cat} value={cat}>
-              {cat}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Controller
+          name="category"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              select
+              variant="outlined"
+              label={`${t('createRoomForm.category')}*`}
+              {...field}
+              error={!!errors.category}
+              helperText={errors.category?.message}
+              sx={filterItemStyle}
+              disabled={
+                isLoadingCategories || !!categoryError || isRoomCreating
+              }
+              fullWidth
+            >
+              {isLoadingCategories && (
+                <MenuItem value="" disabled>
+                  <CircularProgress size={20} />
+                  &nbsp;{t('common.loading')}
+                </MenuItem>
+              )}
+              {categoryError && (
+                <MenuItem value="" disabled>
+                  <Alert
+                    severity="error"
+                    sx={{ width: '100%', boxSizing: 'border-box' }}
+                  >
+                    {categoryError}
+                  </Alert>
+                </MenuItem>
+              )}
+              {!isLoadingCategories &&
+                !categoryError &&
+                categories.length === 0 && (
+                  <MenuItem value="" disabled>
+                    {t(
+                      'createRoomForm.noCategoriesAvailable',
+                      'No categories available'
+                    )}
+                  </MenuItem>
+                )}
+              {!isLoadingCategories &&
+                !categoryError &&
+                categories.length > 0 && (
+                  <MenuItem value="" disabled>
+                    <em>
+                      {t(
+                        'createRoomForm.selectCategoryPlaceholder',
+                        'Select a category'
+                      )}
+                    </em>
+                  </MenuItem>
+                )}
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.name}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
 
         <Box
           sx={{
@@ -239,9 +339,47 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
             error={!!errors.language}
             helperText={errors.language?.message}
             sx={filterItemStyle}
-            disabled={isRoomCreating}
+            disabled={isRoomCreating || isLoadingLanguages || !!languageError}
             defaultValue=""
           >
+            {isLoadingLanguages && (
+              <MenuItem value="" disabled>
+                <CircularProgress size={20} />
+                &nbsp;{t('common.loading')}
+              </MenuItem>
+            )}
+            {languageError && (
+              <MenuItem value="" disabled>
+                <Alert
+                  severity="error"
+                  sx={{ width: '100%', boxSizing: 'border-box' }}
+                >
+                  {
+                    languageError /* Linter should be fine as this block is only entered if languageError is not null (truthy) */
+                  }
+                </Alert>
+              </MenuItem>
+            )}
+            {!isLoadingLanguages &&
+              !languageError &&
+              languages.length === 0 && (
+                <MenuItem value="" disabled>
+                  {t(
+                    'createRoomForm.noLanguagesAvailable',
+                    'No languages available'
+                  )}
+                </MenuItem>
+              )}
+            {!isLoadingLanguages && !languageError && languages.length > 0 && (
+              <MenuItem value="" disabled>
+                <em>
+                  {t(
+                    'createRoomForm.selectLanguagePlaceholder',
+                    'Select a language'
+                  )}
+                </em>
+              </MenuItem>
+            )}
             {languages.map((lang) => (
               <MenuItem key={lang.id} value={lang.name}>
                 {lang.name}

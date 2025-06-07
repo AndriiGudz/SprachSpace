@@ -68,7 +68,9 @@
     "nickname": "Nickname",
     "name": "Name",
     "surname": "Surname",
-    "birthdayDate": "Date of birth"
+    "birthdayDate": "Date of birth",
+    "avatarUploadedSuccess": "Avatar uploaded successfully",
+    "avatarUploadError": "Failed to upload avatar"
   },
   "languageSection": {
     "title": "Language proficiency",
@@ -190,6 +192,11 @@
     "privateRoomLabel": "Private Room",
     "privateRoomHelperTextPublic": "Public: Visible to everyone, no approval needed to join.",
     "privateRoomHelperTextPrivate": "Private: Only users you approve can join.",
+    "errorFetchingCategories": "Error fetching categories",
+    "noCategoriesAvailable": "No categories available",
+    "selectCategoryPlaceholder": "Select a category",
+    "noLanguagesAvailable": "No languages available",
+    "selectLanguagePlaceholder": "Select a language",
     "levels": {
       "beginner": "Beginner",
       "intermediate": "Intermediate",
@@ -205,8 +212,9 @@
     "reset": "Reset",
     "createRoom": "Create Room",
     "close": "Close",
-    "applyFilters": "Apply filters",
-    "roomCreated": "Room created:"
+    "applyFilters": "Apply Filters",
+    "roomCreated": "Room created:",
+    "notSelected": "Not selected"
   },
   "adminUsersList": {
     "searchPlaceholder": "Search by name, email, user ID, etc.",
@@ -287,7 +295,12 @@
     "error": {
       "title": "Failed to load meetings"
     },
-    "noRooms": "No rooms available yet. Create the first one!"
+    "noRooms": "No rooms available yet. Create the first one!",
+    "pagination": {
+      "itemsPerPage": "Items per page:",
+      "page": "Page",
+      "of": "of"
+    }
   },
   "meetingCard": {
     "titleLabel": "Title or Subject:",
@@ -308,6 +321,11 @@
     "organizerTooltip": "Organizer: {{nickname}} ({{firstName}} {{lastName}}) - Rating: {{rating}}",
     "shareTooltip": "Share",
     "copyLinkTooltip": "Copy link",
-    "joinButton": "Join"
+    "joinButton": "Join",
+    "meetingEnded": "Meeting has ended",
+    "privateRoomLabel": "Private",
+    "publicRoomLabel": "Public",
+    "privateRoomTooltip": "Requires host approval to join",
+    "publicRoomTooltip": "Open for all participants"
   }
 }

@@ -10,7 +10,7 @@ function ButtonMUI({ text, onClick }: ButtonProps) {
     <Button
       variant="contained"
       color="warning"
-      sx={{ alignSelf: 'flex-start', backgroundColor: '#FF9800' }}
+      sx={{ alignSelf: 'flex-start', backgroundColor: '#ed6c02' }}
       size="large"
       onClick={onClick}
       type="button"

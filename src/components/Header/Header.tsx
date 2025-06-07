@@ -1,30 +1,30 @@
-import { useTranslation } from 'react-i18next'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { useState, useEffect, useRef } from 'react'
-import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
+import { useTranslation } from 'react-i18next'
+import { useAvatarLoader } from '../../hooks/useAvatarLoader'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import MenuIcon from '@mui/icons-material/Menu'
-import ButtonSign from '../ButtonSign/ButtonSign'
-import LanguageSelector from '../LanguageSelector/LanguageSelector'
-import UserMenu from '../UserMenu/UserMenu' // Импорт компонента UserMenu
+import { Avatar } from '@mui/material'
+import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
 import {
   HeaderBox,
   LogoContainer,
-  MenuButton,
   DesktopOnly,
+  UserMenuWrapper,
   AvatarContainer,
   MobileAvatar,
-  UserMenuWrapper,
+  MenuButton,
 } from './styles'
 import NavLinks from '../NavLinks/NavLinks'
-import defaultAvatar from '../../assets/default-avatar.png'
+import ButtonSign from '../ButtonSign/ButtonSign'
+import UserMenu from '../UserMenu/UserMenu'
+import LanguageSelector from '../LanguageSelector/LanguageSelector'
 
 function Header() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [isMenuOpen, setIsMenuOpen] = useState(false) // Состояние для отслеживания видимости UserMenu
-  const user = useSelector((state: any) => state.user)
-  const isAuthenticated = user.isAuthenticated
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { avatarUrl, isAuthenticated } = useAvatarLoader()
   const menuRef = useRef<HTMLDivElement | null>(null)
 
   const handleSignInClick = () => {
@@ -32,7 +32,7 @@ function Header() {
   }
 
   const toggleUserMenu = () => {
-    setIsMenuOpen((prev) => !prev) // Переключаем состояние меню
+    setIsMenuOpen((prev) => !prev)
   }
 
   const handleOutsideClick = (event: MouseEvent) => {
@@ -52,16 +52,48 @@ function Header() {
     }
   }, [isMenuOpen])
 
-  // Закрываем меню при разлогинивании
   useEffect(() => {
     if (!isAuthenticated) {
       setIsMenuOpen(false)
     }
   }, [isAuthenticated])
 
-  // Закрывает меню при нажатии на пункт меню
   const handleMenuItemClick = () => {
     setIsMenuOpen(false)
+  }
+
+  // Рендер аватара с fallback логикой
+  const renderAvatar = () => {
+    if (avatarUrl) {
+      return (
+        <Avatar
+          src={avatarUrl}
+          alt="User Avatar"
+          sx={{
+            width: 36,
+            height: 36,
+            marginLeft: '16px',
+            '& .MuiAvatar-img': {
+              marginRight: '0 !important',
+            },
+          }}
+        />
+      )
+    }
+
+    return (
+      <AccountCircleIcon
+        sx={{
+          color: '#ffffff',
+          backgroundColor: '#01579b',
+          borderRadius: '50%',
+          width: 36,
+          height: 36,
+          marginLeft: '16px',
+          cursor: 'pointer',
+        }}
+      />
+    )
   }
 
   return (
@@ -74,12 +106,7 @@ function Header() {
         {isAuthenticated ? (
           <>
             <AvatarContainer onClick={toggleUserMenu}>
-              <img
-                src={user.avatar || defaultAvatar}
-                alt="User Avatar"
-                width="36"
-                height="36"
-              />
+              {renderAvatar()}
             </AvatarContainer>
             {isMenuOpen && (
               <UserMenuWrapper ref={menuRef}>
@@ -97,16 +124,10 @@ function Header() {
         )}
         <LanguageSelector />
       </DesktopOnly>
+      {/* Мобильная версия */}
       {isAuthenticated ? (
         <>
-          <MobileAvatar onClick={toggleUserMenu}>
-            <img
-              src={user.avatar || defaultAvatar}
-              alt="User Avatar"
-              width="36"
-              height="36"
-            />
-          </MobileAvatar>
+          <MobileAvatar onClick={toggleUserMenu}>{renderAvatar()}</MobileAvatar>
           {isMenuOpen && (
             <UserMenuWrapper ref={menuRef}>
               <UserMenu onMenuItemClick={handleMenuItemClick} />

@@ -25,6 +25,7 @@ export interface UserSliceState {
   surname: string | null
   email: string | null
   birthdayDate: string | null
+  avatar: string | null
   foto: string | null
   rating: number | null
   internalCurrency: number | null
@@ -37,4 +38,9 @@ export interface UserSliceState {
   refreshToken: string | null
   isAuthenticated: boolean
   message?: string | null
+  avatarDisplayUrl?: string | null
+}
+
+export interface AuthState {
+  // ... existing code ...
 }

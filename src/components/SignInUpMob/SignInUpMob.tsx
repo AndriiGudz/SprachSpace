@@ -71,38 +71,16 @@ function SignInUpMob() {
       if (response.ok) {
         const data = await response.json()
 
-        console.log('=== Успешная авторизация (мобильная версия) ===')
-        console.log(
-          'Роли пользователя:',
-          data.roles.map((role: RoleData) => role.title).join(', ')
-        )
-        console.log(
-          'Полные данные пользователя:',
-          JSON.stringify(
-            {
-              id: data.id,
-              nickname: data.nickname,
-              name: data.name,
-              surname: data.surname,
-              email: data.email,
-              birthdayDate: data.birthdayDate,
-              foto: data.foto,
-              rating: data.rating,
-              internalCurrency: data.internalCurrency,
-              status: data.status,
-              nativeLanguages: data.nativeLanguages || [],
-              learningLanguages: data.learningLanguages || [],
-              roles: data.roles || [],
-              createdRooms: data.createdRooms || [],
-              message: data.message,
-            },
-            null,
-            2
-          )
-        )
-        console.log('=== Конец данных авторизации ===')
-
         // Сохраняем информацию о пользователе в глобальном хранилище
+        // Сначала устанавливаем токены
+        dispatch(
+          setTokens({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          })
+        )
+
+        // Затем устанавливаем данные пользователя (без токенов, они уже установлены)
         dispatch(
           setUser({
             id: data.id,
@@ -111,7 +89,8 @@ function SignInUpMob() {
             surname: data.surname,
             email: data.email,
             birthdayDate: data.birthdayDate,
-            foto: data.foto,
+            avatar: data.avatar,
+            foto: data.avatar, // Используем avatar из ответа сервера
             rating: data.rating,
             internalCurrency: data.internalCurrency,
             status: data.status,
@@ -122,17 +101,6 @@ function SignInUpMob() {
             message: data.message,
           })
         )
-
-        // Сохраняем токены
-        dispatch(
-          setTokens({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-          })
-        )
-
-        // Сохраняем данные в localStorage
-        localStorage.setItem('user', JSON.stringify(data))
 
         toast.success(t('signinUp.loginSuccess'))
         navigate('/')
