@@ -12,8 +12,11 @@ export const headerStyle: SxProps<Theme> = {
 }
 
 export const meetingInfoStyle: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: { xs: 'column', md: 'row' },
+  display: 'grid',
+  gridTemplateColumns: {
+    xs: '1fr',
+    md: 'repeat(auto-fit, minmax(280px, 1fr))',
+  },
   gap: 3,
   mb: 4,
 }
@@ -27,7 +30,8 @@ export const videoAreaStyle: SxProps<Theme> = {
   width: '100%',
   height: '100%',
   bgcolor: 'background.paper',
-  borderRadius: 1,
+  borderRadius: 3,
   overflow: 'hidden',
-  boxShadow: 1,
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+  background: 'linear-gradient(145deg, #f5f7fa 0%, #c3cfe2 100%)',
 }
