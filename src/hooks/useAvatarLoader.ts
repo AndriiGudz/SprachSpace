@@ -92,3 +92,4 @@ export function useAvatarLoader() {
     hasAvatar: !!user.foto,
   }
 }
+ 

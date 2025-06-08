@@ -12,9 +12,9 @@ async function fetchAvatarBlobUrl(
     const response = await fetch(
       `${API_ROOT_URL}/users/file/avatar/${fotoFileName}`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       }
     )
 
@@ -97,27 +97,27 @@ export const initialState: UserSliceState =
         isAuthenticated: true, // Устанавливаем true если есть токен
         avatarDisplayUrl: null, // Принудительно обнуляем blob URL при инициализации
       }
-    : {
-        id: null,
-        nickname: null,
-        name: null,
-        surname: null,
-        email: null,
-        birthdayDate: null,
-        foto: null,
-        rating: null,
-        internalCurrency: null,
-        status: false,
-        nativeLanguages: [],
-        learningLanguages: [],
-        roles: [],
-        createdRooms: [],
-        accessToken: null,
-        refreshToken: null,
-        isAuthenticated: false,
-        message: null,
-        avatarDisplayUrl: null,
-      }
+  : {
+      id: null,
+      nickname: null,
+      name: null,
+      surname: null,
+      email: null,
+      birthdayDate: null,
+      foto: null,
+      rating: null,
+      internalCurrency: null,
+      status: false,
+      nativeLanguages: [],
+      learningLanguages: [],
+      roles: [],
+      createdRooms: [],
+      accessToken: null,
+      refreshToken: null,
+      isAuthenticated: false,
+      message: null,
+      avatarDisplayUrl: null,
+    }
 
 export const userSlice = createSlice({
   name: 'user',
@@ -301,15 +301,15 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loadUserAvatar.fulfilled, (state, action) => {
-        // Очищаем старый blob URL если он есть
-        if (
-          state.avatarDisplayUrl &&
-          state.avatarDisplayUrl.startsWith('blob:')
-        ) {
-          URL.revokeObjectURL(state.avatarDisplayUrl)
-        }
-        state.avatarDisplayUrl = action.payload
-      })
+      // Очищаем старый blob URL если он есть
+      if (
+        state.avatarDisplayUrl &&
+        state.avatarDisplayUrl.startsWith('blob:')
+      ) {
+        URL.revokeObjectURL(state.avatarDisplayUrl)
+      }
+      state.avatarDisplayUrl = action.payload
+    })
       .addCase(loadUserAvatar.rejected, (state, action) => {
         // При ошибке оставляем avatarDisplayUrl как null
         state.avatarDisplayUrl = null

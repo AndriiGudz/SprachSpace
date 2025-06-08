@@ -14,6 +14,9 @@ import {
   useMediaQuery,
   LinearProgress,
   Paper,
+  Button,
+  CircularProgress,
+  Tooltip,
 } from '@mui/material'
 import {
   Clock,
@@ -53,6 +56,11 @@ function MeetingChat() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [activeParticipants] = useState(0) // TODO: Подключить к реальным данным Daily.co
   const [hasJoinedWaiting, setHasJoinedWaiting] = useState(false)
+  const [hasJoinedRoom, setHasJoinedRoom] = useState(false)
+  const [isJoiningRoom, setIsJoiningRoom] = useState(false)
+  const [joinRequestStatus, setJoinRequestStatus] = useState<
+    'none' | 'pending' | 'accepted' | 'rejected'
+  >('none')
 
   // Получаем список комнат из Redux store
   const { rooms, isLoading } = useSelector((state: RootState) => state.rooms)
@@ -61,7 +69,144 @@ function MeetingChat() {
     (state: RootState) => state.user
   )
 
-  // Функция для уведомления сервера о присутствии пользователя
+  // Проверяем, является ли пользователь организатором комнаты
+  const isOrganizer = meeting?.organizer?.id === userId
+
+  // Функция для отправки приглашения на присоединение к комнате
+  const sendJoinInvitation = useCallback(
+    async (roomId: number, userId: number) => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/room/participant/invite/sendInvitation?userId=${userId}&roomId=${roomId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        if (response.ok) {
+          const result = await response.json()
+          return {
+            success: true,
+            participantId: result.participantId || userId,
+          }
+        } else {
+          console.error('Failed to send join invitation:', response.statusText)
+          return { success: false, error: response.statusText }
+        }
+      } catch (error) {
+        console.error('Error sending join invitation:', error)
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+      }
+    },
+    []
+  )
+
+  // Функция для автоматического принятия приглашения (для публичных комнат)
+  const acceptInvitation = useCallback(async (participantId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/room/adminRoom/accept?participantId=${participantId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (response.ok) {
+        return { success: true }
+      } else {
+        console.error('Failed to accept invitation:', response.statusText)
+        return { success: false, error: response.statusText }
+      }
+    } catch (error) {
+      console.error('Error accepting invitation:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
+    }
+  }, [])
+
+  // Функция присоединения к комнате
+  const joinRoom = useCallback(async () => {
+    if (!meeting || !userId || !isAuthenticated || isJoiningRoom) return
+
+    setIsJoiningRoom(true)
+    setJoinRequestStatus('pending')
+
+    try {
+      // 1. Отправляем приглашение
+      const invitationResult = await sendJoinInvitation(meeting.id, userId)
+
+      if (!invitationResult.success) {
+        setJoinRequestStatus('rejected')
+        return
+      }
+
+      // 2. Если комната публичная - автоматически принимаем приглашение
+      if (!meeting.privateRoom) {
+        const acceptResult = await acceptInvitation(
+          invitationResult.participantId
+        )
+
+        if (acceptResult.success) {
+          setJoinRequestStatus('accepted')
+          setHasJoinedRoom(true)
+          // Обновляем данные комнаты
+          const updateRoomData = async () => {
+            try {
+              const response = await fetch(
+                `http://localhost:8080/api/room/${meeting.id}`
+              )
+              if (response.ok) {
+                const updatedRoom = await response.json()
+                const updatedMeeting = mapApiRoomToMeeting(updatedRoom)
+                setMeeting(updatedMeeting)
+              }
+            } catch (error) {
+              console.error('Error updating room data:', error)
+            }
+          }
+          await updateRoomData()
+        } else {
+          setJoinRequestStatus('rejected')
+        }
+      } else {
+        // Для приватной комнаты ждем одобрения организатора
+        setJoinRequestStatus('pending')
+      }
+    } catch (error) {
+      console.error('Error joining room:', error)
+      setJoinRequestStatus('rejected')
+    } finally {
+      setIsJoiningRoom(false)
+    }
+  }, [
+    meeting,
+    userId,
+    isAuthenticated,
+    isJoiningRoom,
+    sendJoinInvitation,
+    acceptInvitation,
+  ])
+
+  // Проверяем статус присоединения при загрузке
+  useEffect(() => {
+    if (meeting && isOrganizer) {
+      setHasJoinedRoom(true)
+      setJoinRequestStatus('accepted')
+    }
+  }, [meeting, isOrganizer])
+
+  // Функция для уведомления сервера о присутствии пользователя в ожидании
   const notifyPresence = useCallback(
     async (roomId: number, isJoining: boolean = true) => {
       if (!userId || !isAuthenticated) return
@@ -158,7 +303,7 @@ function MeetingChat() {
     const interval = setInterval(updateRoomData, 10000)
 
     return () => clearInterval(interval)
-  }, [meeting?.id])
+  }, [meeting])
 
   // Функция проверки условий доступа к видеочату
   const checkChatAccess = () => {
@@ -404,16 +549,68 @@ function MeetingChat() {
       <Box sx={containerStyle}>
         {/* Header */}
         <Box sx={headerStyle}>
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            color="text.primary"
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+            }}
           >
-            {meeting.name}
-          </Typography>
+            <Typography variant="h4" component="h1" color="text.primary">
+              {meeting.name}
+            </Typography>
+            <Tooltip
+              title={
+                meeting.privateRoom
+                  ? t(
+                      'meetingCard.privateRoomDescription',
+                      'Requires organizer approval to join'
+                    )
+                  : t(
+                      'meetingCard.publicRoomDescription',
+                      'Anyone can join immediately'
+                    )
+              }
+              arrow
+              placement="top"
+            >
+              <Chip
+                icon={
+                  meeting.privateRoom ? <Lock size={16} /> : <Users size={16} />
+                }
+                label={
+                  meeting.privateRoom
+                    ? t('meetingCard.privateRoom', 'Private Room')
+                    : t('meetingCard.publicRoom', 'Public Room')
+                }
+                size="medium"
+                sx={{
+                  backgroundColor: meeting.privateRoom
+                    ? 'rgba(255, 107, 107, 0.1)'
+                    : 'rgba(81, 207, 102, 0.1)',
+                  color: meeting.privateRoom ? '#ff6b6b' : '#51cf66',
+                  border: `1px solid ${
+                    meeting.privateRoom
+                      ? 'rgba(255, 107, 107, 0.3)'
+                      : 'rgba(81, 207, 102, 0.3)'
+                  }`,
+                  fontWeight: '500',
+                  cursor: 'help',
+                  '& .MuiChip-icon': {
+                    color: meeting.privateRoom ? '#ff6b6b' : '#51cf66',
+                  },
+                  '&:hover': {
+                    backgroundColor: meeting.privateRoom
+                      ? 'rgba(255, 107, 107, 0.15)'
+                      : 'rgba(81, 207, 102, 0.15)',
+                  },
+                }}
+              />
+            </Tooltip>
+          </Box>
           {meeting.description && (
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
               {meeting.description}
             </Typography>
           )}
@@ -667,21 +864,162 @@ function MeetingChat() {
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Video Area */}
-        <Box sx={chatContainerStyle}>
-          <Box sx={{ ...videoAreaStyle, position: 'relative' }}>
+        {/* Video Area or Join Button */}
+        {hasJoinedRoom || isOrganizer ? (
+          <Box sx={chatContainerStyle}>
+            <Box sx={{ ...videoAreaStyle, position: 'relative' }}>
+              <Box
+                sx={{
+                  filter: chatAccess.hasAccess ? 'none' : 'blur(10px)',
+                  transition: 'filter 0.3s ease-in-out',
+                  height: '100%',
+                }}
+              >
+                <VideoChat roomUrl={meeting.roomUrl} />
+              </Box>
+              {renderWaitingOverlay()}
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={chatContainerStyle}>
             <Box
               sx={{
-                filter: chatAccess.hasAccess ? 'none' : 'blur(10px)',
-                transition: 'filter 0.3s ease-in-out',
-                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '400px',
+                gap: 3,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: 3,
+                color: 'white',
+                textAlign: 'center',
+                p: 4,
               }}
             >
-              <VideoChat roomUrl={meeting.roomUrl} />
+              {/* Join Status Display */}
+              {joinRequestStatus === 'pending' && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 2,
+                  }}
+                >
+                  <CircularProgress color="inherit" size={48} />
+                  <Typography variant="h5" fontWeight="600">
+                    {meeting.privateRoom
+                      ? t(
+                          'meetingChat.waitingApproval',
+                          'Waiting for approval...'
+                        )
+                      : t('meetingChat.joiningRoom', 'Joining room...')}
+                  </Typography>
+                  <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                    {meeting.privateRoom
+                      ? t(
+                          'meetingChat.waitingApprovalDescription',
+                          'The organizer will approve your request shortly'
+                        )
+                      : t(
+                          'meetingChat.joiningRoomDescription',
+                          'Please wait while we connect you to the room'
+                        )}
+                  </Typography>
+                </Box>
+              )}
+
+              {joinRequestStatus === 'rejected' && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 2,
+                  }}
+                >
+                  <AlertCircle size={48} style={{ color: '#ff6b6b' }} />
+                  <Typography variant="h5" fontWeight="600">
+                    {t('meetingChat.joinFailed', 'Join Request Failed')}
+                  </Typography>
+                  <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                    {t(
+                      'meetingChat.joinFailedDescription',
+                      'Unable to join the room. Please try again.'
+                    )}
+                  </Typography>
+                </Box>
+              )}
+
+              {(joinRequestStatus === 'none' ||
+                joinRequestStatus === 'rejected') && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 2,
+                  }}
+                >
+                  <Users size={64} style={{ opacity: 0.8 }} />
+                  <Typography variant="h4" fontWeight="600">
+                    {t('meetingChat.joinRoom', 'Join Video Chat')}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ opacity: 0.9, maxWidth: 400 }}
+                  >
+                    {meeting.privateRoom
+                      ? t(
+                          'meetingChat.privateRoomJoinDescription',
+                          'This is a private room. Your request will be sent to the organizer for approval.'
+                        )
+                      : t(
+                          'meetingChat.publicRoomJoinDescription',
+                          'This is a public room. You can join the video chat immediately.'
+                        )}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={joinRoom}
+                    disabled={isJoiningRoom}
+                    startIcon={
+                      isJoiningRoom ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <Users size={20} />
+                      )
+                    }
+                    sx={{
+                      mt: 2,
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      border: '2px solid rgba(255,255,255,0.3)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.3)',
+                        border: '2px solid rgba(255,255,255,0.5)',
+                      },
+                      '&:disabled': {
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        color: 'rgba(255,255,255,0.6)',
+                      },
+                    }}
+                  >
+                    {isJoiningRoom
+                      ? t('meetingChat.joiningButton', 'Joining...')
+                      : t('meetingChat.joinButton', 'Join Room')}
+                  </Button>
+                </Box>
+              )}
             </Box>
-            {renderWaitingOverlay()}
           </Box>
-        </Box>
+        )}
       </Box>
     </Container>
   )

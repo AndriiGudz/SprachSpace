@@ -95,14 +95,14 @@ export default function WhySprachSpace() {
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Fade in={visibleCards[index]} timeout={800}>
-                <Card
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    boxShadow: 'none',
-                    background: 'transparent',
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  boxShadow: 'none',
+                  background: 'transparent',
                     transform: visibleCards[index]
                       ? 'translateY(0)'
                       : 'translateY(20px)',
@@ -118,32 +118,32 @@ export default function WhySprachSpace() {
                 >
                   <LazyImage
                     src={feature.image}
-                    alt={feature.title}
+                  alt={feature.title}
                     width="222px"
                     height="222px"
                     threshold={0.2}
                     rootMargin="100px"
-                    sx={{
-                      borderRadius: '50%',
-                      boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
-                      margin: '24px',
+                  sx={{
+                    borderRadius: '50%',
+                    boxShadow: '0px 0px 24px 0px rgba(0, 0, 0, 0.25)',
+                    margin: '24px',
                       overflow: 'hidden',
                       transition: 'transform 0.3s ease-out',
+                  }}
+                />
+                <CardContent sx={{ width: '222px' }}>
+                  <Typography
+                    gutterBottom
+                    variant="h4"
+                    align="center"
+                    sx={{
+                      textAlign: 'center',
                     }}
-                  />
-                  <CardContent sx={{ width: '222px' }}>
-                    <Typography
-                      gutterBottom
-                      variant="h4"
-                      align="center"
-                      sx={{
-                        textAlign: 'center',
-                      }}
-                    >
-                      {feature.title}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                  >
+                    {feature.title}
+                  </Typography>
+                </CardContent>
+              </Card>
               </Fade>
             </Grid>
           ))}
