@@ -71,8 +71,6 @@ function MeetingChat() {
     (state: RootState) => state.rooms
   )
 
-  // Обеспечиваем что userParticipations всегда объект
-  const safeUserParticipations = userParticipations || {}
   // Получаем данные пользователя для регистрации присутствия
   const { isAuthenticated, id: userId } = useSelector(
     (state: RootState) => state.user
@@ -100,6 +98,8 @@ function MeetingChat() {
     }
 
     // Если не найдено в данных сервера, проверяем Redux store
+    // Обеспечиваем что userParticipations всегда объект
+    const safeUserParticipations = userParticipations || {}
     if (
       safeUserParticipations &&
       typeof safeUserParticipations === 'object' &&
@@ -113,60 +113,7 @@ function MeetingChat() {
     }
 
     return null
-  }, [meeting, safeUserParticipations, userId])
-
-  // Функция для отправки приглашения на присоединение к комнате
-  const sendJoinInvitation = useCallback(
-    async (roomId: number, userId: number) => {
-      try {
-        const response = await fetch(
-          `http://localhost:8080/api/room/participant/invite/sendInvitation?userId=${userId}&roomId=${roomId}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-
-        if (response.ok) {
-          const result = await response.json()
-          return {
-            success: true,
-            participantId: result.participantId || userId,
-          }
-        } else if (response.status === 409) {
-          // 409 Conflict означает что приглашение уже отправлено - это нормально
-          console.log('Invitation already exists, proceeding with acceptance')
-          try {
-            const result = await response.json()
-            return {
-              success: true,
-              participantId: result.participantId || userId,
-              alreadyExists: true,
-            }
-          } catch {
-            // Если не удалось получить JSON, используем userId
-            return {
-              success: true,
-              participantId: userId,
-              alreadyExists: true,
-            }
-          }
-        } else {
-          console.error('Failed to send join invitation:', response.statusText)
-          return { success: false, error: response.statusText }
-        }
-      } catch (error) {
-        console.error('Error sending join invitation:', error)
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        }
-      }
-    },
-    []
-  )
+  }, [meeting, userParticipations, userId])
 
   // Функция для обновления данных комнаты
   const updateRoomData = useCallback(async () => {
@@ -294,6 +241,15 @@ function MeetingChat() {
     acceptInvitation,
     updateRoomData,
   ])
+
+  // Сбрасываем локальное состояние при смене пользователя
+  useEffect(() => {
+    console.log('User changed, resetting local join states')
+    setJoinRequestStatus('none')
+    setHasJoinedRoom(false)
+    setIsJoiningRoom(false)
+    setHasJoinedWaiting(false)
+  }, [userId])
 
   // Проверяем статус присоединения при загрузке
   useEffect(() => {

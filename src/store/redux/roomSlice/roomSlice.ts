@@ -7,6 +7,9 @@ import {
 } from './roomTypes'
 import type { RootState } from '../../store' // Предполагаем, что store.ts находится в ../../store
 
+// Импорт для обработки действий пользователя
+// NOTE: Будет добавлен динамически для избежания циклических зависимостей
+
 const initialState: RoomSliceState = {
   rooms: [],
   activeRoom: null,
@@ -143,6 +146,9 @@ const roomSlice = createSlice({
       }
       delete state.userParticipations[roomId]
     },
+    clearAllUserParticipations: (state) => {
+      state.userParticipations = {}
+    },
     // Здесь можно будет добавить другие синхронные редьюсеры:
     // updateRoom, removeRoom, addParticipantToRoom, etc.
   },
@@ -199,6 +205,14 @@ const roomSlice = createSlice({
         state.isLoading = false
         state.error = action.payload
       })
+      // Очищаем userParticipations при логауте пользователя
+      .addMatcher(
+        (action) =>
+          action.type === 'user/logoutUser' || action.type === 'user/clearUser',
+        (state) => {
+          state.userParticipations = {}
+        }
+      )
   },
 })
 
@@ -208,6 +222,7 @@ export const {
   setUserParticipation,
   updateParticipationStatus,
   clearUserParticipation,
+  clearAllUserParticipations,
 } = roomSlice.actions
 
 export default roomSlice.reducer
