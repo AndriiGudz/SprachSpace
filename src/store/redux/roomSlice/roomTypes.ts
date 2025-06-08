@@ -19,7 +19,7 @@ export interface ApiRoom {
   minQuantity: number
   maxQuantity: number
   roomUrl: string
-  participants?: any[] // Optional, as per API response
+  participants?: RoomParticipant[] // Обновленный тип для participants
   creator?: ApiCreator // Optional, as per API response, now typed
   // userId: string; // ID пользователя, создавшего комнату
   // category?: string; // Категория может быть не основным полем API
@@ -60,6 +60,7 @@ export interface RoomSliceState {
   activeRoom: ApiRoom | null
   isLoading: boolean // Замена 'status' для простоты
   error: string | null | undefined // Сохраняем сообщение об ошибке
+  userParticipations: Record<number, RoomParticipant> // roomId -> participant data
 }
 
 // Можно добавить тип для пользователя, если он будет использоваться в участниках
@@ -68,3 +69,50 @@ export interface RoomSliceState {
 //   name: string;
 //   // ... другие поля пользователя
 // }
+
+// Новые типы для заявок на присоединение
+export interface ParticipantLanguage {
+  id: number
+  language: {
+    id: number
+    name: string
+  }
+  skillLevel: string
+}
+
+export interface ParticipantRole {
+  id: number
+  title: string
+  authority: string
+}
+
+export interface ParticipantUser {
+  id: number
+  nickname: string
+  name: string
+  email: string
+  surname: string
+  password: string
+  birthdayDate: string
+  avatar: string
+  rating: number
+  internalCurrency: number | null
+  status: boolean
+  nativeLanguages: ParticipantLanguage[]
+  learningLanguages: ParticipantLanguage[]
+  roles: ParticipantRole[]
+  createdRooms: any[]
+  enabled: boolean
+  authorities: any[]
+  username: string
+  accountNonLocked: boolean
+  accountNonExpired: boolean
+  credentialsNonExpired: boolean
+}
+
+export interface RoomParticipant {
+  id: number // participantId
+  user: ParticipantUser
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+  participantType: 'REQUESTED_BY_USER' | 'INVITED_BY_ORGANIZER'
+}

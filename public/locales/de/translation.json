@@ -373,6 +373,11 @@
       "timeCondition": "Meeting öffnet 5 Minuten vor Startzeit",
       "waitingCondition": "Benötigt {{min}} wartende Teilnehmer, aktuell {{current}}",
       "activeCondition": "Benötigt {{min}} aktive Teilnehmer, aktuell {{current}}"
-    }
+    },
+    "organizer": "Sie sind der Organisator",
+    "requestPending": "Anfrage gesendet",
+    "requestAccepted": "Anfrage angenommen",
+    "requestSent": "Anfrage gesendet",
+    "requestSentDescription": "Sie haben erfolgreich eine Beitrittsanfrage gesendet. Bitte warten Sie auf die Bestätigung vom Raumorganisator."
   }
 }

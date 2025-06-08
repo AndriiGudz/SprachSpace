@@ -373,6 +373,11 @@
       "timeCondition": "Meeting opens 5 minutes before start time",
       "waitingCondition": "Need {{min}} waiting participants, currently have {{current}}",
       "activeCondition": "Need {{min}} active participants, currently have {{current}}"
-    }
+    },
+    "organizer": "You are the organizer",
+    "requestPending": "Request sent",
+    "requestAccepted": "Request accepted",
+    "requestSent": "Request sent",
+    "requestSentDescription": "You have successfully sent a request to join. Please wait for confirmation from the room organizer."
   }
 }
