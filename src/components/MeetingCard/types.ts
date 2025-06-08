@@ -38,4 +38,15 @@ export interface Meeting {
   imageUrl?: string // Опциональное основное изображение для карточки (для <Image /> и Schema.org)
   languageFlagIconUrl?: string // Если хотим передавать URL флага вместо логики внутри компонента
   privateRoom: boolean
+  participants?: Array<{
+    id: number
+    user: {
+      id: number
+      nickname: string
+      name: string
+      [key: string]: any
+    }
+    status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+    participantType: 'CREATOR' | 'REQUESTED_BY_USER' | 'INVITED_BY_ORGANIZER'
+  }>
 }

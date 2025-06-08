@@ -65,34 +65,34 @@ function Header() {
   // Рендер аватара с fallback логикой
   const renderAvatar = () => {
     if (avatarUrl) {
-      return (
-        <Avatar
+  return (
+                <Avatar
           src={avatarUrl}
-          alt="User Avatar"
-          sx={{
-            width: 36,
-            height: 36,
-            marginLeft: '16px',
-            '& .MuiAvatar-img': {
-              marginRight: '0 !important',
-            },
-          }}
-        />
+                  alt="User Avatar"
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    marginLeft: '16px',
+                    '& .MuiAvatar-img': {
+                      marginRight: '0 !important',
+                    },
+                  }}
+                />
       )
     }
 
     return (
-      <AccountCircleIcon
-        sx={{
-          color: '#ffffff',
-          backgroundColor: '#01579b',
-          borderRadius: '50%',
-          width: 36,
-          height: 36,
-          marginLeft: '16px',
-          cursor: 'pointer',
-        }}
-      />
+                <AccountCircleIcon
+                  sx={{
+                    color: '#ffffff',
+                    backgroundColor: '#01579b',
+                    borderRadius: '50%',
+                    width: 36,
+                    height: 36,
+                    marginLeft: '16px',
+                    cursor: 'pointer',
+                  }}
+                />
     )
   }
 
