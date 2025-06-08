@@ -62,14 +62,14 @@ function HomepageBanner() {
             transition: 'opacity 0.3s ease-in-out',
           }}
         >
-          <BannerContent>
-            <h1>{t('headerBanner.title')}</h1>
-            <p>{t('headerBanner.description')}</p>
-            <ButtonMUI
-              text={t('headerBanner.join')}
-              onClick={handleSignInClick}
-            />
-          </BannerContent>
+        <BannerContent>
+          <h1>{t('headerBanner.title')}</h1>
+          <p>{t('headerBanner.description')}</p>
+          <ButtonMUI
+            text={t('headerBanner.join')}
+            onClick={handleSignInClick}
+          />
+        </BannerContent>
         </Box>
       </ContentBox>
     </Box>

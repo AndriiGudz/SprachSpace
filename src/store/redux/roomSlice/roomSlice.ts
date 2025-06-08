@@ -1,12 +1,21 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { ApiRoom, CreateRoomApiRequest, RoomSliceState } from './roomTypes'
+import {
+  ApiRoom,
+  CreateRoomApiRequest,
+  RoomSliceState,
+  RoomParticipant,
+} from './roomTypes'
 import type { RootState } from '../../store' // Предполагаем, что store.ts находится в ../../store
+
+// Импорт для обработки действий пользователя
+// NOTE: Будет добавлен динамически для избежания циклических зависимостей
 
 const initialState: RoomSliceState = {
   rooms: [],
   activeRoom: null,
   isLoading: false,
   error: null,
+  userParticipations: {},
 }
 
 // Async Thunk для создания комнаты
@@ -58,6 +67,38 @@ export const fetchRooms = createAsyncThunk<
   }
 })
 
+// Новый async thunk для отправки заявки на присоединение
+export const sendJoinRequest = createAsyncThunk<
+  { roomId: number; participant: RoomParticipant },
+  { roomId: number; userId: number },
+  { rejectValue: string; state: RootState }
+>('rooms/sendJoinRequest', async ({ roomId, userId }, { rejectWithValue }) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/room/participant/invite/sendInvitation?userId=${userId}&roomId=${roomId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+
+    if (response.ok) {
+      const participant: RoomParticipant = await response.json()
+      return { roomId, participant }
+    } else if (response.status === 409) {
+      // 409 Conflict означает что приглашение уже отправлено - получаем данные
+      const participant: RoomParticipant = await response.json()
+      return { roomId, participant }
+    } else {
+      return rejectWithValue('Failed to send join request')
+    }
+  } catch (error: any) {
+    return rejectWithValue(error.message || 'Unknown error occurred')
+  }
+})
+
 const roomSlice = createSlice({
   name: 'rooms',
   initialState,
@@ -67,6 +108,46 @@ const roomSlice = createSlice({
     },
     clearRoomError: (state) => {
       state.error = null
+    },
+    // Новые редьюсеры для управления заявками
+    setUserParticipation: (
+      state,
+      action: PayloadAction<{ roomId: number; participant: RoomParticipant }>
+    ) => {
+      const { roomId, participant } = action.payload
+      // Защита от undefined
+      if (!state.userParticipations) {
+        state.userParticipations = {}
+      }
+      state.userParticipations[roomId] = participant
+    },
+    updateParticipationStatus: (
+      state,
+      action: PayloadAction<{
+        roomId: number
+        status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+      }>
+    ) => {
+      const { roomId, status } = action.payload
+      // Защита от undefined
+      if (!state.userParticipations) {
+        state.userParticipations = {}
+      }
+      if (state.userParticipations[roomId]) {
+        state.userParticipations[roomId].status = status
+      }
+    },
+    clearUserParticipation: (state, action: PayloadAction<number>) => {
+      const roomId = action.payload
+      // Защита от undefined
+      if (!state.userParticipations) {
+        state.userParticipations = {}
+        return
+      }
+      delete state.userParticipations[roomId]
+    },
+    clearAllUserParticipations: (state) => {
+      state.userParticipations = {}
     },
     // Здесь можно будет добавить другие синхронные редьюсеры:
     // updateRoom, removeRoom, addParticipantToRoom, etc.
@@ -106,9 +187,42 @@ const roomSlice = createSlice({
         state.isLoading = false
         state.error = action.payload
       })
+      // Send Join Request
+      .addCase(sendJoinRequest.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(sendJoinRequest.fulfilled, (state, action) => {
+        state.isLoading = false
+        const { roomId, participant } = action.payload
+        // Защита от undefined
+        if (!state.userParticipations) {
+          state.userParticipations = {}
+        }
+        state.userParticipations[roomId] = participant
+      })
+      .addCase(sendJoinRequest.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
+      // Очищаем userParticipations при логауте пользователя
+      .addMatcher(
+        (action) =>
+          action.type === 'user/logoutUser' || action.type === 'user/clearUser',
+        (state) => {
+          state.userParticipations = {}
+        }
+      )
   },
 })
 
-export const { setActiveRoom, clearRoomError } = roomSlice.actions
+export const {
+  setActiveRoom,
+  clearRoomError,
+  setUserParticipation,
+  updateParticipationStatus,
+  clearUserParticipation,
+  clearAllUserParticipations,
+} = roomSlice.actions
 
 export default roomSlice.reducer

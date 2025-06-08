@@ -248,27 +248,27 @@ function UserDashboard({ userId }: UserDashboardProps) {
               }}
             >
               {userStats.map((stat, index) => (
-                <Paper
+                  <Paper
                   key={index}
-                  elevation={0}
-                  sx={{
+                    elevation={0}
+                    sx={{
                     minWidth: '150px',
                     padding: {
                       xs: '12px 8px',
                       sm: '16px 12px',
                       md: '16px 20px',
                     },
-                    textAlign: 'center',
-                    border: '1px solid #e0e0e0',
+                      textAlign: 'center',
+                      border: '1px solid #e0e0e0',
                     borderRadius: '8px',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      borderColor: '#01579b',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        borderColor: '#01579b',
                       boxShadow: '0px 4px 12px 0px rgba(1, 87, 155, 0.15)',
                       transform: 'translateY(-2px)',
-                    },
-                  }}
-                >
+                      },
+                    }}
+                  >
                   <Typography
                     variant="h4"
                     sx={{
@@ -278,8 +278,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
                       color: '#01579b',
                     }}
                   >
-                    {stat.value}
-                  </Typography>
+                      {stat.value}
+                    </Typography>
                   <Typography
                     variant="body2"
                     sx={{
@@ -288,9 +288,9 @@ function UserDashboard({ userId }: UserDashboardProps) {
                       lineHeight: 1.2,
                     }}
                   >
-                    {stat.label}
-                  </Typography>
-                </Paper>
+                      {stat.label}
+                    </Typography>
+                  </Paper>
               ))}
             </Box>
 
@@ -308,8 +308,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
                 {t('userDashboard.personalInformation')}
               </Typography>
 
-              <Box
-                sx={{
+                <Box
+                  sx={{
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
                   gap: { xs: 1.5, sm: 2 },
@@ -319,8 +319,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
                     borderRadius: '8px',
                     border: '1px solid #e9ecef',
                   },
-                }}
-              >
+                  }}
+                >
                 <Box>
                   <Typography
                     variant="body2"
@@ -333,16 +333,16 @@ function UserDashboard({ userId }: UserDashboardProps) {
                   >
                     {t('userDashboard.nickname')}
                   </Typography>
-                  <Typography
-                    variant="body1"
+                    <Typography
+                      variant="body1"
                     sx={{
                       color: '#333',
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
-                  >
-                    {user.nickname}
-                  </Typography>
-                </Box>
+                    >
+                      {user.nickname}
+                    </Typography>
+                  </Box>
 
                 <Box>
                   <Typography
@@ -356,16 +356,16 @@ function UserDashboard({ userId }: UserDashboardProps) {
                   >
                     {t('userDashboard.name')}
                   </Typography>
-                  <Typography
-                    variant="body1"
+                    <Typography
+                      variant="body1"
                     sx={{
                       color: '#333',
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
-                  >
-                    {user.name}
-                  </Typography>
-                </Box>
+                    >
+                      {user.name}
+                    </Typography>
+                  </Box>
 
                 <Box>
                   <Typography
@@ -379,15 +379,15 @@ function UserDashboard({ userId }: UserDashboardProps) {
                   >
                     {t('userDashboard.surname')}
                   </Typography>
-                  <Typography
-                    variant="body1"
+                    <Typography
+                      variant="body1"
                     sx={{
                       color: '#333',
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
-                  >
-                    {user.surname}
-                  </Typography>
+                    >
+                      {user.surname}
+                    </Typography>
                 </Box>
 
                 <Box>
@@ -493,26 +493,26 @@ function UserDashboard({ userId }: UserDashboardProps) {
               >
                 {languageInfo.map((info, index) => (
                   <Box key={index}>
-                    <Typography
+                      <Typography
                       variant="body2"
-                      sx={{
+                        sx={{
                         fontWeight: 'bold',
                         color: '#01579b',
                         mb: 0.5,
                         fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                      }}
-                    >
+                        }}
+                      >
                       {info.label}
-                    </Typography>
-                    <Typography
+                      </Typography>
+                      <Typography
                       variant="body1"
                       sx={{
                         color: '#333',
                         fontSize: { xs: '0.875rem', sm: '1rem' },
                       }}
-                    >
+                      >
                       {info.value || 'Не указано'}
-                    </Typography>
+                      </Typography>
                   </Box>
                 ))}
               </Box>

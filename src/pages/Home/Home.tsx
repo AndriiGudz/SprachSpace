@@ -8,10 +8,10 @@ function Home() {
   return (
     <PageBox>
       <HomepageBanner />
-      <WhySprachSpace />
-      <CardSlider />
-      <HowItWorks />
-    </PageBox>
+    <WhySprachSpace />
+    <CardSlider />
+    <HowItWorks />
+  </PageBox>
   )
 }
 

@@ -338,6 +338,10 @@ export const userSlice = createSlice({
             URL.revokeObjectURL(state.avatarDisplayUrl)
           }
 
+          // Очищаем все заявки пользователя через дополнительное действие
+          // Но поскольку мы в extraReducers, используем dispatch из thunk
+          // Вместо этого добавим очистку через отдельное действие
+
           Object.keys(state).forEach((key) => {
             delete state[key as keyof UserSliceState]
           })

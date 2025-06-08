@@ -21,6 +21,7 @@ import { ReactComponent as AdminIcon } from '../../assets/icon/AdminIcon.svg'
 import LanguageSelector from '../LanguageSelector/LanguageSelector'
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from '../../store/redux/userSlice/userSlice'
+import { clearAllUserParticipations } from '../../store/redux/roomSlice/roomSlice'
 import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../store/store'
 import { toast } from 'react-toastify'
@@ -48,6 +49,9 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
 
   const handleLogout = async () => {
     try {
+      // Очищаем заявки пользователя
+      dispatch(clearAllUserParticipations())
+
       // Используем logoutUser для полной очистки состояния
       dispatch(logoutUser())
 
