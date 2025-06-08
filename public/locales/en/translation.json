@@ -339,5 +339,19 @@
       "camera": "Camera access is disabled. You can still participate with audio only.",
       "general": "Failed to join the video call. Please try again."
     }
+  },
+  "meetingChat": {
+    "waitingTitle": "Meeting Room Locked",
+    "waitingDescription": "The video chat will be available when all conditions are met",
+    "timeUntilStart": "Time until meeting starts:",
+    "conditionsTitle": "Required Conditions:",
+    "timeProgress": "Opens 5 minutes before start",
+    "joinedWaitingRoom": "You have joined the waiting room",
+    "waitingStatus": "Waiting...",
+    "waitingConditions": {
+      "timeCondition": "Meeting opens 5 minutes before start time",
+      "waitingCondition": "Need {{min}} waiting participants, currently have {{current}}",
+      "activeCondition": "Need {{min}} active participants, currently have {{current}}"
+    }
   }
 }

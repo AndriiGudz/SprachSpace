@@ -339,5 +339,19 @@
       "camera": "Kamera-Zugriff ist deaktiviert. Sie können nur mit Audio teilnehmen.",
       "general": "Fehler beim Beitritt zum Videoanruf. Bitte versuchen Sie es erneut."
     }
+  },
+  "meetingChat": {
+    "waitingTitle": "Meetingraum gesperrt",
+    "waitingDescription": "Der Videochat wird verfügbar sein, wenn alle Bedingungen erfüllt sind",
+    "timeUntilStart": "Zeit bis zum Meeting-Start:",
+    "conditionsTitle": "Erforderliche Bedingungen:",
+    "timeProgress": "Öffnet 5 Minuten vor Beginn",
+    "joinedWaitingRoom": "Sie haben den Warteraum betreten",
+    "waitingStatus": "Wartet...",
+    "waitingConditions": {
+      "timeCondition": "Meeting öffnet 5 Minuten vor Startzeit",
+      "waitingCondition": "Benötigt {{min}} wartende Teilnehmer, aktuell {{current}}",
+      "activeCondition": "Benötigt {{min}} aktive Teilnehmer, aktuell {{current}}"
+    }
   }
 }
