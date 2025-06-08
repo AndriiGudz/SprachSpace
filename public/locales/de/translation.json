@@ -340,10 +340,13 @@
     "waitingParticipants": "Wartend: {{count}}",
     "minRequired": "Min: {{min}}",
     "maxAllowed": "Max: {{max}}",
+    "connecting": "Verbindung zum Video-Chat...",
+    "waitingForAccess": "Video-Chat nicht verfügbar",
+    "waitingDescription": "Kamera und Mikrofon werden verbunden, wenn die Bedingungen erfüllt sind",
     "error": {
-      "connection": "Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung.",
-      "microphone": "Mikrofon-Zugriff ist deaktiviert. Aktivieren Sie ihn zur Teilnahme.",
-      "camera": "Kamera-Zugriff ist deaktiviert. Sie können nur mit Audio teilnehmen.",
+      "connection": "Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung.",
+      "microphone": "Mikrofonzugriff ist deaktiviert. Bitte aktivieren Sie ihn zur Teilnahme.",
+      "camera": "Kamerazugriff ist deaktiviert. Sie können nur mit Audio teilnehmen.",
       "general": "Fehler beim Beitritt zum Videoanruf. Bitte versuchen Sie es erneut."
     }
   },

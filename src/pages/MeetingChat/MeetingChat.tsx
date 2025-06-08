@@ -868,16 +868,11 @@ function MeetingChat() {
         {hasJoinedRoom || isOrganizer ? (
           <Box sx={chatContainerStyle}>
             <Box sx={{ ...videoAreaStyle, position: 'relative' }}>
-              <Box
-                sx={{
-                  filter: chatAccess.hasAccess ? 'none' : 'blur(10px)',
-                  transition: 'filter 0.3s ease-in-out',
-                  height: '100%',
-                }}
-              >
-                <VideoChat roomUrl={meeting.roomUrl} />
-              </Box>
-              {renderWaitingOverlay()}
+              <VideoChat
+                roomUrl={meeting.roomUrl}
+                canConnect={chatAccess.hasAccess}
+              />
+              {!chatAccess.hasAccess && renderWaitingOverlay()}
             </Box>
           </Box>
         ) : (

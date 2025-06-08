@@ -340,6 +340,9 @@
     "waitingParticipants": "Waiting: {{count}}",
     "minRequired": "Min: {{min}}",
     "maxAllowed": "Max: {{max}}",
+    "connecting": "Connecting to video chat...",
+    "waitingForAccess": "Video Chat Unavailable",
+    "waitingDescription": "Camera and microphone will connect when conditions are met",
     "error": {
       "connection": "Connection error. Please check your internet connection.",
       "microphone": "Microphone access is disabled. Please enable it to participate.",
