@@ -1,4 +1,5 @@
 {
+  "locale": "de-DE",
   "app": {
     "title": "SprachSpace - Sprachraum für Kommunikation und Lernen",
     "description": "SprachSpace - Plattform zum Sprachenlernen durch Gruppenkommunikation"
@@ -379,5 +380,36 @@
     "requestAccepted": "Anfrage angenommen",
     "requestSent": "Anfrage gesendet",
     "requestSentDescription": "Sie haben erfolgreich eine Beitrittsanfrage gesendet. Bitte warten Sie auf die Bestätigung vom Raumorganisator."
+  },
+  "scheduledMeetings": {
+    "description": "Hier können Sie alle Ihre geplanten Meetings einsehen",
+    "notAuthenticated": "Melden Sie sich an, um Ihre geplanten Meetings zu sehen",
+    "noMeetings": "Sie haben keine geplanten Meetings",
+    "noPastMeetings": "Sie haben keine vergangenen Meetings",
+    "noMeetingsDescription": "Treten Sie bestehenden Räumen bei oder erstellen Sie Ihren eigenen, um mit dem Sprechen zu beginnen",
+    "createFirst": "Erstes Meeting erstellen",
+    "participants": "Teilnehmer",
+    "joinMeeting": "Meeting beitreten",
+    "completed": "Abgeschlossen",
+    "findMoreMeetings": "Mehr Meetings finden",
+    "tabs": {
+      "upcoming": "Bevorstehend",
+      "past": "Vergangen",
+      "created": "Meine Räume",
+      "joined": "Beigetreten"
+    },
+    "filters": {
+      "all": "Alle",
+      "upcoming": "Bevorstehend",
+      "past": "Vergangen",
+      "created": "Meine Räume",
+      "joined": "Beigetreten"
+    },
+    "status": {
+      "upcoming": "Geplant",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgesagt"
+    }
   }
 }

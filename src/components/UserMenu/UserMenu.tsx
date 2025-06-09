@@ -109,9 +109,12 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
           <MenuItemStyled>
             <NotificationsIcon className="icon" /> {t('userMenu.notifications')}
           </MenuItemStyled>
-          <MenuItemStyled>
-            <CalendarIcon className="icon" /> {t('userMenu.scheduledMeetings')}
-          </MenuItemStyled>
+          <LinkStyle to="/scheduled-meetings" onClick={onMenuItemClick}>
+            <MenuItemStyled>
+              <CalendarIcon className="icon" />{' '}
+              {t('userMenu.scheduledMeetings')}
+            </MenuItemStyled>
+          </LinkStyle>
           <MenuItemStyled>
             <FriendsIcon className="icon" /> {t('userMenu.friends')}
           </MenuItemStyled>

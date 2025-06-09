@@ -75,7 +75,6 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     organizer,
     ageRestriction,
     shareLink,
-    roomUrl,
     imageUrl,
     languageFlagIconUrl,
     location,
@@ -599,12 +598,10 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
             ) : (
               <Button
                 component={RouterLink}
-                to={roomUrl || cardLink}
+                to={cardLink}
                 variant="contained"
                 color="primary"
                 sx={modifiedJoinButtonStyle}
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 {t('meetingCard.joinButton', 'Join')}
               </Button>

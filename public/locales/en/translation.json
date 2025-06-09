@@ -1,4 +1,5 @@
 {
+  "locale": "en-US",
   "app": {
     "title": "SprachSpace - Language room, space for communication and learning",
     "description": "SprachSpace - platform for learning languages ​​through group communication"
@@ -379,5 +380,36 @@
     "requestAccepted": "Request accepted",
     "requestSent": "Request sent",
     "requestSentDescription": "You have successfully sent a request to join. Please wait for confirmation from the room organizer."
+  },
+  "scheduledMeetings": {
+    "description": "Here you can view all your scheduled meetings",
+    "notAuthenticated": "Please sign in to view your scheduled meetings",
+    "noMeetings": "You have no scheduled meetings",
+    "noPastMeetings": "You have no past meetings",
+    "noMeetingsDescription": "Join existing rooms or create your own to start conversing",
+    "createFirst": "Create first meeting",
+    "participants": "participants",
+    "joinMeeting": "Join meeting",
+    "completed": "Completed",
+    "findMoreMeetings": "Find more meetings",
+    "tabs": {
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "created": "My rooms",
+      "joined": "Joined"
+    },
+    "filters": {
+      "all": "All",
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "created": "My rooms",
+      "joined": "Joined"
+    },
+    "status": {
+      "upcoming": "Upcoming",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
   }
 }
