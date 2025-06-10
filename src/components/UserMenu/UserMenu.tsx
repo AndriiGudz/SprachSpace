@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Badge } from '@mui/material'
 import {
   DividerStyled,
   LinkStyle,
@@ -25,6 +26,7 @@ import { clearAllUserParticipations } from '../../store/redux/roomSlice/roomSlic
 import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../store/store'
 import { toast } from 'react-toastify'
+import { selectUnreadCount } from '../../store/redux/notificationSlice/selectors'
 
 interface UserMenuProps {
   onMenuItemClick: () => void
@@ -38,6 +40,7 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
     (state: RootState) => state.user.isAuthenticated
   )
   const user = useSelector((state: RootState) => state.user)
+  const unreadCount = useSelector(selectUnreadCount)
 
   // Проверяем, есть ли у пользователя роль администратора
   const isAdmin = user.roles?.some((role) => role.title === 'ROLE_ADMIN')
@@ -106,9 +109,14 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
               </MenuItemStyled>
             </LinkStyle>
           )}
-          <MenuItemStyled>
-            <NotificationsIcon className="icon" /> {t('userMenu.notifications')}
-          </MenuItemStyled>
+          <LinkStyle to="/notifications" onClick={onMenuItemClick}>
+            <MenuItemStyled>
+              <Badge badgeContent={unreadCount} color="error" max={99}>
+                <NotificationsIcon className="icon" />
+              </Badge>{' '}
+              {t('userMenu.notifications')}
+            </MenuItemStyled>
+          </LinkStyle>
           <LinkStyle to="/scheduled-meetings" onClick={onMenuItemClick}>
             <MenuItemStyled>
               <CalendarIcon className="icon" />{' '}

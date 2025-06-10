@@ -2,9 +2,13 @@ import type { Action, ThunkAction } from '@reduxjs/toolkit'
 import { combineSlices, configureStore } from '@reduxjs/toolkit'
 import { userSlice } from './redux/userSlice/userSlice'
 import roomReducer from './redux/roomSlice/roomSlice'
+import notificationReducer from './redux/notificationSlice/notificationSlice'
 
 // Объединяем слайсы
-const rootReducer = combineSlices(userSlice, { rooms: roomReducer })
+const rootReducer = combineSlices(userSlice, {
+  rooms: roomReducer,
+  notifications: notificationReducer,
+})
 
 // Тип корневого состояния
 export type RootState = ReturnType<typeof rootReducer>

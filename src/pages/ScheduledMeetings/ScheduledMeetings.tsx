@@ -184,9 +184,33 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            backdropFilter: 'blur(10px)',
+            background:
+              activeFilter === 'all'
+                ? 'rgba(25, 118, 210, 0.8)'
+                : 'rgba(255, 255, 255, 0.3)',
+            border:
+              activeFilter === 'all'
+                ? '1px solid rgba(25, 118, 210, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.4)',
+            color: activeFilter === 'all' ? '#fff' : 'inherit',
+            transition: 'all 0.3s ease',
+            transform:
+              activeFilter === 'all' ? 'translateY(-1px)' : 'translateY(0px)',
+            boxShadow:
+              activeFilter === 'all'
+                ? '0 6px 20px rgba(25, 118, 210, 0.25)'
+                : '0 3px 12px rgba(0, 0, 0, 0.15)',
             '&:hover': {
-              backgroundColor:
-                activeFilter === 'all' ? 'primary.dark' : 'rgba(0, 0, 0, 0.04)',
+              background:
+                activeFilter === 'all'
+                  ? 'rgba(25, 118, 210, 0.9)'
+                  : 'rgba(255, 255, 255, 0.4)',
+              transform: 'translateY(-3px)',
+              boxShadow:
+                activeFilter === 'all'
+                  ? '0 8px 25px rgba(25, 118, 210, 0.4)'
+                  : '0 6px 20px rgba(0, 0, 0, 0.2)',
             },
           }}
         />
@@ -200,11 +224,35 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            backdropFilter: 'blur(10px)',
+            background:
+              activeFilter === 'upcoming'
+                ? 'rgba(46, 125, 50, 0.8)'
+                : 'rgba(255, 255, 255, 0.3)',
+            border:
+              activeFilter === 'upcoming'
+                ? '1px solid rgba(46, 125, 50, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.4)',
+            color: activeFilter === 'upcoming' ? '#fff' : 'inherit',
+            transition: 'all 0.3s ease',
+            transform:
+              activeFilter === 'upcoming'
+                ? 'translateY(-1px)'
+                : 'translateY(0px)',
+            boxShadow:
+              activeFilter === 'upcoming'
+                ? '0 6px 20px rgba(46, 125, 50, 0.25)'
+                : '0 3px 12px rgba(0, 0, 0, 0.15)',
             '&:hover': {
-              backgroundColor:
+              background:
                 activeFilter === 'upcoming'
-                  ? 'success.dark'
-                  : 'rgba(0, 0, 0, 0.04)',
+                  ? 'rgba(46, 125, 50, 0.9)'
+                  : 'rgba(255, 255, 255, 0.4)',
+              transform: 'translateY(-3px)',
+              boxShadow:
+                activeFilter === 'upcoming'
+                  ? '0 8px 25px rgba(46, 125, 50, 0.4)'
+                  : '0 6px 20px rgba(0, 0, 0, 0.2)',
             },
           }}
         />
@@ -218,11 +266,33 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            backdropFilter: 'blur(10px)',
+            background:
+              activeFilter === 'past'
+                ? 'rgba(156, 39, 176, 0.8)'
+                : 'rgba(255, 255, 255, 0.3)',
+            border:
+              activeFilter === 'past'
+                ? '1px solid rgba(156, 39, 176, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.4)',
+            color: activeFilter === 'past' ? '#fff' : 'inherit',
+            transition: 'all 0.3s ease',
+            transform:
+              activeFilter === 'past' ? 'translateY(-1px)' : 'translateY(0px)',
+            boxShadow:
+              activeFilter === 'past'
+                ? '0 6px 20px rgba(156, 39, 176, 0.25)'
+                : '0 3px 12px rgba(0, 0, 0, 0.15)',
             '&:hover': {
-              backgroundColor:
+              background:
                 activeFilter === 'past'
-                  ? 'secondary.dark'
-                  : 'rgba(0, 0, 0, 0.04)',
+                  ? 'rgba(156, 39, 176, 0.9)'
+                  : 'rgba(255, 255, 255, 0.4)',
+              transform: 'translateY(-3px)',
+              boxShadow:
+                activeFilter === 'past'
+                  ? '0 8px 25px rgba(156, 39, 176, 0.4)'
+                  : '0 6px 20px rgba(0, 0, 0, 0.2)',
             },
           }}
         />
@@ -236,11 +306,35 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            backdropFilter: 'blur(10px)',
+            background:
+              activeFilter === 'created'
+                ? 'rgba(2, 136, 209, 0.8)'
+                : 'rgba(255, 255, 255, 0.3)',
+            border:
+              activeFilter === 'created'
+                ? '1px solid rgba(2, 136, 209, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.4)',
+            color: activeFilter === 'created' ? '#fff' : 'inherit',
+            transition: 'all 0.3s ease',
+            transform:
+              activeFilter === 'created'
+                ? 'translateY(-1px)'
+                : 'translateY(0px)',
+            boxShadow:
+              activeFilter === 'created'
+                ? '0 6px 20px rgba(2, 136, 209, 0.25)'
+                : '0 3px 12px rgba(0, 0, 0, 0.15)',
             '&:hover': {
-              backgroundColor:
+              background:
                 activeFilter === 'created'
-                  ? 'info.dark'
-                  : 'rgba(0, 0, 0, 0.04)',
+                  ? 'rgba(2, 136, 209, 0.9)'
+                  : 'rgba(255, 255, 255, 0.4)',
+              transform: 'translateY(-3px)',
+              boxShadow:
+                activeFilter === 'created'
+                  ? '0 8px 25px rgba(2, 136, 209, 0.4)'
+                  : '0 6px 20px rgba(0, 0, 0, 0.2)',
             },
           }}
         />
@@ -254,11 +348,35 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            backdropFilter: 'blur(10px)',
+            background:
+              activeFilter === 'joined'
+                ? 'rgba(237, 108, 2, 0.8)'
+                : 'rgba(255, 255, 255, 0.3)',
+            border:
+              activeFilter === 'joined'
+                ? '1px solid rgba(237, 108, 2, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.4)',
+            color: activeFilter === 'joined' ? '#fff' : 'inherit',
+            transition: 'all 0.3s ease',
+            transform:
+              activeFilter === 'joined'
+                ? 'translateY(-1px)'
+                : 'translateY(0px)',
+            boxShadow:
+              activeFilter === 'joined'
+                ? '0 6px 20px rgba(237, 108, 2, 0.25)'
+                : '0 3px 12px rgba(0, 0, 0, 0.15)',
             '&:hover': {
-              backgroundColor:
+              background:
                 activeFilter === 'joined'
-                  ? 'warning.dark'
-                  : 'rgba(0, 0, 0, 0.04)',
+                  ? 'rgba(237, 108, 2, 0.9)'
+                  : 'rgba(255, 255, 255, 0.4)',
+              transform: 'translateY(-3px)',
+              boxShadow:
+                activeFilter === 'joined'
+                  ? '0 8px 25px rgba(237, 108, 2, 0.4)'
+                  : '0 6px 20px rgba(0, 0, 0, 0.2)',
             },
           }}
         />

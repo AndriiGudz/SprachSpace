@@ -22,6 +22,7 @@ import Admin from './pages/Admin/PageAdminUsersList'
 import UserDaschboard from './pages/Admin/PageUserDaschboard'
 import MeetingChat from './pages/MeetingChat/MeetingChat'
 import ScheduledMeetings from './pages/ScheduledMeetings/ScheduledMeetings'
+import NotificationsPage from './pages/Notifications/Notifications'
 
 function App() {
   const { t, i18n } = useTranslation()
@@ -91,6 +92,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <ScheduledMeetings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <NotificationsPage />
                     </ProtectedRoute>
                   }
                 />

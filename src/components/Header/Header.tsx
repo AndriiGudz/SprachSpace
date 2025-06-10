@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useAvatarLoader } from '../../hooks/useAvatarLoader'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import MenuIcon from '@mui/icons-material/Menu'
-import { Avatar } from '@mui/material'
+import { Avatar, Badge } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { selectUnreadCount } from '../../store/redux/notificationSlice/selectors'
 import { ReactComponent as Logo } from '../../assets/Logo-sprachspace.svg'
 import {
   HeaderBox,
@@ -26,6 +28,7 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { avatarUrl, isAuthenticated } = useAvatarLoader()
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const unreadCount = useSelector(selectUnreadCount)
 
   const handleSignInClick = () => {
     navigate('/signin')
@@ -62,38 +65,58 @@ function Header() {
     setIsMenuOpen(false)
   }
 
-  // Рендер аватара с fallback логикой
+  // Рендер аватара с fallback логикой и Badge для уведомлений
   const renderAvatar = () => {
-    if (avatarUrl) {
-  return (
-                <Avatar
-          src={avatarUrl}
-                  alt="User Avatar"
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    marginLeft: '16px',
-                    '& .MuiAvatar-img': {
-                      marginRight: '0 !important',
-                    },
-                  }}
-                />
+    const avatarComponent = avatarUrl ? (
+      <Avatar
+        src={avatarUrl}
+        alt="User Avatar"
+        sx={{
+          width: 36,
+          height: 36,
+          marginLeft: '16px',
+          '& .MuiAvatar-img': {
+            marginRight: '0 !important',
+          },
+        }}
+      />
+    ) : (
+      <AccountCircleIcon
+        sx={{
+          color: '#ffffff',
+          backgroundColor: '#01579b',
+          borderRadius: '50%',
+          width: 36,
+          height: 36,
+          marginLeft: '16px',
+          cursor: 'pointer',
+        }}
+      />
+    )
+
+    // Если есть непрочитанные уведомления, оборачиваем в Badge
+    if (isAuthenticated && unreadCount > 0) {
+      return (
+        <Badge
+          badgeContent={unreadCount}
+          color="error"
+          max={99}
+          sx={{
+            '& .MuiBadge-badge': {
+              fontSize: '0.75rem',
+              minWidth: '18px',
+              height: '18px',
+              top: '6px',
+              right: '6px',
+            },
+          }}
+        >
+          {avatarComponent}
+        </Badge>
       )
     }
 
-    return (
-                <AccountCircleIcon
-                  sx={{
-                    color: '#ffffff',
-                    backgroundColor: '#01579b',
-                    borderRadius: '50%',
-                    width: 36,
-                    height: 36,
-                    marginLeft: '16px',
-                    cursor: 'pointer',
-                  }}
-                />
-    )
+    return avatarComponent
   }
 
   return (
