@@ -25,8 +25,6 @@ import Loader from '../../components/Loader/Loader'
 
 // Функция для маппинга ApiRoom в Meeting
 export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
-  // Добавляем логирование для отладки
-  console.log('mapApiRoomToMeeting - apiRoom:', apiRoom)
 
   if (!apiRoom) {
     console.error('mapApiRoomToMeeting - apiRoom is undefined')

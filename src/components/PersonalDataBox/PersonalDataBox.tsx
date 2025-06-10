@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function PersonalDataBox({
+  data,
   isEditing,
   onEdit,
   onSave,
@@ -80,10 +81,7 @@ function PersonalDataBox({
   ])
 
   const isEmpty =
-    !userData.nickname ||
-    !userData.name ||
-    !userData.surname ||
-    !userData.birthdayDate
+    !data.nickname || !data.name || !data.surname || !data.birthdayDate
 
   const handleAvatarEditClick = () => {
     fileInputRef.current?.click()
@@ -193,7 +191,7 @@ function PersonalDataBox({
 
         <TextField
           label={t('personalData.nickname')}
-          value={userData.nickname || ''}
+          value={data.nickname || ''}
           onChange={(e) => onChange({ nickname: e.target.value })}
           disabled={!isEditing}
           fullWidth
@@ -201,7 +199,7 @@ function PersonalDataBox({
         />
         <TextField
           label={t('personalData.name')}
-          value={userData.name || ''}
+          value={data.name || ''}
           onChange={(e) => onChange({ name: e.target.value })}
           disabled={!isEditing}
           fullWidth
@@ -209,7 +207,7 @@ function PersonalDataBox({
         />
         <TextField
           label={t('personalData.surname')}
-          value={userData.surname || ''}
+          value={data.surname || ''}
           onChange={(e) => onChange({ surname: e.target.value })}
           disabled={!isEditing}
           fullWidth
@@ -217,7 +215,7 @@ function PersonalDataBox({
         />
         <DatePicker
           label={t('personalData.birthdayDate')}
-          value={userData.birthdayDate ? dayjs(userData.birthdayDate) : null}
+          value={data.birthdayDate ? dayjs(data.birthdayDate) : null}
           onChange={(date) =>
             onChange({ birthdayDate: date?.toISOString() || null })
           }
