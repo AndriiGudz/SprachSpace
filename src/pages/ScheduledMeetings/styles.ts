@@ -22,9 +22,23 @@ export const meetingCardStyle: SxProps<Theme> = {
 
 export const filterButtonsStyle: SxProps<Theme> = {
   display: 'flex',
-  flexWrap: 'wrap',
+  alignItems: { xs: 'center' },
+  height: { xs: '72px' },
+  flexWrap: 'nowrap',
   gap: 1,
-  justifyContent: 'center',
+  justifyContent: { xs: 'flex-start', sm: 'center' },
   mb: 3,
   px: 2,
+  overflowX: 'auto',
+  overflowY: 'hidden',
+  scrollbarWidth: 'none', // Firefox
+  '&::-webkit-scrollbar': {
+    display: 'none', // Chrome, Safari
+  },
+  touchAction: 'pan-x',
+  '-webkit-overflow-scrolling': 'touch',
+  // Добавляем отступы с боков для мобильных устройств
+  '& > *': {
+    flexShrink: 0,
+  },
 }

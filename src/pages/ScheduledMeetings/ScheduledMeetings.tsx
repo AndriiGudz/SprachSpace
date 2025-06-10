@@ -184,6 +184,8 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
             backdropFilter: 'blur(10px)',
             background:
               activeFilter === 'all'
@@ -224,6 +226,8 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
             backdropFilter: 'blur(10px)',
             background:
               activeFilter === 'upcoming'
@@ -266,6 +270,8 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
             backdropFilter: 'blur(10px)',
             background:
               activeFilter === 'past'
@@ -306,6 +312,8 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
             backdropFilter: 'blur(10px)',
             background:
               activeFilter === 'created'
@@ -348,6 +356,8 @@ function ScheduledMeetings() {
           sx={{
             fontSize: '0.875rem',
             height: 40,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
             backdropFilter: 'blur(10px)',
             background:
               activeFilter === 'joined'
