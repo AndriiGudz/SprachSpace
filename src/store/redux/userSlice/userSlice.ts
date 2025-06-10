@@ -9,14 +9,13 @@ async function fetchAvatarBlobUrl(
   accessToken: string
 ): Promise<string | null> {
   try {
-    const response = await fetch(
-      `${API_ROOT_URL}/users/file/avatar/${fotoFileName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
+    const avatarUrl = `${API_ROOT_URL}/users/file/avatar/${fotoFileName}`
+
+    const response = await fetch(avatarUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
 
     if (!response.ok) {
       return null
@@ -28,7 +27,8 @@ async function fetchAvatarBlobUrl(
       return null
     }
 
-    return URL.createObjectURL(imageBlob)
+    const objectURL = URL.createObjectURL(imageBlob)
+    return objectURL
   } catch (error) {
     return null
   }

@@ -91,33 +91,53 @@ function PersonalDataBox({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0]
-    if (file && userData.id && userData.accessToken) {
-      try {
-        const response = await uploadAvatar(
-          userData.id,
-          file,
-          userData.accessToken
+
+    if (!file) {
+      return
+    }
+
+    if (!userData.id) {
+      toast.error('User ID not available')
+      return
+    }
+
+    if (!userData.accessToken) {
+      toast.error('Access token not available')
+      return
+    }
+
+    try {
+      const response = await uploadAvatar(
+        userData.id,
+        file,
+        userData.accessToken
+      )
+
+      // Обновляем foto в Redux store
+      dispatch(updateUser({ foto: response.foto }))
+
+      // После обновления foto загружаем новый аватар
+      if (response.foto && userData.accessToken) {
+        dispatch(
+          loadUserAvatar({
+            fotoFileName: response.foto,
+            accessToken: userData.accessToken,
+          })
         )
-        dispatch(updateUser({ foto: response.foto }))
-        // После обновления foto загружаем новый аватар
-        if (response.foto && userData.accessToken) {
-          dispatch(
-            loadUserAvatar({
-              fotoFileName: response.foto,
-              accessToken: userData.accessToken,
-            })
-          )
-        }
-        toast.success(t('personalData.avatarUploadedSuccess'))
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(
-            `${t('personalData.avatarUploadError')}: ${error.message}`
-          )
-        } else {
-          toast.error(t('personalData.avatarUploadError'))
-        }
       }
+
+      toast.success(t('personalData.avatarUploadedSuccess'))
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`${t('personalData.avatarUploadError')}: ${error.message}`)
+      } else {
+        toast.error(t('personalData.avatarUploadError'))
+      }
+    }
+
+    // Очищаем input чтобы можно было загрузить тот же файл снова
+    if (event.target) {
+      event.target.value = ''
     }
   }
 

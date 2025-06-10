@@ -28,6 +28,8 @@
     "passwordPlaceholder": "Password",
     "acceptTerms": "I accept the Terms and Conditions",
     "registrationSuccess": "You have registered successfully!",
+    "autoLoginSuccess": "You have been automatically logged in!",
+    "registrationSuccessLoginManually": "Registration successful! Please log in for full access.",
     "loginSuccess": "You have successfully logged in!",
     "loginFailed": "Login failed",
     "registrationFailed": "Registration failed",

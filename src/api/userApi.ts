@@ -20,14 +20,13 @@ export async function uploadAvatar(
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/uploadAvatar?userId=${userId}`,
-    {
-      method: 'POST',
-      body: formData,
-      headers, // Добавляем заголовки
-    }
-  )
+  const uploadUrl = `${API_BASE_URL}/uploadAvatar?userId=${userId}`
+
+  const response = await fetch(uploadUrl, {
+    method: 'POST',
+    body: formData,
+    headers, // Добавляем заголовки
+  })
 
   if (!response.ok) {
     let errorMessage = 'Failed to upload avatar'
@@ -42,6 +41,7 @@ export async function uploadAvatar(
 
   // Сервер возвращает строку: "Uploaded successfully. URL: /api/user/avatar/FILENAME.png"
   const successMessage = await response.text()
+
   const urlPrefix = 'URL: '
   const urlStartIndex = successMessage.indexOf(urlPrefix)
 
@@ -52,6 +52,7 @@ export async function uploadAvatar(
   const relativePathWithLeadingSlash = successMessage.substring(
     urlStartIndex + urlPrefix.length
   )
+
   // relativePath будет, например, "/api/user/avatar/796d67b6-f380-4fd7-a09e-bbec03a595c8.png"
 
   // Извлекаем только имя файла из пути
@@ -62,6 +63,7 @@ export async function uploadAvatar(
       'Invalid server response format: Could not extract filename.'
     )
   }
+
   return { foto: fileName }
 }
 

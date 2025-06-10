@@ -28,6 +28,8 @@
     "passwordPlaceholder": "Пароль",
     "acceptTerms": "Я приймаю Умови користування",
     "registrationSuccess": "Ви успішно зареєструвалися!",
+    "autoLoginSuccess": "Ви автоматично авторизовані!",
+    "registrationSuccessLoginManually": "Реєстрація пройшла успішно! Увійдіть у систему для повного доступу.",
     "loginSuccess": "Ви успішно увійшли!",
     "loginFailed": "Помилка входу",
     "registrationFailed": "Помилка реєстрації",
