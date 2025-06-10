@@ -1,6 +1,6 @@
 export interface Organizer {
   id: number
-  nickname: string
+  nickname?: string
   name: string // Имя или никнейм для отображения, может быть composite
   firstName?: string
   lastName?: string
@@ -42,11 +42,16 @@ export interface Meeting {
     id: number
     user: {
       id: number
-      nickname: string
-      name: string
+      nickname: string | null
+      name: string | null
       [key: string]: any
     }
-    status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
-    participantType: 'CREATOR' | 'REQUESTED_BY_USER' | 'INVITED_BY_ORGANIZER'
+    status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'VIEWED'
+    participantType:
+      | 'CREATOR'
+      | 'REQUESTED_BY_USER'
+      | 'INVITED_BY_ORGANIZER'
+      | 'INVITED_BY_CREATOR'
+      | 'VISITED_WITHOUT_AN_INVITATION'
   }>
 }

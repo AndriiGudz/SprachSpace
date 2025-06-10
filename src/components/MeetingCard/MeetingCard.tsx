@@ -35,6 +35,7 @@ import {
 import defAvatar from '../../assets/default-avatar.png'
 import enFlag from '../../assets/flag/en.png'
 import deFlag from '../../assets/flag/de.png'
+import spFlag from '../../assets/flag/sp.png'
 import ukFlag from '../../assets/flag/ua.png'
 import ruFlag from '../../assets/flag/ru.png'
 import { API_ROOT_URL } from '../../config/apiConfig'
@@ -42,6 +43,7 @@ import { API_ROOT_URL } from '../../config/apiConfig'
 const languageFlagsFallback: Record<string, string> = {
   English: enFlag,
   German: deFlag,
+  Spanish: spFlag,
   Ukrainian: ukFlag,
   Russian: ruFlag,
 }

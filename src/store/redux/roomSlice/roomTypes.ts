@@ -27,15 +27,27 @@ export interface ApiRoom {
 }
 
 export interface ApiCreator {
-  avatar: undefined
-  id: number // Из JSON видно, что это number
-  nickname: string
-  name: string // Это firstName из JSON
-  surname: string // lastName из JSON
-  foto: string // Это avatarUrl из JSON, может быть пустой строкой
-  rating: number // Из JSON видно, что это number
-  // Остальные поля из JSON (email, password, birthdayDate и т.д.) пока не добавляем,
-  // так как они не нужны для MeetingCard. При необходимости можно будет добавить.
+  id: number
+  nickname: string | null
+  name: string | null
+  surname: string | null
+  email: string
+  avatar: string | null
+  rating: number
+  password: string
+  birthdayDate: string | null
+  internalCurrency: string | null
+  status: boolean
+  nativeLanguages: any[]
+  learningLanguages: any[]
+  roles: any[]
+  createdRooms: any[]
+  enabled: boolean
+  username: string
+  authorities: any[]
+  credentialsNonExpired: boolean
+  accountNonExpired: boolean
+  accountNonLocked: boolean
 }
 
 // Тип для данных, отправляемых при создании комнаты (совпадает с CreateRoomRequest из CreateRoomForm)
@@ -88,15 +100,15 @@ export interface ParticipantRole {
 
 export interface ParticipantUser {
   id: number
-  nickname: string
-  name: string
+  nickname: string | null
+  name: string | null
   email: string
-  surname: string
+  surname: string | null
   password: string
-  birthdayDate: string
-  avatar: string
+  birthdayDate: string | null
+  avatar: string | null
   rating: number
-  internalCurrency: number | null
+  internalCurrency: string | null
   status: boolean
   nativeLanguages: ParticipantLanguage[]
   learningLanguages: ParticipantLanguage[]
@@ -113,6 +125,11 @@ export interface ParticipantUser {
 export interface RoomParticipant {
   id: number // participantId
   user: ParticipantUser
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
-  participantType: 'REQUESTED_BY_USER' | 'INVITED_BY_ORGANIZER'
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'VIEWED'
+  participantType:
+    | 'REQUESTED_BY_USER'
+    | 'INVITED_BY_ORGANIZER'
+    | 'CREATOR'
+    | 'INVITED_BY_CREATOR'
+    | 'VISITED_WITHOUT_AN_INVITATION'
 }

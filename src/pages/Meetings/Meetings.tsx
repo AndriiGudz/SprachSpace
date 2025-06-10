@@ -25,6 +25,14 @@ import Loader from '../../components/Loader/Loader'
 
 // Функция для маппинга ApiRoom в Meeting
 export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
+  // Добавляем логирование для отладки
+  console.log('mapApiRoomToMeeting - apiRoom:', apiRoom)
+
+  if (!apiRoom) {
+    console.error('mapApiRoomToMeeting - apiRoom is undefined')
+    throw new Error('ApiRoom is undefined')
+  }
+
   const {
     id,
     topic,
@@ -64,37 +72,37 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     }
   }
 
-  const slug = topic
+  const slug = (topic || 'unknown')
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '')
 
   const meetingData: Meeting = {
-    id,
+    id: id || 0,
     slug,
-    name: topic,
-    category: category.name,
-    startTime,
-    endTime,
+    name: topic || 'Unknown',
+    category: category?.name || 'Unknown',
+    startTime: startTime || new Date().toISOString(),
+    endTime: endTime || new Date().toISOString(),
     duration: durationString,
-    minParticipants: minQuantity,
-    maxParticipants: maxQuantity,
+    minParticipants: minQuantity || 0,
+    maxParticipants: maxQuantity || 0,
     waitingParticipants: participants
       ? participants.filter((p) => p.status === 'PENDING').length
-      : quantityParticipant,
-    language,
+      : quantityParticipant || 0,
+    language: language || 'Unknown',
     proficiency: languageLvl,
     ageRestriction: typeof age === 'string' ? parseInt(age, 10) : age,
-    shareLink: roomUrl,
-    roomUrl,
-    privateRoom,
+    shareLink: roomUrl || '',
+    roomUrl: roomUrl || '',
+    privateRoom: privateRoom || false,
     organizer: creator
       ? {
           id: creator.id,
-          name: creator.name,
-          nickname: creator.nickname,
-          firstName: creator.name,
-          lastName: creator.surname,
+          name: creator.name || creator.nickname || creator.email || 'Unknown',
+          nickname: creator.nickname || undefined,
+          firstName: creator.name || undefined,
+          lastName: creator.surname || undefined,
           avatarFileName: creator.avatar || undefined,
           rating: creator.rating,
         }
