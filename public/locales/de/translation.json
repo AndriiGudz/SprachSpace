@@ -202,7 +202,9 @@
       "beginner": "Anfänger",
       "intermediate": "Mittelstufe",
       "advanced": "Fortgeschritten"
-    }
+    },
+    "ageLimitHelperText": "Lassen Sie das Feld leer für offenen Zugang (keine Beschränkungen)",
+    "ageLimitPlaceholder": "z.B. 18"
   },
   "roomFilter": {
     "category": "Kategorie",

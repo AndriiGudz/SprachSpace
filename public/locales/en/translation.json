@@ -202,7 +202,9 @@
       "beginner": "Beginner",
       "intermediate": "Intermediate",
       "advanced": "Advanced"
-    }
+    },
+    "ageLimitHelperText": "Leave empty for open access (no restrictions)",
+    "ageLimitPlaceholder": "e.g., 18"
   },
   "roomFilter": {
     "category": "Category",

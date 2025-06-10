@@ -241,7 +241,9 @@
       "beginner": "Начинающий",
       "intermediate": "Средний",
       "advanced": "Продвинутый"
-    }
+    },
+    "ageLimitHelperText": "Оставьте пустым для открытого доступа (без ограничений)",
+    "ageLimitPlaceholder": "Например: 18"
   },
   "roomFilter": {
     "category": "Категория",

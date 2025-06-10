@@ -68,10 +68,9 @@ type Props = {
 const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
-  const {
-    isAuthenticated,
-    id: userIdFromAuth,
-  } = useSelector((state: RootState) => state.user)
+  const { isAuthenticated, id: userIdFromAuth } = useSelector(
+    (state: RootState) => state.user
+  )
   const { isLoading: isRoomCreating, error: roomCreationError } = useSelector(
     (state: RootState) => state.rooms
   )
@@ -186,7 +185,10 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
       startTime: new Date(data.openAt).toISOString(),
       endTime: new Date(data.closeAt).toISOString(),
       status: true,
-      age: data.ageLimit === null ? undefined : Number(data.ageLimit),
+      age:
+        data.ageLimit === null || data.ageLimit === undefined
+          ? 0
+          : Number(data.ageLimit),
       language: data.language,
       languageLvl: data.proficiency,
       category: data.category,
@@ -478,9 +480,17 @@ const CreateRoomForm: React.FC<Props> = ({ onRoomCreated }) => {
           type="number"
           {...register('ageLimit')}
           error={!!errors.ageLimit}
-          helperText={errors.ageLimit?.message}
+          helperText={
+            errors.ageLimit?.message ||
+            t(
+              'createRoomForm.ageLimitHelperText',
+              'Оставьте пустым для открытого доступа (без ограничений)'
+            )
+          }
+          placeholder={t('createRoomForm.ageLimitPlaceholder', 'Например: 18')}
           sx={filterItemStyle}
           disabled={isRoomCreating}
+          inputProps={{ min: 0, max: 100 }}
         />
 
         <FormControlLabel

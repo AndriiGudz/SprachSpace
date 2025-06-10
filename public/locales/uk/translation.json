@@ -202,7 +202,9 @@
       "beginner": "Початківець",
       "intermediate": "Середній",
       "advanced": "Просунутий"
-    }
+    },
+    "ageLimitHelperText": "Залиште порожнім для відкритого доступу (без обмежень)",
+    "ageLimitPlaceholder": "Наприклад: 18"
   },
   "roomFilter": {
     "category": "Категорія",

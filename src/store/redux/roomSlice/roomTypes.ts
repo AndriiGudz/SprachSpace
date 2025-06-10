@@ -56,7 +56,7 @@ export interface CreateRoomApiRequest {
   startTime: string // ISO string
   endTime: string // ISO string
   status: boolean
-  age?: number // Optional, API shows 0, form might send null/undefined
+  age: number // Required field - if not set by user, defaults to 0
   language: string
   languageLvl: string // New: maps from UI's proficiency
   category: string // API expects string for creation as per example
