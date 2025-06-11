@@ -383,7 +383,10 @@
     "requestPending": "Request sent",
     "requestAccepted": "Request accepted",
     "requestSent": "Request sent",
-    "requestSentDescription": "You have successfully sent a request to join. Please wait for confirmation from the room organizer."
+    "requestSentDescription": "You have successfully sent a request to join. Please wait for confirmation from the room organizer.",
+    "authRequired": "Authorization Required",
+    "authRequiredDescription": "Only registered users can join video rooms. Please sign in to your account or register to participate in the meeting.",
+    "authButton": "Sign In"
   },
   "scheduledMeetings": {
     "description": "Here you can view all your scheduled meetings",

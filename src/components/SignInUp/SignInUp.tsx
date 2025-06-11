@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage, FieldProps } from 'formik'
 import CloseIcon from '@mui/icons-material/Close'
 import { ReactComponent as GooglePlusIcon } from '../../assets/icons-google-plus.svg'
@@ -54,6 +54,7 @@ function SignInUp() {
     Yup.ObjectSchema<SignUpValues> | undefined
   >(undefined)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -137,7 +138,9 @@ function SignInUp() {
         )
 
         toast.success(t('signinUp.loginSuccess'))
-        navigate('/')
+        // Перенаправляем на страницу, с которой пришел пользователь, или на главную
+        const returnTo = searchParams.get('returnTo')
+        navigate(returnTo ? decodeURIComponent(returnTo) : '/')
       } else {
         const errorData = await response.json()
         console.error(t('signinUp.loginFailed:'), errorData)
@@ -215,18 +218,22 @@ function SignInUp() {
             )
 
             toast.success(t('signinUp.autoLoginSuccess'))
-            navigate('/')
+            // Перенаправляем на страницу, с которой пришел пользователь, или на главную
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo ? decodeURIComponent(returnTo) : '/')
           } else {
             // Если автоматическая авторизация не удалась, сохраняем данные без токенов
             dispatch(setUser(registrationData))
             toast.info(t('signinUp.registrationSuccessLoginManually'))
-            navigate('/')
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo ? decodeURIComponent(returnTo) : '/')
           }
         } catch (autoLoginError) {
           // Если ошибка автоматической авторизации, сохраняем данные без токенов
           dispatch(setUser(registrationData))
           toast.info(t('signinUp.registrationSuccessLoginManually'))
-          navigate('/')
+          const returnTo = searchParams.get('returnTo')
+          navigate(returnTo ? decodeURIComponent(returnTo) : '/')
         }
       } else {
         const errorData = await response.json()

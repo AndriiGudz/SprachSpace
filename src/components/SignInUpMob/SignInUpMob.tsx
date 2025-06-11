@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Formik, Field, Form } from 'formik'
 import CloseIcon from '@mui/icons-material/Close'
 import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -37,6 +37,7 @@ function SignInUpMob() {
   const [isUpPanelActive, setIsRightPanelActive] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
 
   const handleSignInClick = () => {
@@ -103,7 +104,9 @@ function SignInUpMob() {
         )
 
         toast.success(t('signinUp.loginSuccess'))
-        navigate('/')
+        // Перенаправляем на страницу, с которой пришел пользователь, или на главную
+        const returnTo = searchParams.get('returnTo')
+        navigate(returnTo ? decodeURIComponent(returnTo) : '/')
       } else {
         const errorData = await response.json()
         console.error(t('signinUp.loginFailed:'), errorData)
@@ -184,18 +187,22 @@ function SignInUpMob() {
             )
 
             toast.success(t('signinUp.autoLoginSuccess'))
-            navigate('/')
+            // Перенаправляем на страницу, с которой пришел пользователь, или на главную
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo ? decodeURIComponent(returnTo) : '/')
           } else {
             // Если автоматическая авторизация не удалась, сохраняем данные без токенов
             dispatch(setUser(registrationData))
             toast.info(t('signinUp.registrationSuccessLoginManually'))
-            navigate('/')
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo ? decodeURIComponent(returnTo) : '/')
           }
         } catch (autoLoginError) {
           // Если ошибка автоматической авторизации, сохраняем данные без токенов
           dispatch(setUser(registrationData))
           toast.info(t('signinUp.registrationSuccessLoginManually'))
-          navigate('/')
+          const returnTo = searchParams.get('returnTo')
+          navigate(returnTo ? decodeURIComponent(returnTo) : '/')
         }
       } else {
         const errorData = await response.json()

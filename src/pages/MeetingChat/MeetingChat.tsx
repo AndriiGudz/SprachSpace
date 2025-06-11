@@ -168,6 +168,12 @@ function MeetingChat() {
     }
   }, [])
 
+  // Функция для перенаправления на авторизацию с возвратом
+  const handleAuthRedirect = useCallback(() => {
+    const currentPath = window.location.pathname
+    navigate(`/signin?returnTo=${encodeURIComponent(currentPath)}`)
+  }, [navigate])
+
   // Функция присоединения к комнате
   const joinRoom = useCallback(async () => {
     if (!meeting || !userId || !isAuthenticated || isJoiningRoom) return
@@ -1015,6 +1021,61 @@ function MeetingChat() {
                 canConnect={chatAccess.hasAccess}
               />
               {!chatAccess.hasAccess && renderWaitingOverlay()}
+            </Box>
+          </Box>
+        ) : !isAuthenticated ? (
+          // Отображение для неавторизованных пользователей
+          <Box sx={chatContainerStyle}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '400px',
+                gap: 3,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: 3,
+                color: 'white',
+                textAlign: 'center',
+                p: 4,
+              }}
+            >
+              <Lock size={64} style={{ opacity: 0.8 }} />
+              <Typography variant="h4" fontWeight="600">
+                {t('meetingChat.authRequired', 'Требуется авторизация')}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{ opacity: 0.9, maxWidth: 500, lineHeight: 1.6 }}
+              >
+                {t(
+                  'meetingChat.authRequiredDescription',
+                  'Только зарегистрированные пользователи могут присоединяться к видеокомнатам. Пожалуйста, войдите в свой аккаунт или зарегистрируйтесь для участия в встрече.'
+                )}
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={handleAuthRedirect}
+                startIcon={<Lock size={20} />}
+                sx={{
+                  mt: 2,
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.3)',
+                    border: '2px solid rgba(255,255,255,0.5)',
+                  },
+                }}
+              >
+                {t('meetingChat.authButton', 'Авторизоваться')}
+              </Button>
             </Box>
           </Box>
         ) : (

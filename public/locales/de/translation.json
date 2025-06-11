@@ -383,7 +383,10 @@
     "requestPending": "Anfrage gesendet",
     "requestAccepted": "Anfrage angenommen",
     "requestSent": "Anfrage gesendet",
-    "requestSentDescription": "Sie haben erfolgreich eine Beitrittsanfrage gesendet. Bitte warten Sie auf die Bestätigung vom Raumorganisator."
+    "requestSentDescription": "Sie haben erfolgreich eine Beitrittsanfrage gesendet. Bitte warten Sie auf die Bestätigung vom Raumorganisator.",
+    "authRequired": "Autorisierung erforderlich",
+    "authRequiredDescription": "Nur registrierte Benutzer können Videoräumen beitreten. Bitte melden Sie sich in Ihrem Konto an oder registrieren Sie sich, um am Meeting teilzunehmen.",
+    "authButton": "Anmelden"
   },
   "scheduledMeetings": {
     "description": "Hier können Sie alle Ihre geplanten Meetings einsehen",
