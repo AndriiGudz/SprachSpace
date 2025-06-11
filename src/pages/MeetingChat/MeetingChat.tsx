@@ -417,9 +417,8 @@ function MeetingChat() {
       ? parseISO(meeting.startTime)
       : new Date()
     const minutesUntilStart = differenceInMinutes(startTime, currentTime)
-    // Учитываем организатора в подсчете ожидающих участников
-    const waitingParticipants =
-      (meeting.waitingParticipants || 0) + (isOrganizer ? 1 : 0)
+    // Используем значение quantityParticipant с сервера напрямую
+    const waitingParticipants = meeting.waitingParticipants || 0
     const minParticipants = meeting.minParticipants || 4
 
     const conditions = {
@@ -848,29 +847,27 @@ function MeetingChat() {
                     </Typography>
                   </Box>
                 )}
-                {/* Показываем ожидающих участников, включая организатора */}
-                {((meeting.waitingParticipants !== undefined &&
-                  meeting.waitingParticipants > 0) ||
-                  isOrganizer) && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      mt: 1,
-                      pt: 1,
-                      borderTop: '1px solid rgba(255,255,255,0.2)',
-                    }}
-                  >
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      {t('meetingCard.waitingParticipantsLabel')}
-                    </Typography>
-                    <Typography variant="h5" fontWeight="600">
-                      {(meeting.waitingParticipants || 0) +
-                        (isOrganizer ? 1 : 0)}
-                    </Typography>
-                  </Box>
-                )}
+                {/* Показываем ожидающих участников */}
+                {meeting.waitingParticipants !== undefined &&
+                  meeting.waitingParticipants > 0 && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: 1,
+                        pt: 1,
+                        borderTop: '1px solid rgba(255,255,255,0.2)',
+                      }}
+                    >
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        {t('meetingCard.waitingParticipantsLabel')}
+                      </Typography>
+                      <Typography variant="h5" fontWeight="600">
+                        {meeting.waitingParticipants}
+                      </Typography>
+                    </Box>
+                  )}
                 {/* Индикация присоединения текущего пользователя */}
                 {((hasJoinedWaiting && isAuthenticated) ||
                   userParticipation ||

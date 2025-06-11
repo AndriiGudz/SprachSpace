@@ -25,7 +25,6 @@ import Loader from '../../components/Loader/Loader'
 
 // Функция для маппинга ApiRoom в Meeting
 export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
-
   if (!apiRoom) {
     console.error('mapApiRoomToMeeting - apiRoom is undefined')
     throw new Error('ApiRoom is undefined')
@@ -85,9 +84,7 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     duration: durationString,
     minParticipants: minQuantity || 0,
     maxParticipants: maxQuantity || 0,
-    waitingParticipants: participants
-      ? participants.filter((p) => p.status === 'PENDING').length
-      : quantityParticipant || 0,
+    waitingParticipants: quantityParticipant || 0,
     language: language || 'Unknown',
     proficiency: languageLvl,
     ageRestriction: typeof age === 'string' ? parseInt(age, 10) : age,
