@@ -16,6 +16,7 @@ import {
   AvatarContainer,
   MobileAvatar,
   MenuButton,
+  LanguageSelectorContainer,
 } from './styles'
 import NavLinks from '../NavLinks/NavLinks'
 import ButtonSign from '../ButtonSign/ButtonSign'
@@ -145,7 +146,9 @@ function Header() {
             type="button"
           />
         )}
-        <LanguageSelector />
+        <LanguageSelectorContainer>
+          <LanguageSelector />
+        </LanguageSelectorContainer>
       </DesktopOnly>
       {/* Мобильная версия */}
       {isAuthenticated ? (

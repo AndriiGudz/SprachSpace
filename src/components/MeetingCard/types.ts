@@ -54,4 +54,16 @@ export interface Meeting {
       | 'INVITED_BY_CREATOR'
       | 'VISITED_WITHOUT_AN_INVITATION'
   }>
+  // Новые поля для онлайн пользователей
+  roomOnlineUsers?: Array<{
+    id: number
+    nickname: string | null
+    name: string | null
+    email: string | null
+    surname: string | null
+    avatar: string | null
+    rating: number
+    [key: string]: any
+  }>
+  countOnlineUser?: number
 }

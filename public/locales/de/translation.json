@@ -318,6 +318,7 @@
     "minParticipantsLabel": "Minimum:",
     "maxParticipantsLabel": "Maximum:",
     "waitingParticipantsLabel": "Wartend:",
+    "onlineParticipantsLabel": "Online:",
     "languageLabel": "Sprache:",
     "proficiencyLabel": "Niveau:",
     "roomTypeLabel": "Raumtyp",

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
@@ -42,6 +42,7 @@ import { mapApiRoomToMeeting } from '../Meetings/Meetings'
 import Loader from '../../components/Loader/Loader'
 import VideoChat from '../../components/VideoChat/VideoChat'
 import { sendJoinRequest } from '../../store/redux/roomSlice/roomSlice'
+import { useRoomOnlineStatus } from '../../hooks/useRoomOnlineStatus'
 import {
   containerStyle,
   headerStyle,
@@ -50,18 +51,27 @@ import {
 } from './styles'
 
 function MeetingChat() {
+  // Добавляем уникальный ID для отслеживания экземпляров компонента
+  const componentId = useRef(Math.random().toString(36).substr(2, 9))
+
+  console.log('🏗️ MeetingChat component MOUNTING with ID:', componentId.current)
+
   const { meetingId } = useParams()
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
+
+  // Убрали stableDispatch - больше не нужен
+
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [meeting, setMeeting] = useState<Meeting | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [activeParticipants] = useState(0) // TODO: Подключить к реальным данным Daily.co
-  const [hasJoinedWaiting, setHasJoinedWaiting] = useState(false)
   const [hasJoinedRoom, setHasJoinedRoom] = useState(false)
   const [isJoiningRoom, setIsJoiningRoom] = useState(false)
+  const [isLoadingMeeting, setIsLoadingMeeting] = useState(true) // Состояние загрузки данных встречи
+  // Убрали hasJoinedWaiting и hasNotifiedPresence - больше не нужны раз данные приходят с сервера
   const [joinRequestStatus, setJoinRequestStatus] = useState<
     'none' | 'pending' | 'accepted' | 'rejected'
   >('none')
@@ -76,12 +86,49 @@ function MeetingChat() {
     (state: RootState) => state.user
   )
 
+  // Логируем данные пользователя
+  useEffect(() => {
+    console.log('👤 User data from Redux:', {
+      isAuthenticated,
+      userId,
+      userType: typeof userId,
+      timestamp: new Date().toISOString(),
+    })
+  }, [isAuthenticated, userId])
+
+  // Получаем онлайн пользователей напрямую из данных комнаты
+  const onlineUsers = meeting?.roomOnlineUsers || []
+  const onlineUsersCount = meeting?.countOnlineUser || 0
+
+  // Управляем онлайн статусом пользователя в комнате
+  const { isOnline } = useRoomOnlineStatus({
+    roomId: meeting?.id,
+    userId: userId,
+    isAuthenticated: isAuthenticated,
+    enabled: true, // Всегда включен для отслеживания онлайн статуса
+  })
+
+  // Логируем изменения онлайн статуса
+  useEffect(() => {
+    console.log('🔄 Online status changed:', {
+      isOnline,
+      roomId: meeting?.id,
+      userId,
+      isAuthenticated,
+      timestamp: new Date().toISOString(),
+    })
+  }, [isOnline, meeting?.id, userId, isAuthenticated])
+
+  // Обновляем данные комнаты при изменении онлайн статуса - будет добавлено после объявления updateRoomData
+
   // Проверяем, является ли пользователь организатором комнаты
-  const isOrganizer = meeting?.organizer?.id === userId
+  const isOrganizer = useMemo(() => {
+    return meeting?.organizer?.id === userId
+  }, [meeting?.organizer?.id, userId])
 
   // Получаем информацию о заявке пользователя для текущей комнаты
   const userParticipation = useMemo(() => {
-    if (!meeting || !userId) return null
+    if (!meeting?.id || !userId) return null
 
     // Ищем в participants массиве полученном с сервера (приоритет)
     if (meeting.participants) {
@@ -113,28 +160,131 @@ function MeetingChat() {
     }
 
     return null
-  }, [meeting, userParticipations, userId])
+  }, [meeting?.id, meeting?.participants, userParticipations, userId]) // Добавляем meeting?.participants отдельно
 
-  // Функция для обновления данных комнаты
-  const updateRoomData = useCallback(async () => {
-    if (!meeting) return
+  // Создаем стабильную ссылку на ID комнаты
+  const meetingIdRef = useRef<number | null>(null)
 
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/room/id?roomId=${meeting.id}`
-      )
-      if (response.ok) {
-        const updatedRoom = await response.json()
-        const updatedMeeting = mapApiRoomToMeeting(updatedRoom)
-        setMeeting(updatedMeeting)
-        console.log('Room data updated:', updatedMeeting)
-      } else {
-        console.error('Failed to fetch room data:', response.statusText)
-      }
-    } catch (error) {
-      console.error('Error updating room data:', error)
+  // Обновляем ref при изменении ID комнаты
+  useEffect(() => {
+    if (meeting?.id && meetingIdRef.current !== meeting.id) {
+      meetingIdRef.current = meeting.id
+      console.log('📌 Meeting ID ref updated to:', meeting.id)
     }
-  }, [meeting])
+  }, [meeting?.id])
+
+  // Функция для обновления данных комнаты - БЕЗ зависимостей от meeting
+  const updateRoomData = useCallback(
+    async (roomId?: number) => {
+      const targetRoomId = roomId || meetingIdRef.current
+      if (!targetRoomId) {
+        console.log('❌ No room ID for updating room data')
+        return
+      }
+
+      console.log('🔄 Updating room data for room:', targetRoomId)
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/room/id?roomId=${targetRoomId}`
+        )
+        if (response.ok) {
+          const updatedRoom = await response.json()
+          console.log('📥 Received updated room data:', {
+            roomId: updatedRoom.id,
+            countOnlineUser: updatedRoom.countOnlineUser,
+            roomOnlineUsers: updatedRoom.roomOnlineUsers?.length || 0,
+            quantityParticipant: updatedRoom.quantityParticipant,
+          })
+
+          const updatedMeeting = mapApiRoomToMeeting(updatedRoom)
+
+          // Проверяем изменения в данных, включая состав онлайн пользователей
+          setMeeting((prevMeeting) => {
+            const hasOnlineUsersChanged = () => {
+              if (
+                !prevMeeting?.roomOnlineUsers ||
+                !updatedMeeting.roomOnlineUsers
+              ) {
+                return (
+                  prevMeeting?.roomOnlineUsers !==
+                  updatedMeeting.roomOnlineUsers
+                )
+              }
+
+              // Сравниваем ID пользователей
+              const prevIds = new Set(
+                prevMeeting.roomOnlineUsers.map((u) => u.id)
+              )
+              const newIds = new Set(
+                updatedMeeting.roomOnlineUsers.map((u) => u.id)
+              )
+
+              if (prevIds.size !== newIds.size) return true
+
+              return Array.from(prevIds).some((id) => !newIds.has(id))
+
+              return false
+            }
+
+            if (
+              !prevMeeting ||
+              prevMeeting.waitingParticipants !==
+                updatedMeeting.waitingParticipants ||
+              prevMeeting.participants?.length !==
+                updatedMeeting.participants?.length ||
+              prevMeeting.countOnlineUser !== updatedMeeting.countOnlineUser ||
+              hasOnlineUsersChanged()
+            ) {
+              console.log('📊 Room data actually changed, updating...', {
+                oldWaiting: prevMeeting?.waitingParticipants,
+                newWaiting: updatedMeeting.waitingParticipants,
+                oldParticipants: prevMeeting?.participants?.length,
+                newParticipants: updatedMeeting.participants?.length,
+                oldOnlineCount: prevMeeting?.countOnlineUser,
+                newOnlineCount: updatedMeeting.countOnlineUser,
+                oldOnlineUsers: prevMeeting?.roomOnlineUsers?.map((u) => u.id),
+                newOnlineUsers: updatedMeeting.roomOnlineUsers?.map(
+                  (u) => u.id
+                ),
+              })
+              return updatedMeeting
+            }
+            console.log('⚡ Room data same, skipping update')
+            return prevMeeting
+          })
+        } else {
+          console.error('Failed to fetch room data:', response.statusText)
+        }
+      } catch (error) {
+        console.error('Error updating room data:', error)
+      }
+    },
+    [] // БЕЗ зависимостей!
+  )
+
+  // Обновляем данные комнаты при изменении онлайн статуса
+  useEffect(() => {
+    console.log('🔄 Online status effect triggered:', {
+      meetingId: meeting?.id,
+      isOnline,
+      timestamp: new Date().toISOString(),
+    })
+
+    if (meeting?.id && isOnline !== undefined) {
+      console.log('⏰ Setting timer to update room data in 500ms')
+      // Небольшая задержка чтобы сервер успел обновить данные
+      const timer = setTimeout(() => {
+        console.log('⏰ Timer fired, updating room data now')
+        updateRoomData(meeting.id)
+      }, 500)
+
+      return () => {
+        console.log('⏰ Clearing timer')
+        clearTimeout(timer)
+      }
+    }
+  }, [isOnline, meeting?.id, updateRoomData])
 
   // Функция для автоматического принятия приглашения (для публичных комнат)
   const acceptInvitation = useCallback(async (participantId: number) => {
@@ -227,7 +377,7 @@ function MeetingChat() {
         }
 
         // Обновляем данные комнаты в любом случае
-        await updateRoomData()
+        await updateRoomData(meeting.id)
       } else if (sendJoinRequest.rejected.match(result)) {
         console.error('Join request failed:', result.error)
         setJoinRequestStatus('rejected')
@@ -245,7 +395,7 @@ function MeetingChat() {
     isJoiningRoom,
     dispatch,
     acceptInvitation,
-    updateRoomData,
+    updateRoomData, // Теперь это стабильная функция без зависимостей
   ])
 
   // Сбрасываем локальное состояние при смене пользователя
@@ -254,12 +404,11 @@ function MeetingChat() {
     setJoinRequestStatus('none')
     setHasJoinedRoom(false)
     setIsJoiningRoom(false)
-    setHasJoinedWaiting(false)
   }, [userId])
 
   // Проверяем статус присоединения при загрузке
   useEffect(() => {
-    if (meeting && isOrganizer) {
+    if (meeting?.id && isOrganizer) {
       setHasJoinedRoom(true)
       setJoinRequestStatus('accepted')
       setIsJoiningRoom(false)
@@ -293,48 +442,7 @@ function MeetingChat() {
         setHasJoinedRoom(false)
       }
     }
-  }, [meeting, isOrganizer, userParticipation, isJoiningRoom])
-
-  // Функция для уведомления сервера о присутствии пользователя в ожидании
-  // TODO: Реализовать на бэкенде POST /api/room/{roomId}/join и POST /api/room/{roomId}/leave
-  const notifyPresence = useCallback(
-    async (roomId: number, isJoining: boolean = true) => {
-      if (!userId || !isAuthenticated) return
-
-      // Заглушка - пока API не реализован на бэкенде
-      console.log(
-        `Presence notification: ${
-          isJoining ? 'joining' : 'leaving'
-        } room ${roomId} for user ${userId}`
-      )
-      setHasJoinedWaiting(isJoining)
-
-      // TODO: Uncomment when backend API is ready
-      /*
-      try {
-        const endpoint = isJoining ? 'join' : 'leave'
-        const response = await fetch(
-          `http://localhost:8080/api/room/${roomId}/${endpoint}?userId=${userId}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-
-        if (response.ok) {
-          setHasJoinedWaiting(isJoining)
-        } else {
-          console.error(`Failed to ${endpoint} room:`, response.statusText)
-        }
-      } catch (error) {
-        console.error(`Error ${isJoining ? 'joining' : 'leaving'} room:`, error)
-      }
-      */
-    },
-    [userId, isAuthenticated]
-  )
+  }, [meeting?.id, isOrganizer, userParticipation, isJoiningRoom]) // Используем только meeting?.id
 
   // Таймер для обновления текущего времени
   useEffect(() => {
@@ -345,8 +453,16 @@ function MeetingChat() {
     return () => clearInterval(timer)
   }, [])
 
+  // Отдельный useEffect для инициализации комнаты (без POST запросов)
   useEffect(() => {
+    console.log('📋 First useEffect triggered:', {
+      meetingId,
+      roomsLength: rooms.length,
+      navigate: typeof navigate,
+    })
+
     if (!meetingId || !rooms.length) {
+      setIsLoadingMeeting(true)
       return
     }
 
@@ -361,14 +477,11 @@ function MeetingChat() {
     )
 
     if (room) {
-      const mappedMeeting = mapApiRoomToMeeting(room)
-      setMeeting(mappedMeeting)
+      console.log('🏠 Found room, loading fresh data for:', room.id)
 
-      // Уведомляем сервер о присутствии пользователя
-      notifyPresence(room.id, true)
-
-      // Немедленно обновляем данные комнаты для получения актуальной информации
+      // Немедленно загружаем актуальные данные комнаты вместо установки предварительных данных
       const updateMeetingData = async () => {
+        setIsLoadingMeeting(true)
         try {
           const response = await fetch(
             `http://localhost:8080/api/room/id?roomId=${room.id}`
@@ -376,38 +489,77 @@ function MeetingChat() {
           if (response.ok) {
             const updatedRoom = await response.json()
             const updatedMeeting = mapApiRoomToMeeting(updatedRoom)
-            setMeeting(updatedMeeting)
-            console.log('Initial room data loaded:', updatedMeeting)
+            console.log('📊 Setting meeting data once:', updatedMeeting.id)
+
+            // Проверяем, нужно ли обновлять состояние (избегаем лишних ререндеров)
+            setMeeting((prevMeeting) => {
+              if (!prevMeeting || prevMeeting.id !== updatedMeeting.id) {
+                console.log('🔄 Meeting data actually changed, updating...')
+                return updatedMeeting
+              }
+              console.log('⚡ Meeting data same, skipping update')
+              return prevMeeting
+            })
+          } else {
+            // Fallback: используем данные из rooms если API недоступен
+            console.log('📊 Using fallback room data')
+            const mappedMeeting = mapApiRoomToMeeting(room)
+            setMeeting((prevMeeting) => {
+              if (!prevMeeting || prevMeeting.id !== mappedMeeting.id) {
+                return mappedMeeting
+              }
+              return prevMeeting
+            })
           }
         } catch (error) {
-          console.error('Error loading initial room data:', error)
+          console.error('❌ Error loading room data, using fallback:', error)
+          // Fallback: используем данные из rooms
+          const mappedMeeting = mapApiRoomToMeeting(room)
+          setMeeting((prevMeeting) => {
+            if (!prevMeeting || prevMeeting.id !== mappedMeeting.id) {
+              return mappedMeeting
+            }
+            return prevMeeting
+          })
+        } finally {
+          setIsLoadingMeeting(false)
         }
       }
       updateMeetingData()
     } else {
       // Если комната не найдена, редиректим на страницу со списком встреч
+      console.log('❌ Room not found, redirecting to meetings')
+      setIsLoadingMeeting(false)
       navigate('/meetings')
     }
-  }, [meetingId, rooms, navigate, notifyPresence])
+  }, [meetingId, rooms, navigate])
 
-  // Уведомляем сервер при уходе с страницы
+  // Убрали POST запросы для присоединения к онлайн статусу - теперь данные приходят с сервера
+
+  // Убрали логику отправки leave запросов - теперь не нужна раз данные приходят с сервера
+
+  // Периодическое обновление данных комнаты (БЕЗ POST запросов)
   useEffect(() => {
+    if (!meeting?.id) return
+
+    console.log('⏱️ Starting periodic updates for room:', meeting.id)
+
+    // Обновляем только данные комнаты каждые 30 секунд
+    // НЕ отправляем POST запросы для онлайн статуса
+    const interval = setInterval(() => {
+      console.log(
+        '⏱️ Periodic update triggered for room:',
+        meetingIdRef.current
+      )
+      updateRoomData() // Используем функцию без параметров, она сама возьмет ID из ref
+    }, 30000)
+
     return () => {
-      if (meeting) {
-        notifyPresence(meeting.id, false)
-      }
+      console.log('⏱️ Stopping periodic updates for room:', meeting.id)
+      clearInterval(interval)
     }
-  }, [meeting, notifyPresence])
-
-  // Периодическое обновление данных комнаты для актуального количества участников
-  useEffect(() => {
-    if (!meeting) return
-
-    // Обновляем данные каждые 10 секунд
-    const interval = setInterval(updateRoomData, 10000)
-
-    return () => clearInterval(interval)
-  }, [meeting, updateRoomData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meeting?.id]) // updateRoomData намеренно не включен в зависимости, так как создан через useCallback без deps
 
   // Функция проверки условий доступа к видеочату
   const checkChatAccess = () => {
@@ -486,7 +638,7 @@ function MeetingChat() {
 
   const chatAccess = checkChatAccess()
 
-  if (isLoading) {
+  if (isLoading || isLoadingMeeting) {
     return <Loader />
   }
 
@@ -874,10 +1026,95 @@ function MeetingChat() {
                       </Typography>
                     </Box>
                   )}
+                {/* Показываем онлайн пользователей */}
+                {onlineUsersCount > 0 && (
+                  <>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: 1,
+                        pt: 1,
+                        borderTop: '1px solid rgba(255,255,255,0.2)',
+                      }}
+                    >
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        {t('meetingCard.onlineParticipantsLabel', 'Онлайн:')}
+                      </Typography>
+                      <Typography variant="h5" fontWeight="600">
+                        {onlineUsersCount}
+                      </Typography>
+                    </Box>
+                    {/* Аватары онлайн пользователей */}
+                    {onlineUsers && onlineUsers.length > 0 && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: 1,
+                          mt: 1,
+                          pt: 1,
+                          alignItems: 'center',
+                        }}
+                      >
+                        {onlineUsers.slice(0, 6).map((user) => (
+                          <Tooltip
+                            key={user.id}
+                            title={
+                              user.nickname || user.name || `User ${user.id}`
+                            }
+                            arrow
+                          >
+                            <Box
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                overflow: 'hidden',
+                                border: '2px solid rgba(255,255,255,0.3)',
+                                background: 'rgba(255,255,255,0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                  border: '2px solid rgba(255,255,255,0.6)',
+                                },
+                              }}
+                            >
+                              {user.avatar ? (
+                                <img
+                                  src={`http://localhost:8080/api/users/avatar/${user.avatar}`}
+                                  alt={`${
+                                    user.nickname || user.name || user.id
+                                  } avatar`}
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                  }}
+                                />
+                              ) : (
+                                <Users size={16} color="white" />
+                              )}
+                            </Box>
+                          </Tooltip>
+                        ))}
+                        {onlineUsers.length > 6 && (
+                          <Typography
+                            variant="body2"
+                            sx={{ opacity: 0.7, ml: 1 }}
+                          >
+                            +{onlineUsers.length - 6}
+                          </Typography>
+                        )}
+                      </Box>
+                    )}
+                  </>
+                )}
                 {/* Индикация присоединения текущего пользователя */}
-                {((hasJoinedWaiting && isAuthenticated) ||
-                  userParticipation ||
-                  isOrganizer) && (
+                {(userParticipation || isOrganizer) && (
                   <Box
                     sx={{
                       display: 'flex',

@@ -23,10 +23,14 @@ import UserDaschboard from './pages/Admin/PageUserDaschboard'
 import MeetingChat from './pages/MeetingChat/MeetingChat'
 import ScheduledMeetings from './pages/ScheduledMeetings/ScheduledMeetings'
 import NotificationsPage from './pages/Notifications/Notifications'
+import { useLogoutCleanup } from './hooks/useLogoutCleanup'
 
 function App() {
   const { t, i18n } = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
+
+  // Очищаем онлайн статус при логауте
+  useLogoutCleanup()
 
   // Простая инициализация приложения
   useEffect(() => {

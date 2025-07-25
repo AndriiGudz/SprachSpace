@@ -1,5 +1,7 @@
-img {
-  width: 36px;
+.language-selector-flag {
+  width: 32px;
+  height: auto;
+  object-fit: contain;
 
   @media (max-width: 900px) {
     width: 24px;
@@ -8,4 +10,16 @@ img {
 
 .language-title {
   margin-left: 10px;
+  font-size: 14px;
+  color: #333;
+
+  @media (max-width: 900px) {
+    font-size: 12px;
+  }
+}
+
+.MuiSelect-select {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px !important;
 }

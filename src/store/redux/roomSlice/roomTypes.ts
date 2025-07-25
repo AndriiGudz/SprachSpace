@@ -21,6 +21,17 @@ export interface ApiRoom {
   roomUrl: string
   participants?: RoomParticipant[] // Обновленный тип для participants
   creator?: ApiCreator // Optional, as per API response, now typed
+  roomOnlineUsers?: Array<{
+    id: number
+    nickname: string | null
+    name: string | null
+    email: string | null
+    surname: string | null
+    avatar: string | null
+    rating: number
+    [key: string]: any
+  }>
+  countOnlineUser?: number
   // userId: string; // ID пользователя, создавшего комнату
   // category?: string; // Категория может быть не основным полем API
   // proficiency?: string; // Уровень владения может быть не основным полем API

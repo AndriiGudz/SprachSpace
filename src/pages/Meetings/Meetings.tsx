@@ -47,6 +47,8 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     privateRoom,
     creator,
     participants,
+    roomOnlineUsers,
+    countOnlineUser,
   } = apiRoom
 
   let durationString: string | undefined = undefined
@@ -107,6 +109,8 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     languageFlagIconUrl: undefined,
     location: undefined,
     participants: participants || undefined,
+    roomOnlineUsers: roomOnlineUsers || undefined,
+    countOnlineUser: countOnlineUser || 0,
   }
   return meetingData
 }

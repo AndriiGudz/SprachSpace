@@ -7,6 +7,11 @@ export const LinksContainer = styled.nav`
   justify-content: flex-end;
   align-items: center;
   gap: 24px;
+  padding: 0 16px;
+
+  /* @media (max-width: 900px) {
+    padding: 16px;
+  } */
 `
 
 export const NavLink = styled(Link)`
@@ -17,6 +22,12 @@ export const NavLink = styled(Link)`
   line-height: 100%;
   letter-spacing: 0.32px;
   transition: color 0.3s ease;
+  font-size: 16px;
+  padding: 8px 0;
+
+  /* @media (max-width: 900px) {
+    font-size: 18px;
+  } */
 
   &:hover {
     color: #01579b;

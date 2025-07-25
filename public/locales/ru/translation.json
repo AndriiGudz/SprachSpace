@@ -318,6 +318,7 @@
     "minParticipantsLabel": "Минимум:",
     "maxParticipantsLabel": "Максимум:",
     "waitingParticipantsLabel": "Ожидает:",
+    "onlineParticipantsLabel": "Онлайн:",
     "languageLabel": "Язык:",
     "proficiencyLabel": "Уровень:",
     "roomTypeLabel": "Тип комнаты",

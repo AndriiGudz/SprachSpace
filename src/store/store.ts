@@ -35,7 +35,11 @@ export const store = makeStore(persistedState)
 // Подписываемся на изменения состояния и сохраняем актуальное состояние в localStorage
 store.subscribe(() => {
   const state = store.getState() // Получаем состояние один раз
-  localStorage.setItem('reduxState', JSON.stringify(state)) // Используем полученное состояние
+
+  // Сохраняем все состояние (roomOnline больше нет)
+  const stateToSave = state
+
+  localStorage.setItem('reduxState', JSON.stringify(stateToSave))
 })
 
 export type AppStore = typeof store
