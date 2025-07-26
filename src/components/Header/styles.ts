@@ -92,16 +92,11 @@ export const MobileAvatar = styled.div`
 export const UserMenuWrapper = styled.div`
   position: absolute;
   top: 100%;
-  right: 32px;
+  right: 6px;
   background: white;
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-
-  @media (max-width: 900px) {
-    right: 24px;
-    width: 200px;
-  }
 `
 
 export const LanguageSelectorContainer = styled.div`
