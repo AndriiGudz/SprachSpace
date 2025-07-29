@@ -5,6 +5,7 @@ export interface LanguageData {
     id: number
     name: string
   }
+  originalLanguageId?: number // для поиска названия в availableLanguages
 }
 
 export interface RoleData {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
-import type { UserSliceState } from './types'
+import type { UserSliceState, LanguageData } from './types'
 import { API_ROOT_URL } from '../../../config/apiConfig'
 import { validateAndRefreshTokens } from '../../../api/authApi'
 
@@ -153,6 +153,49 @@ export const userSlice = createSlice({
         message,
       } = action.payload
 
+      // Нормализуем языковые данные для обеспечения корректной структуры
+      const normalizeLanguages = (languages: any[]): LanguageData[] => {
+        if (!Array.isArray(languages)) return []
+
+        return languages.map((lang: any) => {
+          // Новая структура с languageId (текущий формат с бэкенда)
+          if (lang?.languageId !== undefined) {
+            return {
+              id: lang.id || 0,
+              skillLevel: lang.skillLevel || 'default',
+              language: {
+                id: lang.languageId,
+                name: '', // будет получено через getLanguageName
+              },
+              originalLanguageId: lang.languageId,
+            }
+          }
+
+          // Если данные уже в правильной структуре LanguageData
+          if (lang?.language?.name) {
+            return {
+              id: lang.id || 0,
+              skillLevel: lang.skillLevel || 'default',
+              language: {
+                id: lang.language.id || 0,
+                name: lang.language.name,
+              },
+            }
+          }
+
+          // Fallback - создаем минимальную структуру
+          return {
+            id: lang.id || 0,
+            skillLevel: lang.skillLevel || 'default',
+            language: {
+              id: lang.languageId || lang.id || 0,
+              name: lang.name || '',
+            },
+            originalLanguageId: lang.languageId,
+          }
+        })
+      }
+
       Object.assign(state, {
         id,
         nickname,
@@ -164,8 +207,8 @@ export const userSlice = createSlice({
         rating,
         internalCurrency,
         status,
-        nativeLanguages,
-        learningLanguages,
+        nativeLanguages: normalizeLanguages(nativeLanguages || []),
+        learningLanguages: normalizeLanguages(learningLanguages || []),
         roles,
         createdRooms,
         message,

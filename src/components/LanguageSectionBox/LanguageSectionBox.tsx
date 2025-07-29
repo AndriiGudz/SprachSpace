@@ -39,27 +39,111 @@ function LanguageSectionBox({
   const dispatch = useDispatch()
 
   // Локальное состояние для списка доступных языков, загружаемых с сервера
-  const [availableLanguages, setAvailableLanguages] = useState<LanguageData[]>(
-    []
-  )
+  const [availableLanguages, setAvailableLanguages] = useState<
+    { id: number; name: string }[]
+  >([])
+
+  // Состояние для принудительного перерендера
+  const [languagesLoaded, setLanguagesLoaded] = useState(false)
+
+  // Состояние для принудительного обновления отображения уровней
+  const [forceUpdate, setForceUpdate] = useState(0)
+
+  // Защитная функция для получения имени языка
+  const getLanguageName = (lang: LanguageData | any): string => {
+    // Если есть название в структуре language
+    if (lang?.language?.name) {
+      return lang.language.name
+    }
+
+    // ИСПРАВЛЕНИЕ: Работа с исходным форматом данных с languageId
+    if (lang?.languageId && availableLanguages.length > 0) {
+      const foundLang = availableLanguages.find(
+        (al) => al.id === lang.languageId
+      )
+      if (foundLang?.name) {
+        return foundLang.name
+      }
+    }
+
+    // Если есть originalLanguageId, ищем в availableLanguages
+    if (lang?.originalLanguageId && availableLanguages.length > 0) {
+      const foundLang = availableLanguages.find(
+        (al) => al.id === lang.originalLanguageId
+      )
+      if (foundLang?.name) {
+        return foundLang.name
+      }
+    }
+
+    // Если есть language.id, ищем в availableLanguages
+    if (lang?.language?.id && availableLanguages.length > 0) {
+      const foundLang = availableLanguages.find(
+        (al) => al.id === lang.language.id
+      )
+      if (foundLang?.name) {
+        return foundLang.name
+      }
+    }
+
+    return `Language ${
+      lang?.languageId ||
+      lang?.language?.id ||
+      lang?.originalLanguageId ||
+      lang?.id ||
+      'Unknown'
+    }`
+  }
+
+  // Защитная функция для получения уровня языка
+  const getSkillLevel = (lang: LanguageData | any): string => {
+    // Проверяем что lang существует и является объектом
+    if (!lang || typeof lang !== 'object') {
+      return 'default'
+    }
+
+    // Сначала проверяем skillLvl (как в логах)
+    if (lang.skillLvl) {
+      return String(lang.skillLvl)
+    }
+
+    // Затем проверяем skillLevel
+    if (lang.skillLevel) {
+      return String(lang.skillLevel)
+    }
+
+    // Используем Object.entries для поиска
+    const entries = Object.entries(lang)
+
+    for (const [key, value] of entries) {
+      if ((key === 'skillLevel' || key === 'skillLvl') && value) {
+        return String(value)
+      }
+    }
+
+    // Также попробуем найти через Object.getOwnPropertyNames
+    const propNames = Object.getOwnPropertyNames(lang)
+
+    for (const propName of propNames) {
+      if (propName === 'skillLevel' || propName === 'skillLvl') {
+        const value = lang[propName]
+        return String(value)
+      }
+    }
+
+    return 'default'
+  }
 
   useEffect(() => {
     // GET-запрос к API для получения списка языков
     fetch('http://localhost:8080/api/language')
       .then((response) => response.json())
       .then((data) => {
-        // Преобразуем данные с сервера в нужную структуру:
-        // каждому языку добавляем поле level со значением 'default'
-        // Здесь предполагается, что lang.name уже имеет нужную структуру (либо объект, либо строку)
-        const languages = data.map((lang: any) => ({
-          id: lang.id,
-          skillLevel: 'default', // или другое значение по умолчанию
-          language: {
-            id: lang.id,
-            name: lang.name,
-          },
-        }))
-        setAvailableLanguages(languages)
+        // Сохраняем языки в простом формате как они приходят с сервера
+        setAvailableLanguages(data)
+        setLanguagesLoaded(true)
+        // Принудительно обновляем компонент через 100ms чтобы дать время данным загрузиться
+        setTimeout(() => setForceUpdate((prev) => prev + 1), 100)
       })
       .catch((error) =>
         console.error('Ошибка при загрузке языков с сервера:', error)
@@ -76,7 +160,8 @@ function LanguageSectionBox({
   const handleAddNativeLanguage = () => {
     // Если значение не выбрано или язык уже добавлен — ничего не делаем
     if (newNativeLangId === '') return
-    if (nativeLanguages.find((lang) => lang.id === newNativeLangId)) return
+    if (nativeLanguages.find((lang) => lang.language?.id === newNativeLangId))
+      return
     if (!userId) {
       console.error('User id is not available')
       return
@@ -84,12 +169,8 @@ function LanguageSectionBox({
 
     // Находим выбранный язык в списке доступных языков
     const langObj = availableLanguages.find((l) => l.id === newNativeLangId)
-    // Извлекаем название языка. Если langObj.name — объект, обращаемся к его свойству name.
-    const languageName = langObj
-      ? typeof langObj.language === 'string'
-        ? langObj.language
-        : langObj.language.name
-      : String(newNativeLangId)
+    // Извлекаем название языка
+    const languageName = langObj?.name || `Language ${newNativeLangId}`
 
     // Готовим тело запроса с идентификатором пользователя и названием языка
     const requestBody = {
@@ -112,15 +193,15 @@ function LanguageSectionBox({
         throw new Error('Failed to add native language')
       })
       .then((data) => {
-        // Предположим, что сервер возвращает успешно добавленный язык.
-        // Обновляем локальный список родных языков.
-        const newLang: LanguageData = langObj
-          ? { ...langObj }
-          : {
-              id: newNativeLangId,
-              skillLevel: 'default',
-              language: { id: newNativeLangId, name: languageName },
-            }
+        // Создаем новый язык в правильной структуре LanguageData
+        const newLang: LanguageData = {
+          id: data.id || Date.now(), // используем ID из ответа или временный
+          skillLevel: 'default',
+          language: {
+            id: newNativeLangId as number,
+            name: languageName,
+          },
+        }
         const updated = [...nativeLanguages, newLang]
         onNativeLanguagesChange(updated)
         // Обновляем глобальное состояние, чтобы userData.nativeLanguages содержало новый язык
@@ -137,7 +218,10 @@ function LanguageSectionBox({
   // Функция для добавления нового изучаемого языка с выбранным уровнем
   const handleAddLearningLanguage = () => {
     if (newLearningLangId === '') return
-    if (learningLanguages.find((lang) => lang.id === newLearningLangId)) return
+    if (
+      learningLanguages.find((lang) => lang.language?.id === newLearningLangId)
+    )
+      return
     if (!userId) {
       console.error('User id is not available')
       return
@@ -145,12 +229,8 @@ function LanguageSectionBox({
 
     // Находим выбранный язык в списке доступных языков
     const langObj = availableLanguages.find((l) => l.id === newLearningLangId)
-    // Извлекаем название языка, как и ранее
-    const languageName = langObj
-      ? typeof langObj.language === 'string'
-        ? langObj.language
-        : langObj.language.name
-      : String(newLearningLangId)
+    // Извлекаем название языка
+    const languageName = langObj?.name || `Language ${newLearningLangId}`
 
     // Готовим тело запроса с дополнительным полем skillLevel для изучаемого языка
     const requestBody = {
@@ -174,14 +254,15 @@ function LanguageSectionBox({
         throw new Error('Failed to add learning language')
       })
       .then((data) => {
-        // Обновляем локальный список изучаемых языков.
-        const newLang = langObj
-          ? { ...langObj, skillLevel: newLearningLangLevel }
-          : {
-              id: newLearningLangId,
-              skillLevel: newLearningLangLevel,
-              language: { id: newLearningLangId, name: languageName },
-            }
+        // Создаем новый язык в правильной структуре LanguageData
+        const newLang: LanguageData = {
+          id: data.id || Date.now(), // используем ID из ответа или временный
+          skillLevel: newLearningLangLevel,
+          language: {
+            id: newLearningLangId as number,
+            name: languageName,
+          },
+        }
         const updated = [...learningLanguages, newLang]
         onLearningLanguagesChange(updated)
         toast.success(t('languageSection.learningLanguageAdded'))
@@ -208,7 +289,7 @@ function LanguageSectionBox({
         if (response.ok) {
           // Если удаление прошло успешно, обновляем список родных языков
           const updated = nativeLanguages.filter(
-            (lang) => lang.language.id !== langId
+            (lang) => (lang.language?.id || lang.id) !== langId
           )
           onNativeLanguagesChange(updated)
           toast.success(t('languageSection.nativeLanguageRemoved'))
@@ -237,7 +318,7 @@ function LanguageSectionBox({
         if (response.ok) {
           // Если удаление прошло успешно, обновляем список изучаемых языков
           const updated = learningLanguages.filter(
-            (lang) => lang.language.id !== langId
+            (lang) => (lang.language?.id || lang.id) !== langId
           )
           onLearningLanguagesChange(updated)
           toast.success(t('languageSection.learningLanguageRemoved'))
@@ -264,7 +345,12 @@ function LanguageSectionBox({
     >
       {isEditing ? (
         // Режим редактирования
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box
+          key={`editing-${languagesLoaded}-${forceUpdate}`}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
           {/* Блок родных языков */}
           <Typography variant="subtitle1">
             {t('languageSection.speakFluently')}
@@ -274,8 +360,10 @@ function LanguageSectionBox({
             {nativeLanguages.map((lang) => (
               <Chip
                 key={lang.id}
-                label={lang.language.name}
-                onDelete={() => handleDeleteNativeLanguage(lang.language.id)}
+                label={getLanguageName(lang)}
+                onDelete={() =>
+                  handleDeleteNativeLanguage(lang.language?.id || lang.id)
+                }
                 sx={{
                   '& .MuiChip-deleteIcon:hover': {
                     color: 'rgba(211, 47, 47, 1)', // Цвет при наведении
@@ -306,6 +394,11 @@ function LanguageSectionBox({
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#E0E0E0',
                   },
+                  '& .MuiSelect-select': {
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: '1.4375em',
+                  },
                 }}
                 onChange={(e) =>
                   setNewNativeLangId(
@@ -318,15 +411,15 @@ function LanguageSectionBox({
                   .filter(
                     (lang) =>
                       !nativeLanguages.some(
-                        (nl) => nl.language.id === lang.id
+                        (nl) => nl.language?.id === lang.id
                       ) &&
                       !learningLanguages.some(
-                        (ll) => ll.language.id === lang.id
+                        (ll) => ll.language?.id === lang.id
                       )
                   )
                   .map((lang) => (
                     <MenuItem key={lang.id} value={lang.id}>
-                      {lang.language.name}
+                      {lang.name}
                     </MenuItem>
                   ))}
               </Select>
@@ -345,9 +438,9 @@ function LanguageSectionBox({
             {learningLanguages.map((lang) => (
               <Box key={lang.id} display="flex" alignItems="center" gap={1}>
                 <Chip
-                  label={lang.language.name + ' - ' + lang.skillLevel}
+                  label={getLanguageName(lang) + ' - ' + getSkillLevel(lang)}
                   onDelete={() =>
-                    handleDeleteLearningLanguage(lang.language.id)
+                    handleDeleteLearningLanguage(lang.language?.id || lang.id)
                   }
                   sx={{
                     '& .MuiChip-deleteIcon:hover': {
@@ -380,6 +473,11 @@ function LanguageSectionBox({
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#E0E0E0',
                   },
+                  '& .MuiSelect-select': {
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: '1.4375em',
+                  },
                 }}
                 onChange={(e) =>
                   setNewLearningLangId(
@@ -391,20 +489,25 @@ function LanguageSectionBox({
                   .filter(
                     (lang) =>
                       !nativeLanguages.some(
-                        (nl) => nl.language.id === lang.id
+                        (nl) => nl.language?.id === lang.id
                       ) &&
                       !learningLanguages.some(
-                        (ll) => ll.language.id === lang.id
+                        (ll) => ll.language?.id === lang.id
                       )
                   )
                   .map((lang) => (
                     <MenuItem key={lang.id} value={lang.id}>
-                      {lang.language.name}
+                      {lang.name}
                     </MenuItem>
                   ))}
               </Select>
             </FormControl>
-            <FormControl variant="outlined">
+            <FormControl
+              variant="outlined"
+              sx={{
+                width: '120px',
+              }}
+            >
               <InputLabel>{t('languageSection.level')}</InputLabel>
               <Select
                 variant="outlined"
@@ -413,6 +516,11 @@ function LanguageSectionBox({
                 sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#E0E0E0',
+                  },
+                  '& .MuiSelect-select': {
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: '1.4375em',
                   },
                 }}
                 onChange={(e) => setNewLearningLangLevel(e.target.value)}
@@ -431,7 +539,12 @@ function LanguageSectionBox({
         </Box>
       ) : (
         // Режим просмотра (не редактирования)
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box
+          key={`viewing-${languagesLoaded}-${forceUpdate}`}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
           <Typography variant="subtitle1">
             {t('languageSection.speakFluently')}
           </Typography>
@@ -442,7 +555,7 @@ function LanguageSectionBox({
                 variant="body1"
                 sx={{ color: '#757575' }}
               >
-                {lang.language.name}
+                {getLanguageName(lang)}
               </Typography>
             ))
           ) : (
@@ -460,7 +573,7 @@ function LanguageSectionBox({
                 variant="body1"
                 sx={{ color: '#757575' }}
               >
-                {lang.language.name} - {lang.skillLevel}
+                {getLanguageName(lang)} - {getSkillLevel(lang)}
               </Typography>
             ))
           ) : (

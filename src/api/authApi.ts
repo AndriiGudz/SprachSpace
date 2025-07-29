@@ -1,4 +1,5 @@
 import { API_ROOT_URL } from '../config/apiConfig'
+import { LanguageData } from '../store/redux/userSlice/types'
 
 export interface TokenResponse {
   accessToken: string
@@ -16,8 +17,8 @@ export interface LoginResponse extends TokenResponse {
   rating: number
   internalCurrency: number
   status: boolean
-  nativeLanguages: any[]
-  learningLanguages: any[]
+  nativeLanguages: LanguageData[]
+  learningLanguages: LanguageData[]
   roles: any[]
   createdRooms: any[]
   message?: string
