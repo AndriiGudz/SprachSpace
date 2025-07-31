@@ -204,9 +204,12 @@ const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
                 {t('roomFilter.category')}
               </InputLabel>
               <Select
+                id="category-select"
                 labelId="category-label"
                 value={filters.category}
                 label={t('roomFilter.category')}
+                aria-labelledby="category-label"
+                data-value={filters.category}
                 onChange={(e) => handleFilterChange('category', e.target.value)}
                 disabled={isLoadingCategories}
               >
@@ -242,9 +245,12 @@ const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
                 {t('roomFilter.language')}
               </InputLabel>
               <Select
+                id="language-select"
                 labelId="language-label"
                 value={filters.language}
                 label={t('roomFilter.language')}
+                aria-labelledby="language-label"
+                data-value={filters.language}
                 onChange={(e) => handleFilterChange('language', e.target.value)}
                 disabled={isLoadingLanguages}
               >
@@ -290,9 +296,12 @@ const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
                 {t('roomFilter.proficiency')}
               </InputLabel>
               <Select
+                id="proficiency-select"
                 labelId="proficiency-label"
                 value={filters.proficiency}
                 label={t('roomFilter.proficiency')}
+                aria-labelledby="proficiency-label"
+                data-value={filters.proficiency}
                 onChange={(e) =>
                   handleFilterChange('proficiency', e.target.value)
                 }

@@ -293,11 +293,17 @@ function UserList() {
         </Box>
         <Box sx={{ display: 'flex', gap: 2, pt: 1 }}>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
-            <InputLabel>{t('adminUsersList.status')}</InputLabel>
+            <InputLabel id="status-label">
+              {t('adminUsersList.status')}
+            </InputLabel>
             <Select
+              id="status-select"
+              labelId="status-label"
               variant="outlined"
               value={status}
               label={t('adminUsersList.status')}
+              aria-labelledby="status-label"
+              data-value={status}
               onChange={(e) => setStatus(e.target.value as string)}
               sx={{
                 height: '32px',
@@ -319,11 +325,17 @@ function UserList() {
             </Select>
           </FormControl>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
-            <InputLabel>{t('adminUsersList.rating')}</InputLabel>
+            <InputLabel id="rating-label">
+              {t('adminUsersList.rating')}
+            </InputLabel>
             <Select
+              id="rating-select"
+              labelId="rating-label"
               variant="outlined"
               value={rating}
               label={t('adminUsersList.rating')}
+              aria-labelledby="rating-label"
+              data-value={rating}
               onChange={(e) => setRating(e.target.value as string)}
               sx={{
                 height: '32px',

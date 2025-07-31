@@ -83,6 +83,8 @@
     "language": "Язык",
     "level": "Уровень",
     "add": "Добавить",
+    "selectLanguagePlaceholder": "Выберите язык",
+    "selectLevelPlaceholder": "Выберите уровень",
     "nativeLanguageAdded": "Родной язык успешно добавлен",
     "nativeLanguageAddError": "Ошибка добавления родного языка",
     "learningLanguageAdded": "Изучаемый язык успешно добавлен",

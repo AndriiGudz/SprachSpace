@@ -324,10 +324,13 @@ function Meetings() {
                   {t('meetings.pagination.itemsPerPage')}
                 </InputLabel>
                 <Select
+                  id="items-per-page-select"
                   labelId="items-per-page-label"
                   value={itemsPerPage}
                   onChange={handleItemsPerPageChange}
                   label={t('meetings.pagination.itemsPerPage')}
+                  aria-labelledby="items-per-page-label"
+                  data-value={itemsPerPage}
                   sx={{ fontSize: '0.875rem' }}
                 >
                   <MenuItem value={8}>8</MenuItem>

@@ -21,13 +21,6 @@ export const filterItemStyle = {
     height: '40px',
     fontSize: '0.875rem',
   },
-  '& .MuiInputLabel-root': {
-    fontSize: '0.875rem',
-    transform: 'translate(14px, 10px) scale(1)',
-  },
-  '& .MuiInputLabel-shrink': {
-    transform: 'translate(14px, -9px) scale(0.75)',
-  },
   '& .MuiSelect-select': {
     paddingTop: '8.5px',
     paddingBottom: '8.5px',

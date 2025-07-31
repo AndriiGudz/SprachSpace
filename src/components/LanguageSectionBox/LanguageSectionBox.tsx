@@ -49,6 +49,12 @@ function LanguageSectionBox({
   // Состояние для принудительного обновления отображения уровней
   const [forceUpdate, setForceUpdate] = useState(0)
 
+  // Локальные состояния для хранения выбранных идентификаторов новых языков и уровня нового изучаемого языка
+  const [newNativeLangId, setNewNativeLangId] = useState<number | ''>('')
+  const [newLearningLangId, setNewLearningLangId] = useState<number | ''>('')
+  const [newLearningLangLevel, setNewLearningLangLevel] =
+    useState<string>('default')
+
   // Защитная функция для получения имени языка
   const getLanguageName = (lang: LanguageData | any): string => {
     // Если есть название в структуре language
@@ -149,12 +155,6 @@ function LanguageSectionBox({
         console.error('Ошибка при загрузке языков с сервера:', error)
       )
   }, [])
-
-  // Локальные состояния для хранения выбранных идентификаторов новых языков и уровня нового изучаемого языка
-  const [newNativeLangId, setNewNativeLangId] = useState<number | ''>('')
-  const [newLearningLangId, setNewLearningLangId] = useState<number | ''>('')
-  const [newLearningLangLevel, setNewLearningLangLevel] =
-    useState<string>('default')
 
   // Функция для добавления нового родного языка
   const handleAddNativeLanguage = () => {
@@ -385,11 +385,26 @@ function LanguageSectionBox({
                 width: '150px',
               }}
             >
-              <InputLabel>{t('languageSection.language')}</InputLabel>
+              <InputLabel
+              id="native-language-label"
+              // sx={{
+              //   top: '-8px',
+              //   transition: 'all 0.2s ease',
+              //   '&.MuiInputLabel-shrink': {
+              //     top: '0px',
+              //     transform: 'translate(14px, -9px) scale(0.75)',
+              //   },
+              // }}
+              >
+                {t('languageSection.language')}
+              </InputLabel>
               <Select
+                id="native-language-select"
+                labelId="native-language-label"
                 variant="outlined"
-                value={newNativeLangId}
+                value={newNativeLangId || ''}
                 label={t('languageSection.language')}
+                data-value={newNativeLangId || ''}
                 sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#E0E0E0',
@@ -406,6 +421,9 @@ function LanguageSectionBox({
                   )
                 }
               >
+                <MenuItem value="">
+                  <em>{t('languageSection.selectLanguagePlaceholder')}</em>
+                </MenuItem>
                 {/* Выводим только те языки, которые ещё не добавлены */}
                 {availableLanguages
                   .filter(
@@ -464,11 +482,16 @@ function LanguageSectionBox({
                 width: '150px',
               }}
             >
-              <InputLabel>{t('languageSection.language')}</InputLabel>
+              <InputLabel id="learning-language-label">
+                {t('languageSection.language')}
+              </InputLabel>
               <Select
+                id="learning-language-select"
+                labelId="learning-language-label"
                 variant="outlined"
-                value={newLearningLangId}
+                value={newLearningLangId || ''}
                 label={t('languageSection.language')}
+                data-value={newLearningLangId || ''}
                 sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#E0E0E0',
@@ -485,6 +508,9 @@ function LanguageSectionBox({
                   )
                 }
               >
+                <MenuItem value="">
+                  <em>{t('languageSection.selectLanguagePlaceholder')}</em>
+                </MenuItem>
                 {availableLanguages
                   .filter(
                     (lang) =>
@@ -508,11 +534,16 @@ function LanguageSectionBox({
                 width: '120px',
               }}
             >
-              <InputLabel>{t('languageSection.level')}</InputLabel>
+              <InputLabel id="learning-level-label">
+                {t('languageSection.level')}
+              </InputLabel>
               <Select
+                id="learning-level-select"
+                labelId="learning-level-label"
                 variant="outlined"
-                value={newLearningLangLevel}
+                value={newLearningLangLevel || ''}
                 label={t('languageSection.level')}
+                data-value={newLearningLangLevel || ''}
                 sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#E0E0E0',
@@ -525,6 +556,9 @@ function LanguageSectionBox({
                 }}
                 onChange={(e) => setNewLearningLangLevel(e.target.value)}
               >
+                <MenuItem value="">
+                  <em>{t('languageSection.selectLevelPlaceholder')}</em>
+                </MenuItem>
                 {LEVEL_OPTIONS.map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
