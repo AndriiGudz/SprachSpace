@@ -6,6 +6,7 @@ export interface LanguageData {
     name: string
   }
   originalLanguageId?: number // для поиска названия в availableLanguages
+  languageId?: number // для поддержки формата с прямым languageId
 }
 
 export interface LanguageSectionProps {

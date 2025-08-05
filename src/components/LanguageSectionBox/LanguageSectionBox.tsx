@@ -276,21 +276,26 @@ function LanguageSectionBox({
   }
 
   // Функция для удаления родного языка с вызовом DELETE-запроса на сервер
+  // langId должен быть language_id из базы данных, а не id записи
   const handleDeleteNativeLanguage = (langId: number) => {
     if (!userId) {
       console.error('User id is not available')
       return
     }
+
     // Формируем URL с параметрами userId и languagesId
     const url = `http://localhost:8080/api/language/deleteNative?userId=${userId}&languagesId=${langId}`
+
     // Выполняем DELETE-запрос
     fetch(url, { method: 'DELETE' })
       .then((response) => {
         if (response.ok) {
           // Если удаление прошло успешно, обновляем список родных языков
-          const updated = nativeLanguages.filter(
-            (lang) => (lang.language?.id || lang.id) !== langId
-          )
+          const updated = nativeLanguages.filter((lang) => {
+            const currentLangId =
+              lang.language?.id || lang.languageId || lang.id
+            return currentLangId !== langId
+          })
           onNativeLanguagesChange(updated)
           toast.success(t('languageSection.nativeLanguageRemoved'))
         } else {
@@ -305,21 +310,26 @@ function LanguageSectionBox({
   }
 
   // Функция для удаления изучаемого языка с вызовом DELETE-запроса на сервер
+  // langId должен быть language_id из базы данных, а не id записи
   const handleDeleteLearningLanguage = (langId: number) => {
     if (!userId) {
       console.error('User id is not available')
       return
     }
+
     // Формируем URL с параметрами
     const url = `http://localhost:8080/api/language/deleteLearning?userId=${userId}&languagesId=${langId}`
+
     // Выполняем DELETE-запрос
     fetch(url, { method: 'DELETE' })
       .then((response) => {
         if (response.ok) {
           // Если удаление прошло успешно, обновляем список изучаемых языков
-          const updated = learningLanguages.filter(
-            (lang) => (lang.language?.id || lang.id) !== langId
-          )
+          const updated = learningLanguages.filter((lang) => {
+            const currentLangId =
+              lang.language?.id || lang.languageId || lang.id
+            return currentLangId !== langId
+          })
           onLearningLanguagesChange(updated)
           toast.success(t('languageSection.learningLanguageRemoved'))
         } else {
@@ -361,9 +371,12 @@ function LanguageSectionBox({
               <Chip
                 key={lang.id}
                 label={getLanguageName(lang)}
-                onDelete={() =>
-                  handleDeleteNativeLanguage(lang.language?.id || lang.id)
-                }
+                onDelete={() => {
+                  // Передаем language_id вместо id записи
+                  const languageId =
+                    lang.language?.id || lang.languageId || lang.id
+                  handleDeleteNativeLanguage(languageId)
+                }}
                 sx={{
                   '& .MuiChip-deleteIcon:hover': {
                     color: 'rgba(211, 47, 47, 1)', // Цвет при наведении
@@ -385,17 +398,7 @@ function LanguageSectionBox({
                 width: '150px',
               }}
             >
-              <InputLabel
-              id="native-language-label"
-              // sx={{
-              //   top: '-8px',
-              //   transition: 'all 0.2s ease',
-              //   '&.MuiInputLabel-shrink': {
-              //     top: '0px',
-              //     transform: 'translate(14px, -9px) scale(0.75)',
-              //   },
-              // }}
-              >
+              <InputLabel id="native-language-label">
                 {t('languageSection.language')}
               </InputLabel>
               <Select
@@ -457,9 +460,12 @@ function LanguageSectionBox({
               <Box key={lang.id} display="flex" alignItems="center" gap={1}>
                 <Chip
                   label={getLanguageName(lang) + ' - ' + getSkillLevel(lang)}
-                  onDelete={() =>
-                    handleDeleteLearningLanguage(lang.language?.id || lang.id)
-                  }
+                  onDelete={() => {
+                    // Передаем language_id вместо id записи
+                    const languageId =
+                      lang.language?.id || lang.languageId || lang.id
+                    handleDeleteLearningLanguage(languageId)
+                  }}
                   sx={{
                     '& .MuiChip-deleteIcon:hover': {
                       color: 'rgba(211, 47, 47, 1)', // Цвет при наведении
