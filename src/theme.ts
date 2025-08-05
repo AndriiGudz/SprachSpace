@@ -118,7 +118,7 @@ const theme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          '&.MuiInputLabel-outlined': {
+          '.withSelect &': {
             top: '-8px',
             transition: 'all 0.2s ease',
             '&.MuiInputLabel-shrink': {

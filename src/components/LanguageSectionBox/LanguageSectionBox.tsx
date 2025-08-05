@@ -393,6 +393,7 @@ function LanguageSectionBox({
             justifyContent="space-between"
           >
             <FormControl
+              className="withSelect"
               variant="outlined"
               sx={{
                 width: '150px',
@@ -483,6 +484,7 @@ function LanguageSectionBox({
             justifyContent="space-between"
           >
             <FormControl
+              className="withSelect"
               variant="outlined"
               sx={{
                 width: '150px',

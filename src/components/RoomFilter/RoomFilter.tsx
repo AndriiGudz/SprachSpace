@@ -197,6 +197,7 @@ const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
             }}
           >
             <FormControl
+              className="withSelect"
               variant="outlined"
               sx={{ ...filterItemStyle, m: 0, flex: 1 }}
             >
@@ -238,6 +239,7 @@ const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
             </FormControl>
 
             <FormControl
+              className="withSelect"
               variant="outlined"
               sx={{ ...filterItemStyle, m: 0, flex: 1 }}
             >
@@ -289,6 +291,7 @@ const RoomFilter = ({ onFiltersChange }: RoomFilterProps) => {
             }}
           >
             <FormControl
+              className="withSelect"
               variant="outlined"
               sx={{ ...filterItemStyle, m: 0, flex: 1 }}
             >
