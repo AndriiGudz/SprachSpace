@@ -382,10 +382,10 @@ function UserList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedUsers.map((user: UserSliceState) => (
+            {displayedUsers.map((user: UserSliceState, index: number) => (
               <TableRow
-                key={user.id}
-                onClick={() => handleUserClick(user.id!)}
+                key={user.id || `user-${index}`}
+                onClick={() => user.id && handleUserClick(user.id)}
                 sx={{
                   backgroundColor: '#F5F5F5',
                   cursor: 'pointer',
@@ -393,29 +393,29 @@ function UserList() {
                 }}
               >
                 <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                  {user.id}
+                  {user.id || 'N/A'}
                 </TableCell>
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    {user.nickname}
+                    {user.nickname || 'Не указано'}
                   </TableCell>
                 )}
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    {user.name}
+                    {user.name || 'Не указано'}
                   </TableCell>
                 )}
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    {user.surname}
+                    {user.surname || 'Не указано'}
                   </TableCell>
                 )}
                 <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                  {user.email}
+                  {user.email || 'Не указано'}
                 </TableCell>
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    ⭐ {user.rating}
+                    ⭐ {user.rating || 0}
                   </TableCell>
                 )}
                 <TableCell>

@@ -30,7 +30,6 @@ import { useDispatch } from 'react-redux'
 import { setUser, setTokens } from '../../store/redux/userSlice/userSlice'
 import { SignInSchema } from '../../validationSchemas/SignInSchema'
 import { SignUpSchema } from '../../validationSchemas/SignUpSchema'
-import { RoleData } from '../../store/redux/userSlice/types'
 
 function SignInUpMob() {
   const { t } = useTranslation()

@@ -1,12 +1,7 @@
-export interface LanguageData {
-  id: number
-  skillLevel: string
-  language: {
-    id: number
-    name: string
-  }
-  originalLanguageId?: number // для поиска названия в availableLanguages
-}
+// Импортируем LanguageData из общих утилит
+import type { LanguageData } from '../../../utils/languageUtils'
+
+export type { LanguageData }
 
 export interface RoleData {
   id: number

@@ -158,11 +158,15 @@ export const userSlice = createSlice({
         if (!Array.isArray(languages)) return []
 
         return languages.map((lang: any) => {
+          // Определяем правильный skillLevel из различных возможных полей
+          const skillLevel =
+            lang.skillLevel || lang.skillLvl || lang.level || 'default'
+
           // Новая структура с languageId (текущий формат с бэкенда)
           if (lang?.languageId !== undefined) {
             return {
               id: lang.id || 0,
-              skillLevel: lang.skillLevel || 'default',
+              skillLevel: skillLevel,
               language: {
                 id: lang.languageId,
                 name: '', // будет получено через getLanguageName
@@ -175,7 +179,7 @@ export const userSlice = createSlice({
           if (lang?.language?.name) {
             return {
               id: lang.id || 0,
-              skillLevel: lang.skillLevel || 'default',
+              skillLevel: skillLevel,
               language: {
                 id: lang.language.id || 0,
                 name: lang.language.name,
@@ -186,7 +190,7 @@ export const userSlice = createSlice({
           // Fallback - создаем минимальную структуру
           return {
             id: lang.id || 0,
-            skillLevel: lang.skillLevel || 'default',
+            skillLevel: skillLevel,
             language: {
               id: lang.languageId || lang.id || 0,
               name: lang.name || '',

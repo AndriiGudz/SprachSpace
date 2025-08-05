@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import {
   Box,
@@ -13,9 +13,13 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import EditableSection from '../EditableSection/EditableSection'
-import { LanguageData, LanguageSectionProps } from './types'
+import { LanguageSectionProps } from './types'
+import {
+  LanguageData,
+  getLanguageName,
+  getSkillLevel,
+} from '../../utils/languageUtils'
 import { toast } from 'react-toastify'
-import { updateUser } from '../../store/redux/userSlice/userSlice'
 
 // Массив допустимых вариантов уровней владения языком
 const LEVEL_OPTIONS = ['beginner', 'intermediate', 'advanced', 'default']
@@ -35,9 +39,6 @@ function LanguageSectionBox({
   // Получаем userId из глобального состояния для использования в запросе удаления изучаемого языка
   const userId = useSelector((state: RootState) => state.user.id)
 
-  // Хук для получения функции dispatch для отправки экшенов в Redux
-  const dispatch = useDispatch()
-
   // Локальное состояние для списка доступных языков, загружаемых с сервера
   const [availableLanguages, setAvailableLanguages] = useState<
     { id: number; name: string }[]
@@ -54,91 +55,6 @@ function LanguageSectionBox({
   const [newLearningLangId, setNewLearningLangId] = useState<number | ''>('')
   const [newLearningLangLevel, setNewLearningLangLevel] =
     useState<string>('default')
-
-  // Защитная функция для получения имени языка
-  const getLanguageName = (lang: LanguageData | any): string => {
-    // Если есть название в структуре language
-    if (lang?.language?.name) {
-      return lang.language.name
-    }
-
-    // ИСПРАВЛЕНИЕ: Работа с исходным форматом данных с languageId
-    if (lang?.languageId && availableLanguages.length > 0) {
-      const foundLang = availableLanguages.find(
-        (al) => al.id === lang.languageId
-      )
-      if (foundLang?.name) {
-        return foundLang.name
-      }
-    }
-
-    // Если есть originalLanguageId, ищем в availableLanguages
-    if (lang?.originalLanguageId && availableLanguages.length > 0) {
-      const foundLang = availableLanguages.find(
-        (al) => al.id === lang.originalLanguageId
-      )
-      if (foundLang?.name) {
-        return foundLang.name
-      }
-    }
-
-    // Если есть language.id, ищем в availableLanguages
-    if (lang?.language?.id && availableLanguages.length > 0) {
-      const foundLang = availableLanguages.find(
-        (al) => al.id === lang.language.id
-      )
-      if (foundLang?.name) {
-        return foundLang.name
-      }
-    }
-
-    return `Language ${
-      lang?.languageId ||
-      lang?.language?.id ||
-      lang?.originalLanguageId ||
-      lang?.id ||
-      'Unknown'
-    }`
-  }
-
-  // Защитная функция для получения уровня языка
-  const getSkillLevel = (lang: LanguageData | any): string => {
-    // Проверяем что lang существует и является объектом
-    if (!lang || typeof lang !== 'object') {
-      return 'default'
-    }
-
-    // Сначала проверяем skillLvl (как в логах)
-    if (lang.skillLvl) {
-      return String(lang.skillLvl)
-    }
-
-    // Затем проверяем skillLevel
-    if (lang.skillLevel) {
-      return String(lang.skillLevel)
-    }
-
-    // Используем Object.entries для поиска
-    const entries = Object.entries(lang)
-
-    for (const [key, value] of entries) {
-      if ((key === 'skillLevel' || key === 'skillLvl') && value) {
-        return String(value)
-      }
-    }
-
-    // Также попробуем найти через Object.getOwnPropertyNames
-    const propNames = Object.getOwnPropertyNames(lang)
-
-    for (const propName of propNames) {
-      if (propName === 'skillLevel' || propName === 'skillLvl') {
-        const value = lang[propName]
-        return String(value)
-      }
-    }
-
-    return 'default'
-  }
 
   useEffect(() => {
     // GET-запрос к API для получения списка языков
@@ -204,8 +120,6 @@ function LanguageSectionBox({
         }
         const updated = [...nativeLanguages, newLang]
         onNativeLanguagesChange(updated)
-        // Обновляем глобальное состояние, чтобы userData.nativeLanguages содержало новый язык
-        dispatch(updateUser({ nativeLanguages: updated }))
         // Сбрасываем значение выбора нового языка
         setNewNativeLangId('')
         toast.success(t('languageSection.nativeLanguageAdded'))
@@ -370,7 +284,7 @@ function LanguageSectionBox({
             {nativeLanguages.map((lang) => (
               <Chip
                 key={lang.id}
-                label={getLanguageName(lang)}
+                label={getLanguageName(lang, availableLanguages)}
                 onDelete={() => {
                   // Передаем language_id вместо id записи
                   const languageId =
@@ -460,7 +374,11 @@ function LanguageSectionBox({
             {learningLanguages.map((lang) => (
               <Box key={lang.id} display="flex" alignItems="center" gap={1}>
                 <Chip
-                  label={getLanguageName(lang) + ' - ' + getSkillLevel(lang)}
+                  label={
+                    getLanguageName(lang, availableLanguages) +
+                    ' - ' +
+                    getSkillLevel(lang)
+                  }
                   onDelete={() => {
                     // Передаем language_id вместо id записи
                     const languageId =
@@ -597,7 +515,7 @@ function LanguageSectionBox({
                 variant="body1"
                 sx={{ color: '#757575' }}
               >
-                {getLanguageName(lang)}
+                {getLanguageName(lang, availableLanguages)}
               </Typography>
             ))
           ) : (
@@ -615,7 +533,8 @@ function LanguageSectionBox({
                 variant="body1"
                 sx={{ color: '#757575' }}
               >
-                {getLanguageName(lang)} - {getSkillLevel(lang)}
+                {getLanguageName(lang, availableLanguages)} -{' '}
+                {getSkillLevel(lang)}
               </Typography>
             ))
           ) : (
