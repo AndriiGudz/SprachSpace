@@ -311,7 +311,8 @@
   },
   "meetingCard": {
     "titleLabel": "Название или тема:",
-    "categoryLabel": "Категория и язык",
+    "categoryLabel": "Категория",
+    "categoryNotSet": "Категория не указана",
     "timeLabel": "Время",
     "startTimeLabel": "Начало:",
     "endTimeLabel": "Конец:",

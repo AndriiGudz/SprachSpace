@@ -30,7 +30,8 @@ export interface Meeting {
   waitingParticipants?: number
   language: string // Для Schema.org Language, itemprop="inLanguage"
   proficiency: string | null
-  organizer?: Organizer // Для Schema.org Event.organizer (Person)
+  creator?: number | { id: number } // ID создателя комнаты (может быть числом или объектом с id)
+  organizer?: Organizer // Для Schema.org Event.organizer (Person) - добавляется компонентом MeetingCardWithCreator
   location?: MeetingLocation // Для Schema.org Event.location
   ageRestriction?: number | null
   shareLink: string // Для кнопки "Поделиться"

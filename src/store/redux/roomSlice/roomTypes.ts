@@ -10,6 +10,8 @@ export interface ApiRoom {
   endTime: string // ISO Date string
   duration?: number // New, from API response (e.g., 50 minutes)
   category: ApiRoomCategory // Changed from string to object
+  // Дополнительно: некоторые ответы могут содержать только имя категории
+  categoryName?: string
   privateRoom: boolean // New
   languageLvl: string | null // New
   quantityParticipant: number // Количество участников ожидающих встречу

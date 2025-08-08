@@ -108,16 +108,19 @@ function Profile() {
       : null
 
     // Формирование объекта данных, который будет отправлен на сервер
-    const dataToSend = {
+    const dataToSend: Record<string, unknown> = {
       ...data,
       id: userData.id,
-      foto: data.foto,
       nickName: data.nickname,
       birthdayDate: formattedBirthdayDate,
       // Передаются обновлённые массивы языков
       nativeLanguages,
       learningLanguages,
       email: securityData.email,
+    }
+    // Маппим на поле, которое ожидает бэк: avatar (а не foto)
+    if (userData.foto) {
+      dataToSend.avatar = userData.foto
     }
 
     try {
@@ -126,6 +129,9 @@ function Profile() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(userData.accessToken
+            ? { Authorization: `Bearer ${userData.accessToken}` }
+            : {}),
         },
         body: JSON.stringify(dataToSend),
       })

@@ -15,7 +15,7 @@ import { formatDistanceStrict } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 
 import { Meeting } from '../../components/MeetingCard/types'
-import MeetingCard from '../../components/MeetingCard/MeetingCard'
+import MeetingCardWithCreator from '../../components/MeetingCard/MeetingCardWithCreator'
 import RoomFilter, { RoomFilters } from '../../components/RoomFilter/RoomFilter'
 import { boxTitleStyle, containerStyle, meetingCardStyle } from './styles'
 import { fetchRooms } from '../../store/redux/roomSlice/roomSlice'
@@ -80,7 +80,10 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     id: id || 0,
     slug,
     name: topic || 'Unknown',
-    category: category?.name || 'Unknown',
+    // Категория может приходить как объект { id, name } или как строка categoryName в других эндпоинтах
+    // Нормализуем к видимому названию категории
+    category:
+      (category as any)?.name || (apiRoom as any)?.categoryName || 'Unknown',
     startTime: startTime || new Date().toISOString(),
     endTime: endTime || new Date().toISOString(),
     duration: durationString,
@@ -93,17 +96,7 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     shareLink: roomUrl || '',
     roomUrl: roomUrl || '',
     privateRoom: privateRoom || false,
-    organizer: creator
-      ? {
-          id: creator.id,
-          name: creator.name || creator.nickname || creator.email || 'Unknown',
-          nickname: creator.nickname || undefined,
-          firstName: creator.name || undefined,
-          lastName: creator.surname || undefined,
-          avatarFileName: creator.avatar || undefined,
-          rating: creator.rating,
-        }
-      : undefined,
+    creator: creator, // Сохраняем creator для последующей обработки
     description: undefined,
     imageUrl: undefined,
     languageFlagIconUrl: undefined,
@@ -291,7 +284,7 @@ function Meetings() {
                       },
                     }}
                   >
-                    <MeetingCard meeting={meeting} isPast={isPast} />
+                    <MeetingCardWithCreator meeting={meeting} isPast={isPast} />
                   </Box>
                 )
               })}

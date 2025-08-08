@@ -311,7 +311,8 @@
   },
   "meetingCard": {
     "titleLabel": "Title or topic:",
-    "categoryLabel": "Category and Language",
+    "categoryLabel": "Category",
+    "categoryNotSet": "Category not specified",
     "timeLabel": "Time",
     "startTimeLabel": "Start:",
     "endTimeLabel": "End:",

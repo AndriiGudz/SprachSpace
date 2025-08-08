@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../store/store'
 import { fetchRooms } from '../../store/redux/roomSlice/roomSlice'
 import { Meeting } from '../../components/MeetingCard/types'
-import MeetingCard from '../../components/MeetingCard/MeetingCard'
+import MeetingCardWithCreator from '../../components/MeetingCard/MeetingCardWithCreator'
 import Loader from '../../components/Loader/Loader'
 import {
   containerStyle,
@@ -398,7 +398,7 @@ function ScheduledMeetings() {
             {filteredMeetings.map((meeting) => {
               const isPast = isPastMeeting(meeting)
               return (
-                <MeetingCard
+                <MeetingCardWithCreator
                   key={meeting.id}
                   meeting={meeting}
                   isPast={isPast}
