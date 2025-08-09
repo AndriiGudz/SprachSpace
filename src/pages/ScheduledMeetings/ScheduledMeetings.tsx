@@ -17,6 +17,7 @@ import {
 } from './styles'
 import { mapApiRoomToMeeting } from '../Meetings/Meetings'
 import { useState } from 'react'
+import { CreateRoomButton } from '../../components/CreateRoomButton/CreateRoomButton'
 
 type FilterType = 'all' | 'upcoming' | 'past' | 'created' | 'joined'
 
@@ -57,7 +58,7 @@ function ScheduledMeetings() {
           room.creator?.id !== user.id && // не организатор
           (userParticipations[room.id]?.status === 'ACCEPTED' || // принятые заявки
             room.participants?.some(
-              (p) => p.user.id === user.id && p.status === 'ACCEPTED'
+              (p) => p?.user?.id === user.id && p?.status === 'ACCEPTED'
             ))
       )
       .map(mapApiRoomToMeeting)
@@ -419,9 +420,11 @@ function ScheduledMeetings() {
             <Typography variant="body2" color="text.secondary" paragraph>
               {t('scheduledMeetings.noMeetingsDescription')}
             </Typography>
-            <Button variant="contained" onClick={handleCreateMeeting}>
-              {t('scheduledMeetings.createFirst')}
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <CreateRoomButton
+                buttonText={t('scheduledMeetings.createFirst')}
+              />
+            </Box>
           </Box>
         )}
       </Box>

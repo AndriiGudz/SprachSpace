@@ -75,6 +75,7 @@ function MeetingChat() {
   const [joinRequestStatus, setJoinRequestStatus] = useState<
     'none' | 'pending' | 'accepted' | 'rejected'
   >('none')
+  const [joinError, setJoinError] = useState<string | null>(null)
 
   // Получаем список комнат из Redux store
   const { rooms, isLoading, userParticipations } = useSelector(
@@ -82,9 +83,11 @@ function MeetingChat() {
   )
 
   // Получаем данные пользователя для регистрации присутствия
-  const { isAuthenticated, id: userId } = useSelector(
-    (state: RootState) => state.user
-  )
+  const {
+    isAuthenticated,
+    id: userId,
+    rating,
+  } = useSelector((state: RootState) => state.user)
 
   // Логируем данные пользователя
   useEffect(() => {
@@ -293,6 +296,19 @@ function MeetingChat() {
   // Функция для автоматического принятия приглашения (для публичных комнат)
   const acceptInvitation = useCallback(async (participantId: number) => {
     try {
+      if (participantId === undefined || participantId === null) {
+        console.warn(
+          '⚠️ acceptInvitation called with invalid participantId:',
+          participantId
+        )
+        return { success: false, error: 'participantId is undefined' }
+      }
+
+      console.log('🚀 Auto-accept → PUT /adminRoom/accept', {
+        participantId,
+        timestamp: new Date().toISOString(),
+      })
+
       const response = await fetch(
         `http://localhost:8080/api/room/adminRoom/accept?participantId=${participantId}`,
         {
@@ -302,6 +318,11 @@ function MeetingChat() {
           },
         }
       )
+
+      console.log('📡 Auto-accept response:', {
+        status: response.status,
+        statusText: response.statusText,
+      })
 
       if (response.ok) {
         return { success: true }
@@ -334,9 +355,33 @@ function MeetingChat() {
 
     setIsJoiningRoom(true)
     setJoinRequestStatus('pending')
+    setJoinError(null)
 
     try {
+      // Для публичной комнаты проверяем рейтинг >= 3
+      if (!meeting.privateRoom) {
+        const userRating = typeof rating === 'number' ? rating : null
+        if (userRating !== null && userRating < 3) {
+          setJoinRequestStatus('none')
+          setIsJoiningRoom(false)
+          setJoinError(
+            t(
+              'meetingChat.ratingTooLow',
+              'Недостаточный рейтинг для присоединения к публичной комнате (нужно 3+).'
+            )
+          )
+          return
+        }
+      }
+
       // Отправляем запрос через Redux
+      console.log('📨 sendJoinRequest dispatch →', {
+        roomId: meeting.id,
+        userId,
+        isPublic: !meeting.privateRoom,
+        rating,
+        storeUserParticipationBefore: (userParticipations || {})[meeting.id],
+      })
       const result = await dispatch(
         sendJoinRequest({
           roomId: meeting.id,
@@ -345,10 +390,11 @@ function MeetingChat() {
       )
 
       if (sendJoinRequest.fulfilled.match(result)) {
-        console.log('Join request successful:', result.payload)
+        console.log('✅ sendJoinRequest fulfilled. Payload:', result.payload)
 
         // Заявка успешно отправлена, данные уже в Redux
         const { participant } = result.payload
+        console.log('🧩 participant parsed from payload:', participant)
 
         // Устанавливаем статус на основе полученных данных
         const status = participant.status?.toLowerCase()
@@ -362,17 +408,39 @@ function MeetingChat() {
           setJoinRequestStatus('pending')
         }
 
-        // Если комната публичная, попытаемся автоматически принять приглашение
+        // Если комната публичная, попытаемся автоматически принять приглашение, если есть свободные места
         if (!meeting.privateRoom) {
+          const acceptedCount = (meeting.participants || []).filter(
+            (p) => p.status === 'ACCEPTED'
+          ).length
+          const max = meeting.maxParticipants || 0
+          const hasCapacity = max === 0 || acceptedCount < max
+          console.log('🔎 Auto-accept pre-check:', {
+            acceptedCount,
+            maxParticipants: meeting.maxParticipants,
+            hasCapacity,
+            payloadParticipantId: participant?.id,
+          })
           try {
-            const acceptResult = await acceptInvitation(participant.id)
+            const participantIdToAccept = participant?.id as number | undefined
+            if (participantIdToAccept === undefined) {
+              console.warn(
+                '⚠️ No participant.id in payload; skipping auto-accept'
+              )
+            }
+            const acceptResult =
+              hasCapacity && participantIdToAccept !== undefined
+                ? await acceptInvitation(participantIdToAccept)
+                : { success: false }
 
             if (acceptResult.success) {
               setJoinRequestStatus('accepted')
               setHasJoinedRoom(true)
               console.log('Auto-accepted for public room')
             } else {
-              console.log('Auto-accept failed, staying in pending state')
+              console.log(
+                'Auto-accept failed or capacity reached, pending state'
+              )
             }
           } catch (acceptError) {
             console.log('Auto-accept error:', acceptError)
@@ -383,11 +451,11 @@ function MeetingChat() {
         // Обновляем данные комнаты в любом случае
         await updateRoomData(meeting.id)
       } else if (sendJoinRequest.rejected.match(result)) {
-        console.error('Join request failed:', result.error)
+        console.error('❌ sendJoinRequest rejected:', result.error)
         setJoinRequestStatus('rejected')
       }
     } catch (error) {
-      console.error('Error joining room:', error)
+      console.error('Unexpected error in joinRoom:', error)
       setJoinRequestStatus('rejected')
     } finally {
       setIsJoiningRoom(false)
@@ -400,6 +468,9 @@ function MeetingChat() {
     dispatch,
     acceptInvitation,
     updateRoomData, // Теперь это стабильная функция без зависимостей
+    rating,
+    t,
+    userParticipations,
   ])
 
   // Сбрасываем локальное состояние при смене пользователя
@@ -408,6 +479,7 @@ function MeetingChat() {
     setJoinRequestStatus('none')
     setHasJoinedRoom(false)
     setIsJoiningRoom(false)
+    setJoinError(null)
   }, [userId])
 
   // Проверяем статус присоединения при загрузке
@@ -1434,11 +1506,16 @@ function MeetingChat() {
                             'This is a public room. You can join the video chat immediately.'
                           )}
                     </Typography>
+                    {joinError && (
+                      <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                        {joinError}
+                      </Typography>
+                    )}
                     <Button
                       variant="contained"
                       size="large"
                       onClick={joinRoom}
-                      disabled={isJoiningRoom}
+                      disabled={isJoiningRoom || Boolean(joinError)}
                       startIcon={
                         isJoiningRoom ? (
                           <CircularProgress size={20} />
