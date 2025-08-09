@@ -122,9 +122,15 @@ function MeetingChat() {
   // Обновляем данные комнаты при изменении онлайн статуса - будет добавлено после объявления updateRoomData
 
   // Проверяем, является ли пользователь организатором комнаты
+  // В данных встречи поле с ID создателя находится в `creator` (число или объект с id)
   const isOrganizer = useMemo(() => {
-    return meeting?.organizer?.id === userId
-  }, [meeting?.organizer?.id, userId])
+    if (!meeting || !userId) return false
+    const creatorId =
+      typeof meeting.creator === 'number'
+        ? meeting.creator
+        : (meeting.creator as { id?: number } | undefined)?.id
+    return creatorId === userId
+  }, [meeting, userId])
 
   // Получаем информацию о заявке пользователя для текущей комнаты
   const userParticipation = useMemo(() => {
@@ -223,8 +229,6 @@ function MeetingChat() {
               if (prevIds.size !== newIds.size) return true
 
               return Array.from(prevIds).some((id) => !newIds.has(id))
-
-              return false
             }
 
             if (
