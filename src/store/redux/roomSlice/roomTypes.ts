@@ -10,6 +10,8 @@ export interface ApiRoom {
   endTime: string // ISO Date string
   duration?: number // New, from API response (e.g., 50 minutes)
   category: ApiRoomCategory // Changed from string to object
+  // Дополнительно: некоторые ответы могут содержать только имя категории
+  categoryName?: string
   privateRoom: boolean // New
   languageLvl: string | null // New
   quantityParticipant: number // Количество участников ожидающих встречу
@@ -21,21 +23,44 @@ export interface ApiRoom {
   roomUrl: string
   participants?: RoomParticipant[] // Обновленный тип для participants
   creator?: ApiCreator // Optional, as per API response, now typed
+  roomOnlineUsers?: Array<{
+    id: number
+    nickname: string | null
+    name: string | null
+    email: string | null
+    surname: string | null
+    avatar: string | null
+    rating: number
+    [key: string]: any
+  }>
+  countOnlineUser?: number
   // userId: string; // ID пользователя, создавшего комнату
   // category?: string; // Категория может быть не основным полем API
   // proficiency?: string; // Уровень владения может быть не основным полем API
 }
 
 export interface ApiCreator {
-  avatar: undefined
-  id: number // Из JSON видно, что это number
-  nickname: string
-  name: string // Это firstName из JSON
-  surname: string // lastName из JSON
-  foto: string // Это avatarUrl из JSON, может быть пустой строкой
-  rating: number // Из JSON видно, что это number
-  // Остальные поля из JSON (email, password, birthdayDate и т.д.) пока не добавляем,
-  // так как они не нужны для MeetingCard. При необходимости можно будет добавить.
+  id: number
+  nickname: string | null
+  name: string | null
+  surname: string | null
+  email: string
+  avatar: string | null
+  rating: number
+  password: string
+  birthdayDate: string | null
+  internalCurrency: string | null
+  status: boolean
+  nativeLanguages: any[]
+  learningLanguages: any[]
+  roles: any[]
+  createdRooms: any[]
+  enabled: boolean
+  username: string
+  authorities: any[]
+  credentialsNonExpired: boolean
+  accountNonExpired: boolean
+  accountNonLocked: boolean
 }
 
 // Тип для данных, отправляемых при создании комнаты (совпадает с CreateRoomRequest из CreateRoomForm)
@@ -44,7 +69,7 @@ export interface CreateRoomApiRequest {
   startTime: string // ISO string
   endTime: string // ISO string
   status: boolean
-  age?: number // Optional, API shows 0, form might send null/undefined
+  age: number // Required field - if not set by user, defaults to 0
   language: string
   languageLvl: string // New: maps from UI's proficiency
   category: string // API expects string for creation as per example
@@ -88,15 +113,15 @@ export interface ParticipantRole {
 
 export interface ParticipantUser {
   id: number
-  nickname: string
-  name: string
+  nickname: string | null
+  name: string | null
   email: string
-  surname: string
+  surname: string | null
   password: string
-  birthdayDate: string
-  avatar: string
+  birthdayDate: string | null
+  avatar: string | null
   rating: number
-  internalCurrency: number | null
+  internalCurrency: string | null
   status: boolean
   nativeLanguages: ParticipantLanguage[]
   learningLanguages: ParticipantLanguage[]
@@ -113,6 +138,11 @@ export interface ParticipantUser {
 export interface RoomParticipant {
   id: number // participantId
   user: ParticipantUser
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
-  participantType: 'REQUESTED_BY_USER' | 'INVITED_BY_ORGANIZER'
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'VIEWED'
+  participantType:
+    | 'REQUESTED_BY_USER'
+    | 'INVITED_BY_ORGANIZER'
+    | 'CREATOR'
+    | 'INVITED_BY_CREATOR'
+    | 'VISITED_WITHOUT_AN_INVITATION'
 }

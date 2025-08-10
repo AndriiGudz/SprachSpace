@@ -6,6 +6,7 @@ import PersonalDataBox from '../../components/PersonalDataBox/PersonalDataBox'
 import LanguageSectionBox from '../../components/LanguageSectionBox/LanguageSectionBox'
 import SecuritySectionBox from '../../components/SecuritySectionBox/SecuritySectionBox'
 import { PersonalData } from '../../components/PersonalDataBox/types'
+import { LanguageData } from '../../utils/languageUtils'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import { DataBox, PageContainer, ProfileContainer } from './styles'
@@ -49,10 +50,10 @@ function Profile() {
   )
 
   // Состояния для хранения массивов языков (родных и изучаемых)
-  const [nativeLanguages, setNativeLanguages] = useState(
+  const [nativeLanguages, setNativeLanguages] = useState<LanguageData[]>(
     userData.nativeLanguages || []
   )
-  const [learningLanguages, setLearningLanguages] = useState(
+  const [learningLanguages, setLearningLanguages] = useState<LanguageData[]>(
     userData.learningLanguages || []
   )
 
@@ -107,16 +108,19 @@ function Profile() {
       : null
 
     // Формирование объекта данных, который будет отправлен на сервер
-    const dataToSend = {
+    const dataToSend: Record<string, unknown> = {
       ...data,
       id: userData.id,
-      foto: data.foto,
       nickName: data.nickname,
       birthdayDate: formattedBirthdayDate,
       // Передаются обновлённые массивы языков
       nativeLanguages,
       learningLanguages,
       email: securityData.email,
+    }
+    // Маппим на поле, которое ожидает бэк: avatar (а не foto)
+    if (userData.foto) {
+      dataToSend.avatar = userData.foto
     }
 
     try {
@@ -125,6 +129,9 @@ function Profile() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(userData.accessToken
+            ? { Authorization: `Bearer ${userData.accessToken}` }
+            : {}),
         },
         body: JSON.stringify(dataToSend),
       })
@@ -166,12 +173,12 @@ function Profile() {
   // Обработчики для изменения языков.
   // При выборе нового языка обновляются соответствующие состояния.
   // Функция handleNativeLanguagesChange обновляет массив родных языков
-  const handleNativeLanguagesChange = (newLanguages: any) => {
+  const handleNativeLanguagesChange = (newLanguages: LanguageData[]) => {
     setNativeLanguages(newLanguages)
   }
 
   // Функция handleLearningLanguagesChange обновляет массив изучаемых языков
-  const handleLearningLanguagesChange = (newLanguages: any) => {
+  const handleLearningLanguagesChange = (newLanguages: LanguageData[]) => {
     setLearningLanguages(newLanguages)
   }
 

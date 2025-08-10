@@ -1,4 +1,5 @@
 {
+  "locale": "de-DE",
   "app": {
     "title": "SprachSpace - Sprachraum für Kommunikation und Lernen",
     "description": "SprachSpace - Plattform zum Sprachenlernen durch Gruppenkommunikation"
@@ -27,6 +28,8 @@
     "passwordPlaceholder": "Passwort",
     "acceptTerms": "Ich akzeptiere die Nutzungsbedingungen",
     "registrationSuccess": "Sie haben sich erfolgreich registriert!",
+    "autoLoginSuccess": "Sie wurden automatisch angemeldet!",
+    "registrationSuccessLoginManually": "Registrierung erfolgreich! Bitte melden Sie sich für vollen Zugang an.",
     "loginSuccess": "Sie haben sich erfolgreich angemeldet!",
     "loginFailed": "Anmeldung fehlgeschlagen",
     "registrationFailed": "Registrierung fehlgeschlagen",
@@ -80,14 +83,16 @@
     "language": "Sprache",
     "level": "Niveau",
     "add": "Hinzufügen",
+    "selectLanguagePlaceholder": "Sprache auswählen",
+    "selectLevelPlaceholder": "Niveau auswählen",
     "nativeLanguageAdded": "Muttersprache erfolgreich hinzugefügt",
     "nativeLanguageAddError": "Fehler beim Hinzufügen der Muttersprache",
     "learningLanguageAdded": "Lernsprache erfolgreich hinzugefügt",
     "learningLanguageAddError": "Fehler beim Hinzufügen der Lernsprache",
     "nativeLanguageRemoved": "Muttersprache erfolgreich entfernt",
-    "nativeLanguageRemoveError": "Fehler beim Entfernen der Muttersprache",
+    "nativeLanguageRemoveError": "Muttersprache konnte nicht entfernt werden",
     "learningLanguageRemoved": "Lernsprache erfolgreich entfernt",
-    "learningLanguageRemoveError": "Fehler beim Entfernen der Lernsprache",
+    "learningLanguageRemoveError": "Lernsprache konnte nicht entfernt werden",
     "noLanguageSelected": "Noch keine Sprache ausgewählt",
     "learningLanguageDeleteError": "Fehler beim Löschen der Lernsprache",
     "nativeLanguageDeleteError": "Fehler beim Löschen der Muttersprache"
@@ -201,7 +206,9 @@
       "beginner": "Anfänger",
       "intermediate": "Mittelstufe",
       "advanced": "Fortgeschritten"
-    }
+    },
+    "ageLimitHelperText": "Lassen Sie das Feld leer für offenen Zugang (keine Beschränkungen)",
+    "ageLimitPlaceholder": "z.B. 18"
   },
   "roomFilter": {
     "category": "Kategorie",
@@ -304,7 +311,8 @@
   },
   "meetingCard": {
     "titleLabel": "Titel oder Thema:",
-    "categoryLabel": "Kategorie und Sprache",
+    "categoryLabel": "Kategorie",
+    "categoryNotSet": "Kategorie nicht angegeben",
     "timeLabel": "Zeit",
     "startTimeLabel": "Beginn:",
     "endTimeLabel": "Ende:",
@@ -313,6 +321,7 @@
     "minParticipantsLabel": "Minimum:",
     "maxParticipantsLabel": "Maximum:",
     "waitingParticipantsLabel": "Wartend:",
+    "onlineParticipantsLabel": "Online:",
     "languageLabel": "Sprache:",
     "proficiencyLabel": "Niveau:",
     "roomTypeLabel": "Raumtyp",
@@ -378,6 +387,40 @@
     "requestPending": "Anfrage gesendet",
     "requestAccepted": "Anfrage angenommen",
     "requestSent": "Anfrage gesendet",
-    "requestSentDescription": "Sie haben erfolgreich eine Beitrittsanfrage gesendet. Bitte warten Sie auf die Bestätigung vom Raumorganisator."
+    "requestSentDescription": "Sie haben erfolgreich eine Beitrittsanfrage gesendet. Bitte warten Sie auf die Bestätigung vom Raumorganisator.",
+    "authRequired": "Autorisierung erforderlich",
+    "authRequiredDescription": "Nur registrierte Benutzer können Videoräumen beitreten. Bitte melden Sie sich in Ihrem Konto an oder registrieren Sie sich, um am Meeting teilzunehmen.",
+    "authButton": "Anmelden"
+  },
+  "scheduledMeetings": {
+    "description": "Hier können Sie alle Ihre geplanten Meetings einsehen",
+    "notAuthenticated": "Melden Sie sich an, um Ihre geplanten Meetings zu sehen",
+    "noMeetings": "Sie haben keine geplanten Meetings",
+    "noPastMeetings": "Sie haben keine vergangenen Meetings",
+    "noMeetingsDescription": "Treten Sie bestehenden Räumen bei oder erstellen Sie Ihren eigenen, um mit dem Sprechen zu beginnen",
+    "createFirst": "Erstes Meeting erstellen",
+    "participants": "Teilnehmer",
+    "joinMeeting": "Meeting beitreten",
+    "completed": "Abgeschlossen",
+    "findMoreMeetings": "Mehr Meetings finden",
+    "tabs": {
+      "upcoming": "Bevorstehend",
+      "past": "Vergangen",
+      "created": "Meine Räume",
+      "joined": "Beigetreten"
+    },
+    "filters": {
+      "all": "Alle",
+      "upcoming": "Bevorstehend",
+      "past": "Vergangen",
+      "created": "Meine Räume",
+      "joined": "Beigetreten"
+    },
+    "status": {
+      "upcoming": "Geplant",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgesagt"
+    }
   }
 }

@@ -1,6 +1,6 @@
 export interface Organizer {
   id: number
-  nickname: string
+  nickname?: string
   name: string // Имя или никнейм для отображения, может быть composite
   firstName?: string
   lastName?: string
@@ -30,7 +30,8 @@ export interface Meeting {
   waitingParticipants?: number
   language: string // Для Schema.org Language, itemprop="inLanguage"
   proficiency: string | null
-  organizer?: Organizer // Для Schema.org Event.organizer (Person)
+  creator?: number | { id: number } // ID создателя комнаты (может быть числом или объектом с id)
+  organizer?: Organizer // Для Schema.org Event.organizer (Person) - добавляется компонентом MeetingCardWithCreator
   location?: MeetingLocation // Для Schema.org Event.location
   ageRestriction?: number | null
   shareLink: string // Для кнопки "Поделиться"
@@ -42,11 +43,28 @@ export interface Meeting {
     id: number
     user: {
       id: number
-      nickname: string
-      name: string
+      nickname: string | null
+      name: string | null
       [key: string]: any
     }
-    status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
-    participantType: 'CREATOR' | 'REQUESTED_BY_USER' | 'INVITED_BY_ORGANIZER'
+    status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'VIEWED'
+    participantType:
+      | 'CREATOR'
+      | 'REQUESTED_BY_USER'
+      | 'INVITED_BY_ORGANIZER'
+      | 'INVITED_BY_CREATOR'
+      | 'VISITED_WITHOUT_AN_INVITATION'
   }>
+  // Новые поля для онлайн пользователей
+  roomOnlineUsers?: Array<{
+    id: number
+    nickname: string | null
+    name: string | null
+    email: string | null
+    surname: string | null
+    avatar: string | null
+    rating: number
+    [key: string]: any
+  }>
+  countOnlineUser?: number
 }

@@ -21,10 +21,16 @@ import Meetings from './pages/Meetings/Meetings'
 import Admin from './pages/Admin/PageAdminUsersList'
 import UserDaschboard from './pages/Admin/PageUserDaschboard'
 import MeetingChat from './pages/MeetingChat/MeetingChat'
+import ScheduledMeetings from './pages/ScheduledMeetings/ScheduledMeetings'
+import NotificationsPage from './pages/Notifications/Notifications'
+import { useLogoutCleanup } from './hooks/useLogoutCleanup'
 
 function App() {
   const { t, i18n } = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
+
+  // Очищаем онлайн статус при логауте
+  useLogoutCleanup()
 
   // Простая инициализация приложения
   useEffect(() => {
@@ -54,39 +60,55 @@ function App() {
           <CssBaseline />
           <GlobalStyles />
           <AuthGuard>
-          <Notifications />
-          <Routes>
-            <Route path="/signin" element={<PageSignInUp />} />
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="/meetings" element={<Meetings />} />
-              <Route path="/meetings/:meetingId" element={<MeetingChat />} />
-              <Route
-                path="/admin/users"
-                element={
-                  <AdminRoute>
-                    <Admin />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/users/:userId"
-                element={
-                  <AdminRoute>
-                    <UserDaschboard />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-          </Routes>
+            <Notifications />
+            <Routes>
+              <Route path="/signin" element={<PageSignInUp />} />
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="/meetings" element={<Meetings />} />
+                <Route path="/meetings/:meetingId" element={<MeetingChat />} />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <AdminRoute>
+                      <Admin />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users/:userId"
+                  element={
+                    <AdminRoute>
+                      <UserDaschboard />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/scheduled-meetings"
+                  element={
+                    <ProtectedRoute>
+                      <ScheduledMeetings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <NotificationsPage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+            </Routes>
           </AuthGuard>
         </LocalizationProvider>
       </ThemeProvider>

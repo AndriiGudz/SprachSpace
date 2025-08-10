@@ -38,6 +38,8 @@ export const LogoContainer = styled.a`
 export const DesktopOnly = styled.div`
   display: flex;
   width: 100%;
+  align-items: center;
+  justify-content: flex-end;
   gap: 24px;
 
   @media (max-width: 900px) {
@@ -90,6 +92,18 @@ export const MobileAvatar = styled.div`
 export const UserMenuWrapper = styled.div`
   position: absolute;
   top: 100%;
-  right: 0;
+  right: 6px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+`
+
+export const LanguageSelectorContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media (max-width: 900px) {
+    margin: 8px 0;
+  }
 `

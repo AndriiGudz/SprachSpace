@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useEffect, useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css'
@@ -17,6 +17,7 @@ import {
 import { Share2, Copy, Lock, Globe } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
 import { Meeting } from './types'
 import {
   cardStyle,
@@ -35,13 +36,16 @@ import {
 import defAvatar from '../../assets/default-avatar.png'
 import enFlag from '../../assets/flag/en.png'
 import deFlag from '../../assets/flag/de.png'
+import spFlag from '../../assets/flag/sp.png'
 import ukFlag from '../../assets/flag/ua.png'
 import ruFlag from '../../assets/flag/ru.png'
 import { API_ROOT_URL } from '../../config/apiConfig'
+import { RootState } from '../../store/store'
 
 const languageFlagsFallback: Record<string, string> = {
   English: enFlag,
   German: deFlag,
+  Spanish: spFlag,
   Ukrainian: ukFlag,
   Russian: ruFlag,
 }
@@ -75,7 +79,6 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     organizer,
     ageRestriction,
     shareLink,
-    roomUrl,
     imageUrl,
     languageFlagIconUrl,
     location,
@@ -87,18 +90,63 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
     [languageFlagIconUrl, language]
   )
 
-  const hostAvatarUrl = useMemo(
-    () =>
-      organizer?.avatarFileName
-        ? `${API_ROOT_URL}/users/file/avatar/${organizer.avatarFileName}`
-        : null,
-    [organizer?.avatarFileName]
+  // Достаём токен из стора
+  const accessToken = useSelector((state: RootState) => state.user.accessToken)
+
+  // Загружаем аватар организатора с авторизацией и создаём blob URL
+  const [hostAvatarBlobUrl, setHostAvatarBlobUrl] = useState<string | null>(
+    null
   )
 
-  const hostAvatarSrc = useMemo(
-    () => hostAvatarUrl || defAvatar,
-    [hostAvatarUrl]
-  )
+  useEffect(() => {
+    let revokedUrl: string | null = null
+
+    async function loadAvatar() {
+      try {
+        const fileName = organizer?.avatarFileName
+        if (
+          !fileName ||
+          fileName === 'null' ||
+          fileName === '' ||
+          !accessToken
+        ) {
+          setHostAvatarBlobUrl(null)
+          return
+        }
+
+        const url = `${API_ROOT_URL}/users/file/avatar/${fileName}`
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        if (!response.ok) {
+          setHostAvatarBlobUrl(null)
+          return
+        }
+        const blob = await response.blob()
+        if (!blob || blob.size === 0) {
+          setHostAvatarBlobUrl(null)
+          return
+        }
+        const objectUrl = URL.createObjectURL(blob)
+        setHostAvatarBlobUrl(objectUrl)
+        revokedUrl = objectUrl
+      } catch (_e) {
+        setHostAvatarBlobUrl(null)
+      }
+    }
+
+    loadAvatar()
+
+    return () => {
+      if (revokedUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(revokedUrl)
+      }
+    }
+  }, [organizer?.avatarFileName, accessToken])
+
+  const hostAvatarSrc = useMemo(() => {
+    return hostAvatarBlobUrl || defAvatar
+  }, [hostAvatarBlobUrl])
 
   const cardLink = useMemo(() => `/meetings/${slug || id}`, [slug, id])
 
@@ -243,7 +291,9 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
             color="text.secondary"
             itemProp="about"
           >
-            {category}
+            {category && category.toLowerCase() !== 'unknown'
+              ? category
+              : t('meetingCard.categoryNotSet', 'Категория не указана')}
           </Typography>
         </Box>
       </Box>
@@ -389,7 +439,9 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
           style={{ display: 'none' }}
         >
           <meta itemProp="name" content={organizer.name} />
-          {hostAvatarUrl && <meta itemProp="image" content={hostAvatarUrl} />}
+          {hostAvatarBlobUrl && (
+            <meta itemProp="image" content={hostAvatarBlobUrl} />
+          )}
         </div>
       )}
 
@@ -599,12 +651,10 @@ function MeetingCard({ meeting, isPast = false }: MeetingCardProps) {
             ) : (
               <Button
                 component={RouterLink}
-                to={roomUrl || cardLink}
+                to={cardLink}
                 variant="contained"
                 color="primary"
                 sx={modifiedJoinButtonStyle}
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 {t('meetingCard.joinButton', 'Join')}
               </Button>

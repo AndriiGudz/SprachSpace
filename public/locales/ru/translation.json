@@ -1,4 +1,5 @@
 {
+  "locale": "ru-RU",
   "app": {
     "title": "SprachSpace - Языковая комната для общения и обучения",
     "description": "SprachSpace - платформа для изучения языков через групповое общение"
@@ -27,6 +28,8 @@
     "passwordPlaceholder": "Пароль",
     "acceptTerms": "Я принимаю Условия использования",
     "registrationSuccess": "Вы успешно зарегистрировались!",
+    "autoLoginSuccess": "Вы автоматически авторизованы!",
+    "registrationSuccessLoginManually": "Регистрация прошла успешно! Войдите в систему для полного доступа.",
     "loginSuccess": "Вы успешно вошли!",
     "loginFailed": "Ошибка входа",
     "registrationFailed": "Ошибка регистрации",
@@ -80,6 +83,8 @@
     "language": "Язык",
     "level": "Уровень",
     "add": "Добавить",
+    "selectLanguagePlaceholder": "Выберите язык",
+    "selectLevelPlaceholder": "Выберите уровень",
     "nativeLanguageAdded": "Родной язык успешно добавлен",
     "nativeLanguageAddError": "Ошибка добавления родного языка",
     "learningLanguageAdded": "Изучаемый язык успешно добавлен",
@@ -240,7 +245,9 @@
       "beginner": "Начинающий",
       "intermediate": "Средний",
       "advanced": "Продвинутый"
-    }
+    },
+    "ageLimitHelperText": "Оставьте пустым для открытого доступа (без ограничений)",
+    "ageLimitPlaceholder": "Например: 18"
   },
   "roomFilter": {
     "category": "Категория",
@@ -304,7 +311,8 @@
   },
   "meetingCard": {
     "titleLabel": "Название или тема:",
-    "categoryLabel": "Категория и язык",
+    "categoryLabel": "Категория",
+    "categoryNotSet": "Категория не указана",
     "timeLabel": "Время",
     "startTimeLabel": "Начало:",
     "endTimeLabel": "Конец:",
@@ -313,6 +321,7 @@
     "minParticipantsLabel": "Минимум:",
     "maxParticipantsLabel": "Максимум:",
     "waitingParticipantsLabel": "Ожидает:",
+    "onlineParticipantsLabel": "Онлайн:",
     "languageLabel": "Язык:",
     "proficiencyLabel": "Уровень:",
     "roomTypeLabel": "Тип комнаты",
@@ -378,6 +387,54 @@
     "requestPending": "Заявка отправлена",
     "requestAccepted": "Заявка принята",
     "requestSent": "Заявка отправлена",
-    "requestSentDescription": "Вы успешно отправили запрос на присоединение. Ожидайте подтверждение от организатора комнаты."
+    "requestSentDescription": "Вы успешно отправили запрос на присоединение. Ожидайте подтверждение от организатора комнаты.",
+    "authRequired": "Требуется авторизация",
+    "authRequiredDescription": "Только зарегистрированные пользователи могут присоединяться к видеокомнатам. Пожалуйста, войдите в свой аккаунт или зарегистрируйтесь для участия в встрече.",
+    "authButton": "Авторизоваться"
+  },
+  "scheduledMeetings": {
+    "description": "Здесь вы можете просмотреть все ваши запланированные встречи",
+    "notAuthenticated": "Войдите в свой аккаунт, чтобы просмотреть запланированные встречи",
+    "noMeetings": "У вас нет запланированных встреч",
+    "noPastMeetings": "У вас нет завершенных встреч",
+    "noMeetingsDescription": "Присоединяйтесь к существующим комнатам или создайте свою собственную, чтобы начать общение",
+    "createFirst": "Создать первую встречу",
+    "participants": "участников",
+    "joinMeeting": "Присоединиться к встрече",
+    "completed": "Завершено",
+    "findMoreMeetings": "Найти больше встреч",
+    "tabs": {
+      "upcoming": "Предстоящие",
+      "past": "Прошедшие",
+      "created": "Мои комнаты",
+      "joined": "Присоединился"
+    },
+    "filters": {
+      "all": "Все",
+      "upcoming": "Предстоящие",
+      "past": "Прошедшие",
+      "created": "Мои комнаты",
+      "joined": "Присоединился"
+    },
+    "status": {
+      "upcoming": "Запланировано",
+      "inProgress": "В процессе",
+      "completed": "Завершено",
+      "cancelled": "Отменено"
+    }
+  },
+  "notifications": {
+    "description": "Здесь вы можете просмотреть все ваши уведомления",
+    "noNotifications": "У вас нет уведомлений",
+    "noNotificationsDescription": "Когда появятся новые уведомления, они будут отображаться здесь",
+    "markAllAsRead": "Отметить все как прочитанные",
+    "new": "Новое",
+    "filters": {
+      "all": "Все",
+      "unread": "Непрочитанные",
+      "read": "Прочитанные",
+      "meetings": "Встречи",
+      "system": "Система"
+    }
   }
 }
