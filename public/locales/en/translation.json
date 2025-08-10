@@ -1,4 +1,5 @@
 {
+  "locale": "en-US",
   "app": {
     "title": "SprachSpace - Language room, space for communication and learning",
     "description": "SprachSpace - platform for learning languages ​​through group communication"
@@ -27,6 +28,8 @@
     "passwordPlaceholder": "Password",
     "acceptTerms": "I accept the Terms and Conditions",
     "registrationSuccess": "You have registered successfully!",
+    "autoLoginSuccess": "You have been automatically logged in!",
+    "registrationSuccessLoginManually": "Registration successful! Please log in for full access.",
     "loginSuccess": "You have successfully logged in!",
     "loginFailed": "Login failed",
     "registrationFailed": "Registration failed",
@@ -73,20 +76,22 @@
     "avatarUploadError": "Failed to upload avatar"
   },
   "languageSection": {
-    "title": "Language proficiency",
-    "addLanguage": "Add language",
+    "title": "Language Knowledge",
+    "addLanguage": "Add Language",
     "speakFluently": "I speak fluently:",
-    "learning": "I am studying:",
+    "learning": "I am learning:",
     "language": "Language",
     "level": "Level",
     "add": "Add",
-    "nativeLanguageAdded": "Native language added successfully",
+    "selectLanguagePlaceholder": "Select a language",
+    "selectLevelPlaceholder": "Select a level",
+    "nativeLanguageAdded": "Native language successfully added",
     "nativeLanguageAddError": "Error adding native language",
-    "learningLanguageAdded": "Learning language added successfully",
+    "learningLanguageAdded": "Learning language successfully added",
     "learningLanguageAddError": "Error adding learning language",
-    "nativeLanguageRemoved": "Native language removed successfully",
+    "nativeLanguageRemoved": "Native language successfully removed",
     "nativeLanguageRemoveError": "Failed to remove native language",
-    "learningLanguageRemoved": "Learning language removed successfully",
+    "learningLanguageRemoved": "Learning language successfully removed",
     "learningLanguageRemoveError": "Failed to remove learning language",
     "noLanguageSelected": "No language selected yet",
     "learningLanguageDeleteError": "Error deleting learning language",
@@ -201,7 +206,9 @@
       "beginner": "Beginner",
       "intermediate": "Intermediate",
       "advanced": "Advanced"
-    }
+    },
+    "ageLimitHelperText": "Leave empty for open access (no restrictions)",
+    "ageLimitPlaceholder": "e.g., 18"
   },
   "roomFilter": {
     "category": "Category",
@@ -304,7 +311,8 @@
   },
   "meetingCard": {
     "titleLabel": "Title or topic:",
-    "categoryLabel": "Category and Language",
+    "categoryLabel": "Category",
+    "categoryNotSet": "Category not specified",
     "timeLabel": "Time",
     "startTimeLabel": "Start:",
     "endTimeLabel": "End:",
@@ -313,6 +321,7 @@
     "minParticipantsLabel": "Minimum:",
     "maxParticipantsLabel": "Maximum:",
     "waitingParticipantsLabel": "Waiting:",
+    "onlineParticipantsLabel": "Online:",
     "languageLabel": "Language:",
     "proficiencyLabel": "Level:",
     "roomTypeLabel": "Room Type",
@@ -378,6 +387,40 @@
     "requestPending": "Request sent",
     "requestAccepted": "Request accepted",
     "requestSent": "Request sent",
-    "requestSentDescription": "You have successfully sent a request to join. Please wait for confirmation from the room organizer."
+    "requestSentDescription": "You have successfully sent a request to join. Please wait for confirmation from the room organizer.",
+    "authRequired": "Authorization Required",
+    "authRequiredDescription": "Only registered users can join video rooms. Please sign in to your account or register to participate in the meeting.",
+    "authButton": "Sign In"
+  },
+  "scheduledMeetings": {
+    "description": "Here you can view all your scheduled meetings",
+    "notAuthenticated": "Please sign in to view your scheduled meetings",
+    "noMeetings": "You have no scheduled meetings",
+    "noPastMeetings": "You have no past meetings",
+    "noMeetingsDescription": "Join existing rooms or create your own to start conversing",
+    "createFirst": "Create first meeting",
+    "participants": "participants",
+    "joinMeeting": "Join meeting",
+    "completed": "Completed",
+    "findMoreMeetings": "Find more meetings",
+    "tabs": {
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "created": "My rooms",
+      "joined": "Joined"
+    },
+    "filters": {
+      "all": "All",
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "created": "My rooms",
+      "joined": "Joined"
+    },
+    "status": {
+      "upcoming": "Upcoming",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
   }
 }

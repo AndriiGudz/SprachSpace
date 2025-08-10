@@ -2,9 +2,13 @@ import type { Action, ThunkAction } from '@reduxjs/toolkit'
 import { combineSlices, configureStore } from '@reduxjs/toolkit'
 import { userSlice } from './redux/userSlice/userSlice'
 import roomReducer from './redux/roomSlice/roomSlice'
+import notificationReducer from './redux/notificationSlice/notificationSlice'
 
 // Объединяем слайсы
-const rootReducer = combineSlices(userSlice, { rooms: roomReducer })
+const rootReducer = combineSlices(userSlice, {
+  rooms: roomReducer,
+  notifications: notificationReducer,
+})
 
 // Тип корневого состояния
 export type RootState = ReturnType<typeof rootReducer>
@@ -31,7 +35,11 @@ export const store = makeStore(persistedState)
 // Подписываемся на изменения состояния и сохраняем актуальное состояние в localStorage
 store.subscribe(() => {
   const state = store.getState() // Получаем состояние один раз
-  localStorage.setItem('reduxState', JSON.stringify(state)) // Используем полученное состояние
+
+  // Сохраняем все состояние (roomOnline больше нет)
+  const stateToSave = state
+
+  localStorage.setItem('reduxState', JSON.stringify(stateToSave))
 })
 
 export type AppStore = typeof store

@@ -1,9 +1,58 @@
 .icon {
-    fill: #757575;
-    transition: fill 0.3s ease;
+  fill: #64748b;
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+/* Hover эффекты обрабатываются в styled components */
+.MenuItemStyled:hover .icon {
+  fill: #01579b;
+}
+
+/* Специальные стили для иконок в админ бейдже */
+.admin-icon {
+  fill: #ff6b35;
+}
+
+/* Анимация для иконки уведомлений */
+@keyframes bellRing {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
   }
-  
-  .MenuItemStyled:hover .icon {
-    fill: #01579b; /* Цвет при наведении */
+  25% {
+    transform: rotate(10deg);
   }
-  
+  75% {
+    transform: rotate(-10deg);
+  }
+}
+
+.notifications-icon:hover {
+  animation: bellRing 0.6s ease-in-out;
+}
+
+/* Эффект для календарной иконки */
+.calendar-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Эффект для иконки друзей */
+.friends-icon:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 2px 4px rgba(1, 87, 155, 0.3));
+}
+
+/* Эффект для иконки отзывов */
+.reviews-icon:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 2px 8px rgba(255, 193, 7, 0.4));
+}
+
+/* Плавная анимация для всех иконок */
+.icon:not(.static) {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+}

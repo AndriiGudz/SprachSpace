@@ -12,7 +12,12 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import { UserSliceState, LanguageData } from '../../store/redux/userSlice/types'
+import { UserSliceState } from '../../store/redux/userSlice/types'
+import {
+  LanguageData,
+  getLanguageName,
+  getSkillLevel,
+} from '../../utils/languageUtils'
 import Loader from '../Loader/Loader'
 import { RootState } from '../../store/store'
 import { API_ROOT_URL } from '../../config/apiConfig'
@@ -29,6 +34,9 @@ function UserDashboard({ userId }: UserDashboardProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [availableLanguages, setAvailableLanguages] = useState<
+    { id: number; name: string }[]
+  >([])
 
   useEffect(() => {
     if (!userId) {
@@ -36,6 +44,16 @@ function UserDashboard({ userId }: UserDashboardProps) {
       setLoading(false)
       return
     }
+
+    // Загружаем доступные языки
+    fetch('http://localhost:8080/api/language')
+      .then((response) => response.json())
+      .then((data) => {
+        setAvailableLanguages(data)
+      })
+      .catch((error) =>
+        console.error('Ошибка при загрузке языков с сервера:', error)
+      )
 
     fetch(`http://localhost:8080/api/users/${userId}`)
       .then((response) => {
@@ -83,7 +101,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
         )
       }
 
-      setUser((prev) => (prev ? { ...prev, status: !prev.status } : null))
+      const updatedUser = user ? { ...user, status: !user.status } : null
+      setUser(updatedUser)
     } catch (err) {
       console.error(err)
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -161,10 +180,10 @@ function UserDashboard({ userId }: UserDashboardProps) {
     { label: t('userDashboard.reviews'), value: '10' },
     {
       label: t('userDashboard.roomCreated'),
-      value: user.createdRooms.length.toString(),
+      value: (user.createdRooms?.length || 0).toString(),
     },
     { label: t('userDashboard.roomAttended'), value: '5' },
-    { label: t('userDashboard.rating'), value: user.rating },
+    { label: t('userDashboard.rating'), value: user.rating || 0 },
   ]
 
   // Информация о языках
@@ -172,13 +191,17 @@ function UserDashboard({ userId }: UserDashboardProps) {
     {
       label: t('userDashboard.nativeLanguages'),
       value: user.nativeLanguages
-        .map((l: LanguageData) => l.language.name)
+        .map((l: LanguageData) => getLanguageName(l, availableLanguages))
         .join(', '),
     },
     {
       label: t('userDashboard.learningLanguages'),
       value: user.learningLanguages
-        .map((l: LanguageData) => l.language.name)
+        .map((l: LanguageData) => {
+          const languageName = getLanguageName(l, availableLanguages)
+          const skillLevel = getSkillLevel(l)
+          return `${languageName} (${skillLevel})`
+        })
         .join(', '),
     },
   ]
@@ -217,7 +240,7 @@ function UserDashboard({ userId }: UserDashboardProps) {
             >
               <Avatar
                 src={srcAvatarUrl || ''}
-                alt={`${user.nickname} avatar`}
+                alt={`${user.nickname || 'User'} avatar`}
                 sx={{
                   width: { xs: 80, sm: 100 },
                   height: { xs: 80, sm: 100 },
@@ -248,27 +271,27 @@ function UserDashboard({ userId }: UserDashboardProps) {
               }}
             >
               {userStats.map((stat, index) => (
-                  <Paper
+                <Paper
                   key={index}
-                    elevation={0}
-                    sx={{
+                  elevation={0}
+                  sx={{
                     minWidth: '150px',
                     padding: {
                       xs: '12px 8px',
                       sm: '16px 12px',
                       md: '16px 20px',
                     },
-                      textAlign: 'center',
-                      border: '1px solid #e0e0e0',
+                    textAlign: 'center',
+                    border: '1px solid #e0e0e0',
                     borderRadius: '8px',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        borderColor: '#01579b',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderColor: '#01579b',
                       boxShadow: '0px 4px 12px 0px rgba(1, 87, 155, 0.15)',
                       transform: 'translateY(-2px)',
-                      },
-                    }}
-                  >
+                    },
+                  }}
+                >
                   <Typography
                     variant="h4"
                     sx={{
@@ -278,8 +301,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
                       color: '#01579b',
                     }}
                   >
-                      {stat.value}
-                    </Typography>
+                    {stat.value}
+                  </Typography>
                   <Typography
                     variant="body2"
                     sx={{
@@ -288,9 +311,9 @@ function UserDashboard({ userId }: UserDashboardProps) {
                       lineHeight: 1.2,
                     }}
                   >
-                      {stat.label}
-                    </Typography>
-                  </Paper>
+                    {stat.label}
+                  </Typography>
+                </Paper>
               ))}
             </Box>
 
@@ -308,8 +331,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
                 {t('userDashboard.personalInformation')}
               </Typography>
 
-                <Box
-                  sx={{
+              <Box
+                sx={{
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
                   gap: { xs: 1.5, sm: 2 },
@@ -319,8 +342,8 @@ function UserDashboard({ userId }: UserDashboardProps) {
                     borderRadius: '8px',
                     border: '1px solid #e9ecef',
                   },
-                  }}
-                >
+                }}
+              >
                 <Box>
                   <Typography
                     variant="body2"
@@ -333,16 +356,16 @@ function UserDashboard({ userId }: UserDashboardProps) {
                   >
                     {t('userDashboard.nickname')}
                   </Typography>
-                    <Typography
-                      variant="body1"
+                  <Typography
+                    variant="body1"
                     sx={{
                       color: '#333',
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
-                    >
-                      {user.nickname}
-                    </Typography>
-                  </Box>
+                  >
+                    {user.nickname || 'Не указано'}
+                  </Typography>
+                </Box>
 
                 <Box>
                   <Typography
@@ -356,16 +379,16 @@ function UserDashboard({ userId }: UserDashboardProps) {
                   >
                     {t('userDashboard.name')}
                   </Typography>
-                    <Typography
-                      variant="body1"
+                  <Typography
+                    variant="body1"
                     sx={{
                       color: '#333',
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
-                    >
-                      {user.name}
-                    </Typography>
-                  </Box>
+                  >
+                    {user.name || 'Не указано'}
+                  </Typography>
+                </Box>
 
                 <Box>
                   <Typography
@@ -379,15 +402,15 @@ function UserDashboard({ userId }: UserDashboardProps) {
                   >
                     {t('userDashboard.surname')}
                   </Typography>
-                    <Typography
-                      variant="body1"
+                  <Typography
+                    variant="body1"
                     sx={{
                       color: '#333',
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
-                    >
-                      {user.surname}
-                    </Typography>
+                  >
+                    {user.surname || 'Не указано'}
+                  </Typography>
                 </Box>
 
                 <Box>
@@ -409,7 +432,7 @@ function UserDashboard({ userId }: UserDashboardProps) {
                       fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}
                   >
-                    {user.birthdayDate}
+                    {user.birthdayDate || 'Не указано'}
                   </Typography>
                 </Box>
 
@@ -433,7 +456,7 @@ function UserDashboard({ userId }: UserDashboardProps) {
                       wordBreak: 'break-all',
                     }}
                   >
-                    {user.email}
+                    {user.email || 'Не указано'}
                   </Typography>
                 </Box>
 
@@ -493,26 +516,26 @@ function UserDashboard({ userId }: UserDashboardProps) {
               >
                 {languageInfo.map((info, index) => (
                   <Box key={index}>
-                      <Typography
+                    <Typography
                       variant="body2"
-                        sx={{
+                      sx={{
                         fontWeight: 'bold',
                         color: '#01579b',
                         mb: 0.5,
                         fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        }}
-                      >
+                      }}
+                    >
                       {info.label}
-                      </Typography>
-                      <Typography
+                    </Typography>
+                    <Typography
                       variant="body1"
                       sx={{
                         color: '#333',
                         fontSize: { xs: '0.875rem', sm: '1rem' },
                       }}
-                      >
+                    >
                       {info.value || 'Не указано'}
-                      </Typography>
+                    </Typography>
                   </Box>
                 ))}
               </Box>
@@ -533,7 +556,7 @@ function UserDashboard({ userId }: UserDashboardProps) {
                 onClick={handleSetAdmin}
                 disabled={
                   isProcessing ||
-                  user?.roles.some(
+                  user?.roles?.some(
                     (role) =>
                       typeof role === 'object' && role.title === 'ROLE_ADMIN'
                   )

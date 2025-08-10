@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Badge } from '@mui/material'
 import {
   DividerStyled,
   LinkStyle,
@@ -8,6 +9,10 @@ import {
   UserInfo,
   UserMenuContainer,
   UserNav,
+  NotificationBadge,
+  AdminBadge,
+  LogoutButton,
+  SignInButton,
 } from './styles'
 import './icon.css'
 import { ReactComponent as ProfileIcon } from '../../assets/icon/PersonFilled.svg'
@@ -25,9 +30,53 @@ import { clearAllUserParticipations } from '../../store/redux/roomSlice/roomSlic
 import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../store/store'
 import { toast } from 'react-toastify'
+import { selectUnreadCount } from '../../store/redux/notificationSlice/selectors'
 
 interface UserMenuProps {
   onMenuItemClick: () => void
+}
+
+interface MenuItemProps {
+  to?: string
+  icon: React.ReactNode
+  label: string
+  onClick?: () => void
+  badge?: number
+  isAdmin?: boolean
+}
+
+function MenuItem({ to, icon, label, onClick, badge, isAdmin }: MenuItemProps) {
+  const handleClick = () => {
+    onClick?.()
+  }
+
+  const content = (
+    <MenuItemStyled onClick={handleClick}>
+      <div
+        style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+      >
+        {badge !== undefined && badge > 0 ? (
+          <NotificationBadge>
+            <Badge badgeContent={badge} color="error" max={99}>
+              {icon}
+            </Badge>
+          </NotificationBadge>
+        ) : (
+          icon
+        )}
+        {isAdmin && <AdminBadge />}
+      </div>
+      {label}
+    </MenuItemStyled>
+  )
+
+  return to ? (
+    <LinkStyle to={to} onClick={onClick}>
+      {content}
+    </LinkStyle>
+  ) : (
+    content
+  )
 }
 
 function UserMenu({ onMenuItemClick }: UserMenuProps) {
@@ -38,6 +87,7 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
     (state: RootState) => state.user.isAuthenticated
   )
   const user = useSelector((state: RootState) => state.user)
+  const unreadCount = useSelector(selectUnreadCount)
 
   // Проверяем, есть ли у пользователя роль администратора
   const isAdmin = user.roles?.some((role) => role.title === 'ROLE_ADMIN')
@@ -82,57 +132,84 @@ function UserMenu({ onMenuItemClick }: UserMenuProps) {
           <DividerStyled />
         </>
       )}
+
       <MobOnly>
-        <MenuItemStyled onClick={onMenuItemClick}>
-          {t('userMenu.meetings')}
-        </MenuItemStyled>
-        <MenuItemStyled onClick={onMenuItemClick}>
-          {t('userMenu.about')}
-        </MenuItemStyled>
+        <MenuItem
+          icon={<CalendarIcon className="icon" />}
+          label={t('userMenu.meetings')}
+          onClick={onMenuItemClick}
+        />
+        <MenuItem
+          icon={<ProfileIcon className="icon" />}
+          label={t('userMenu.about')}
+          onClick={onMenuItemClick}
+        />
         {isAuthenticated && <DividerStyled />}
       </MobOnly>
+
       {isAuthenticated && (
         <UserNav>
-          <LinkStyle to="/profile" onClick={onMenuItemClick}>
-            <MenuItemStyled>
-              <ProfileIcon className="icon" /> {t('userMenu.profile')}
-            </MenuItemStyled>
-          </LinkStyle>
-          {/* Добавляем ссылку на страницу администрирования, видимую только для админов */}
+          <MenuItem
+            to="/profile"
+            icon={<ProfileIcon className="icon" />}
+            label={t('userMenu.profile')}
+            onClick={onMenuItemClick}
+          />
+
           {isAdmin && (
-            <LinkStyle to="/admin/users" onClick={onMenuItemClick}>
-              <MenuItemStyled>
-                <AdminIcon className="icon" /> {t('userMenu.userList')}
-              </MenuItemStyled>
-            </LinkStyle>
+            <MenuItem
+              to="/admin/users"
+              icon={<AdminIcon className="icon admin-icon" />}
+              label={t('userMenu.userList')}
+              onClick={onMenuItemClick}
+              isAdmin={true}
+            />
           )}
-          <MenuItemStyled>
-            <NotificationsIcon className="icon" /> {t('userMenu.notifications')}
-          </MenuItemStyled>
-          <MenuItemStyled>
-            <CalendarIcon className="icon" /> {t('userMenu.scheduledMeetings')}
-          </MenuItemStyled>
-          <MenuItemStyled>
-            <FriendsIcon className="icon" /> {t('userMenu.friends')}
-          </MenuItemStyled>
-          <MenuItemStyled>
-            <ReviewsIcon className="icon" /> {t('userMenu.reviews')}
-          </MenuItemStyled>
+
+          <MenuItem
+            to="/notifications"
+            icon={<NotificationsIcon className="icon notifications-icon" />}
+            label={t('userMenu.notifications')}
+            onClick={onMenuItemClick}
+            badge={unreadCount}
+          />
+
+          <MenuItem
+            to="/scheduled-meetings"
+            icon={<CalendarIcon className="icon calendar-icon" />}
+            label={t('userMenu.scheduledMeetings')}
+            onClick={onMenuItemClick}
+          />
+
+          <MenuItem
+            icon={<FriendsIcon className="icon friends-icon" />}
+            label={t('userMenu.friends')}
+            onClick={onMenuItemClick}
+          />
+
+          <MenuItem
+            icon={<ReviewsIcon className="icon reviews-icon" />}
+            label={t('userMenu.reviews')}
+            onClick={onMenuItemClick}
+          />
         </UserNav>
       )}
+
       <MobLangSel>
         <DividerStyled />
         <LanguageSelector />
       </MobLangSel>
+
       <DividerStyled />
+
       {isAuthenticated ? (
-        <MenuItemStyled onClick={handleLogout}>
+        <LogoutButton onClick={handleLogout}>
           <SignoutIcon className="icon" /> {t('userMenu.signOut')}
-        </MenuItemStyled>
+        </LogoutButton>
       ) : (
-        <MenuItemStyled onClick={handleSignInClick}>
+        <SignInButton onClick={handleSignInClick}>
           <SignIn className="icon" /> {t('userMenu.signIn')}
-        </MenuItemStyled>
+        </SignInButton>
       )}
     </UserMenuContainer>
   )

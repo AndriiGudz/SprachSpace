@@ -15,7 +15,7 @@ import { formatDistanceStrict } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 
 import { Meeting } from '../../components/MeetingCard/types'
-import MeetingCard from '../../components/MeetingCard/MeetingCard'
+import MeetingCardWithCreator from '../../components/MeetingCard/MeetingCardWithCreator'
 import RoomFilter, { RoomFilters } from '../../components/RoomFilter/RoomFilter'
 import { boxTitleStyle, containerStyle, meetingCardStyle } from './styles'
 import { fetchRooms } from '../../store/redux/roomSlice/roomSlice'
@@ -25,6 +25,11 @@ import Loader from '../../components/Loader/Loader'
 
 // Функция для маппинга ApiRoom в Meeting
 export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
+  if (!apiRoom) {
+    console.error('mapApiRoomToMeeting - apiRoom is undefined')
+    throw new Error('ApiRoom is undefined')
+  }
+
   const {
     id,
     topic,
@@ -42,6 +47,8 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     privateRoom,
     creator,
     participants,
+    roomOnlineUsers,
+    countOnlineUser,
   } = apiRoom
 
   let durationString: string | undefined = undefined
@@ -64,46 +71,39 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
     }
   }
 
-  const slug = topic
+  const slug = (topic || 'unknown')
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '')
 
   const meetingData: Meeting = {
-    id,
+    id: id || 0,
     slug,
-    name: topic,
-    category: category.name,
-    startTime,
-    endTime,
+    name: topic || 'Unknown',
+    // Категория может приходить как объект { id, name } или как строка categoryName в других эндпоинтах
+    // Нормализуем к видимому названию категории
+    category:
+      (category as any)?.name || (apiRoom as any)?.categoryName || 'Unknown',
+    startTime: startTime || new Date().toISOString(),
+    endTime: endTime || new Date().toISOString(),
     duration: durationString,
-    minParticipants: minQuantity,
-    maxParticipants: maxQuantity,
-    waitingParticipants: participants
-      ? participants.filter((p) => p.status === 'PENDING').length
-      : quantityParticipant,
-    language,
+    minParticipants: minQuantity || 0,
+    maxParticipants: maxQuantity || 0,
+    waitingParticipants: quantityParticipant || 0,
+    language: language || 'Unknown',
     proficiency: languageLvl,
     ageRestriction: typeof age === 'string' ? parseInt(age, 10) : age,
-    shareLink: roomUrl,
-    roomUrl,
-    privateRoom,
-    organizer: creator
-      ? {
-          id: creator.id,
-          name: creator.name,
-          nickname: creator.nickname,
-          firstName: creator.name,
-          lastName: creator.surname,
-          avatarFileName: creator.avatar || undefined,
-          rating: creator.rating,
-        }
-      : undefined,
+    shareLink: roomUrl || '',
+    roomUrl: roomUrl || '',
+    privateRoom: privateRoom || false,
+    creator: creator, // Сохраняем creator для последующей обработки
     description: undefined,
     imageUrl: undefined,
     languageFlagIconUrl: undefined,
     location: undefined,
     participants: participants || undefined,
+    roomOnlineUsers: roomOnlineUsers || undefined,
+    countOnlineUser: countOnlineUser || 0,
   }
   return meetingData
 }
@@ -284,7 +284,7 @@ function Meetings() {
                       },
                     }}
                   >
-                    <MeetingCard meeting={meeting} isPast={isPast} />
+                    <MeetingCardWithCreator meeting={meeting} isPast={isPast} />
                   </Box>
                 )
               })}
@@ -317,10 +317,13 @@ function Meetings() {
                   {t('meetings.pagination.itemsPerPage')}
                 </InputLabel>
                 <Select
+                  id="items-per-page-select"
                   labelId="items-per-page-label"
                   value={itemsPerPage}
                   onChange={handleItemsPerPageChange}
                   label={t('meetings.pagination.itemsPerPage')}
+                  aria-labelledby="items-per-page-label"
+                  data-value={itemsPerPage}
                   sx={{ fontSize: '0.875rem' }}
                 >
                   <MenuItem value={8}>8</MenuItem>

@@ -293,11 +293,17 @@ function UserList() {
         </Box>
         <Box sx={{ display: 'flex', gap: 2, pt: 1 }}>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
-            <InputLabel>{t('adminUsersList.status')}</InputLabel>
+            <InputLabel id="status-label">
+              {t('adminUsersList.status')}
+            </InputLabel>
             <Select
+              id="status-select"
+              labelId="status-label"
               variant="outlined"
               value={status}
               label={t('adminUsersList.status')}
+              aria-labelledby="status-label"
+              data-value={status}
               onChange={(e) => setStatus(e.target.value as string)}
               sx={{
                 height: '32px',
@@ -319,11 +325,17 @@ function UserList() {
             </Select>
           </FormControl>
           <FormControl variant="outlined" sx={{ width: '150px' }}>
-            <InputLabel>{t('adminUsersList.rating')}</InputLabel>
+            <InputLabel id="rating-label">
+              {t('adminUsersList.rating')}
+            </InputLabel>
             <Select
+              id="rating-select"
+              labelId="rating-label"
               variant="outlined"
               value={rating}
               label={t('adminUsersList.rating')}
+              aria-labelledby="rating-label"
+              data-value={rating}
               onChange={(e) => setRating(e.target.value as string)}
               sx={{
                 height: '32px',
@@ -370,10 +382,10 @@ function UserList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedUsers.map((user: UserSliceState) => (
+            {displayedUsers.map((user: UserSliceState, index: number) => (
               <TableRow
-                key={user.id}
-                onClick={() => handleUserClick(user.id!)}
+                key={user.id || `user-${index}`}
+                onClick={() => user.id && handleUserClick(user.id)}
                 sx={{
                   backgroundColor: '#F5F5F5',
                   cursor: 'pointer',
@@ -381,29 +393,29 @@ function UserList() {
                 }}
               >
                 <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                  {user.id}
+                  {user.id || 'N/A'}
                 </TableCell>
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    {user.nickname}
+                    {user.nickname || 'Не указано'}
                   </TableCell>
                 )}
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    {user.name}
+                    {user.name || 'Не указано'}
                   </TableCell>
                 )}
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    {user.surname}
+                    {user.surname || 'Не указано'}
                   </TableCell>
                 )}
                 <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                  {user.email}
+                  {user.email || 'Не указано'}
                 </TableCell>
                 {!isMobile && (
                   <TableCell sx={{ fontSize: '14px', fontWeight: '300' }}>
-                    ⭐ {user.rating}
+                    ⭐ {user.rating || 0}
                   </TableCell>
                 )}
                 <TableCell>

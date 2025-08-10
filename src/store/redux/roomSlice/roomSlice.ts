@@ -99,6 +99,39 @@ export const sendJoinRequest = createAsyncThunk<
   }
 })
 
+// Async thunk для получения встреч пользователя
+export const fetchUserMeetings = createAsyncThunk<
+  { createdRooms: ApiRoom[]; joinedRooms: ApiRoom[] },
+  number, // userId
+  { rejectValue: string }
+>('rooms/fetchUserMeetings', async (userId, { rejectWithValue }) => {
+  try {
+    // Получаем созданные пользователем комнаты
+    const createdResponse = await fetch(
+      `http://localhost:8080/api/room/user/${userId}/created`
+    )
+    // Получаем комнаты к которым присоединился пользователь
+    const joinedResponse = await fetch(
+      `http://localhost:8080/api/room/user/${userId}/joined`
+    )
+
+    if (!createdResponse.ok && !joinedResponse.ok) {
+      return rejectWithValue('Failed to fetch user meetings')
+    }
+
+    const createdRooms: ApiRoom[] = createdResponse.ok
+      ? await createdResponse.json()
+      : []
+    const joinedRooms: ApiRoom[] = joinedResponse.ok
+      ? await joinedResponse.json()
+      : []
+
+    return { createdRooms, joinedRooms }
+  } catch (error: any) {
+    return rejectWithValue(error.message || 'Unknown error occurred')
+  }
+})
+
 const roomSlice = createSlice({
   name: 'rooms',
   initialState,

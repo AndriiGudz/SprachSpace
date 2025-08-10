@@ -108,12 +108,31 @@ const theme = createTheme({
     MuiFormLabel: {
       styleOverrides: {
         root: {
-          display: 'flex',
-          alignItems: 'center',
           color: '#212121',
           '&.Mui-focused': {
             color: '#01579B',
           },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          '.withSelect &': {
+            top: '-8px',
+            transition: 'all 0.2s ease',
+            '&.MuiInputLabel-shrink': {
+              top: '0px',
+              transform: 'translate(14px, -9px) scale(0.75)',
+            },
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          // Убираем кастомные стили padding
         },
       },
     },

@@ -19,6 +19,21 @@ export const filterItemStyle: SxProps<Theme> = {
       borderColor: '#E0E0E0', // Цвет обводки в обычном состоянии
     },
   },
+
+  // Выровнять контент select по вертикали как в RoomFilter
+  '& .MuiInputBase-root': {
+    height: '40px',
+    fontSize: '0.875rem',
+  },
+  '& .MuiSelect-select': {
+    paddingTop: '8.5px',
+    paddingBottom: '8.5px',
+  },
+
+  // Поднять лейбл в неактивном (не shrink) состоянии, чтобы не прилипал к низу
+  '& .MuiInputLabel-root:not(.MuiInputLabel-shrink)': {
+    top: '-8px',
+  },
 }
 
 export const createButtonStyle: SxProps<Theme> = {

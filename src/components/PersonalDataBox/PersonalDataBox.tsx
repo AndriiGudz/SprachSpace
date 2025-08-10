@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function PersonalDataBox({
+  data,
   isEditing,
   onEdit,
   onSave,
@@ -80,10 +81,7 @@ function PersonalDataBox({
   ])
 
   const isEmpty =
-    !userData.nickname ||
-    !userData.name ||
-    !userData.surname ||
-    !userData.birthdayDate
+    !data.nickname || !data.name || !data.surname || !data.birthdayDate
 
   const handleAvatarEditClick = () => {
     fileInputRef.current?.click()
@@ -93,33 +91,53 @@ function PersonalDataBox({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0]
-    if (file && userData.id && userData.accessToken) {
-      try {
-        const response = await uploadAvatar(
-          userData.id,
-          file,
-          userData.accessToken
+
+    if (!file) {
+      return
+    }
+
+    if (!userData.id) {
+      toast.error('User ID not available')
+      return
+    }
+
+    if (!userData.accessToken) {
+      toast.error('Access token not available')
+      return
+    }
+
+    try {
+      const response = await uploadAvatar(
+        userData.id,
+        file,
+        userData.accessToken
+      )
+
+      // Обновляем foto в Redux store
+      dispatch(updateUser({ foto: response.foto }))
+
+      // После обновления foto загружаем новый аватар
+      if (response.foto && userData.accessToken) {
+        dispatch(
+          loadUserAvatar({
+            fotoFileName: response.foto,
+            accessToken: userData.accessToken,
+          })
         )
-        dispatch(updateUser({ foto: response.foto }))
-        // После обновления foto загружаем новый аватар
-        if (response.foto && userData.accessToken) {
-          dispatch(
-            loadUserAvatar({
-              fotoFileName: response.foto,
-              accessToken: userData.accessToken,
-            })
-          )
-        }
-        toast.success(t('personalData.avatarUploadedSuccess'))
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(
-            `${t('personalData.avatarUploadError')}: ${error.message}`
-          )
-        } else {
-          toast.error(t('personalData.avatarUploadError'))
-        }
       }
+
+      toast.success(t('personalData.avatarUploadedSuccess'))
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`${t('personalData.avatarUploadError')}: ${error.message}`)
+      } else {
+        toast.error(t('personalData.avatarUploadError'))
+      }
+    }
+
+    // Очищаем input чтобы можно было загрузить тот же файл снова
+    if (event.target) {
+      event.target.value = ''
     }
   }
 
@@ -193,7 +211,7 @@ function PersonalDataBox({
 
         <TextField
           label={t('personalData.nickname')}
-          value={userData.nickname || ''}
+          value={data.nickname || ''}
           onChange={(e) => onChange({ nickname: e.target.value })}
           disabled={!isEditing}
           fullWidth
@@ -201,7 +219,7 @@ function PersonalDataBox({
         />
         <TextField
           label={t('personalData.name')}
-          value={userData.name || ''}
+          value={data.name || ''}
           onChange={(e) => onChange({ name: e.target.value })}
           disabled={!isEditing}
           fullWidth
@@ -209,7 +227,7 @@ function PersonalDataBox({
         />
         <TextField
           label={t('personalData.surname')}
-          value={userData.surname || ''}
+          value={data.surname || ''}
           onChange={(e) => onChange({ surname: e.target.value })}
           disabled={!isEditing}
           fullWidth
@@ -217,7 +235,7 @@ function PersonalDataBox({
         />
         <DatePicker
           label={t('personalData.birthdayDate')}
-          value={userData.birthdayDate ? dayjs(userData.birthdayDate) : null}
+          value={data.birthdayDate ? dayjs(data.birthdayDate) : null}
           onChange={(date) =>
             onChange({ birthdayDate: date?.toISOString() || null })
           }

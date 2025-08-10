@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
-import type { UserSliceState } from './types'
+import type { UserSliceState, LanguageData } from './types'
 import { API_ROOT_URL } from '../../../config/apiConfig'
 import { validateAndRefreshTokens } from '../../../api/authApi'
 
@@ -9,14 +9,13 @@ async function fetchAvatarBlobUrl(
   accessToken: string
 ): Promise<string | null> {
   try {
-    const response = await fetch(
-      `${API_ROOT_URL}/users/file/avatar/${fotoFileName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
+    const avatarUrl = `${API_ROOT_URL}/users/file/avatar/${fotoFileName}`
+
+    const response = await fetch(avatarUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
 
     if (!response.ok) {
       return null
@@ -28,7 +27,8 @@ async function fetchAvatarBlobUrl(
       return null
     }
 
-    return URL.createObjectURL(imageBlob)
+    const objectURL = URL.createObjectURL(imageBlob)
+    return objectURL
   } catch (error) {
     return null
   }
@@ -153,6 +153,53 @@ export const userSlice = createSlice({
         message,
       } = action.payload
 
+      // Нормализуем языковые данные для обеспечения корректной структуры
+      const normalizeLanguages = (languages: any[]): LanguageData[] => {
+        if (!Array.isArray(languages)) return []
+
+        return languages.map((lang: any) => {
+          // Определяем правильный skillLevel из различных возможных полей
+          const skillLevel =
+            lang.skillLevel || lang.skillLvl || lang.level || 'default'
+
+          // Новая структура с languageId (текущий формат с бэкенда)
+          if (lang?.languageId !== undefined) {
+            return {
+              id: lang.id || 0,
+              skillLevel: skillLevel,
+              language: {
+                id: lang.languageId,
+                name: '', // будет получено через getLanguageName
+              },
+              originalLanguageId: lang.languageId,
+            }
+          }
+
+          // Если данные уже в правильной структуре LanguageData
+          if (lang?.language?.name) {
+            return {
+              id: lang.id || 0,
+              skillLevel: skillLevel,
+              language: {
+                id: lang.language.id || 0,
+                name: lang.language.name,
+              },
+            }
+          }
+
+          // Fallback - создаем минимальную структуру
+          return {
+            id: lang.id || 0,
+            skillLevel: skillLevel,
+            language: {
+              id: lang.languageId || lang.id || 0,
+              name: lang.name || '',
+            },
+            originalLanguageId: lang.languageId,
+          }
+        })
+      }
+
       Object.assign(state, {
         id,
         nickname,
@@ -164,8 +211,8 @@ export const userSlice = createSlice({
         rating,
         internalCurrency,
         status,
-        nativeLanguages,
-        learningLanguages,
+        nativeLanguages: normalizeLanguages(nativeLanguages || []),
+        learningLanguages: normalizeLanguages(learningLanguages || []),
         roles,
         createdRooms,
         message,

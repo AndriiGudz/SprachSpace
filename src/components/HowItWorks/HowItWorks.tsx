@@ -26,8 +26,8 @@ export default function HowItWorks() {
   ])
   const sectionRef = useRef<HTMLDivElement>(null)
 
-  const handleSignInClick = () => {
-    navigate('/signin')
+  const handleStartClick = () => {
+    navigate('/meetings')
   }
 
   // Анимация появления карточек при скролле
@@ -95,14 +95,14 @@ export default function HowItWorks() {
           {features.map((feature, index) => (
             <Grid item xs={12} sm={12} md={4} key={index}>
               <Fade in={visibleCards[index]} timeout={1000}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  boxShadow: 'none',
-                  background: 'transparent',
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    boxShadow: 'none',
+                    background: 'transparent',
                     transform: visibleCards[index]
                       ? 'translateY(0)'
                       : 'translateY(30px)',
@@ -118,33 +118,33 @@ export default function HowItWorks() {
                 >
                   <LazyImage
                     src={feature.image}
-                  alt={feature.title}
+                    alt={feature.title}
                     width="282px"
                     height="auto"
                     threshold={0.2}
                     rootMargin="100px"
-                  sx={{
-                    objectFit: 'cover',
-                      transition: 'transform 0.3s ease-out',
-                  }}
-                />
-
-                <CardContent sx={{ width: '282px' }}>
-                  <Typography
-                    gutterBottom
-                    variant="h4"
-                    align="center"
                     sx={{
-                      textAlign: 'start',
+                      objectFit: 'cover',
+                      transition: 'transform 0.3s ease-out',
                     }}
-                  >
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="subtitle1">
-                    {feature.description}
-                  </Typography>
-                </CardContent>
-              </Card>
+                  />
+
+                  <CardContent sx={{ width: '282px' }}>
+                    <Typography
+                      gutterBottom
+                      variant="h4"
+                      align="center"
+                      sx={{
+                        textAlign: 'start',
+                      }}
+                    >
+                      {feature.title}
+                    </Typography>
+                    <Typography variant="subtitle1">
+                      {feature.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
               </Fade>
             </Grid>
           ))}
@@ -158,7 +158,7 @@ export default function HowItWorks() {
         >
           <ButtonMUI
             text={t('howItWorks.buttonBegin')}
-            onClick={handleSignInClick}
+            onClick={handleStartClick}
           />
         </Box>
       </Container>

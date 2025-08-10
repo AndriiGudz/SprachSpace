@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Formik, Field, Form } from 'formik'
 import CloseIcon from '@mui/icons-material/Close'
 import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -30,13 +30,13 @@ import { useDispatch } from 'react-redux'
 import { setUser, setTokens } from '../../store/redux/userSlice/userSlice'
 import { SignInSchema } from '../../validationSchemas/SignInSchema'
 import { SignUpSchema } from '../../validationSchemas/SignUpSchema'
-import { RoleData } from '../../store/redux/userSlice/types'
 
 function SignInUpMob() {
   const { t } = useTranslation()
   const [isUpPanelActive, setIsRightPanelActive] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
 
   const handleSignInClick = () => {
@@ -103,7 +103,9 @@ function SignInUpMob() {
         )
 
         toast.success(t('signinUp.loginSuccess'))
-        navigate('/')
+        // Перенаправляем на страницу, с которой пришел пользователь, или на главную
+        const returnTo = searchParams.get('returnTo')
+        navigate(returnTo ? decodeURIComponent(returnTo) : '/')
       } else {
         const errorData = await response.json()
         console.error(t('signinUp.loginFailed:'), errorData)
@@ -129,17 +131,83 @@ function SignInUpMob() {
       })
 
       if (response.ok) {
-        const data = await response.json()
-        dispatch(setUser(data)) // Сохраняем пользователя в глобальном хранилище после регистрации
+        const registrationData = await response.json()
+
+        // Показываем успешную регистрацию
         toast.success(t('signinUp.registrationSuccess'))
-        navigate('/')
+
+        // Автоматически авторизуем пользователя после регистрации
+        try {
+          const loginResponse = await fetch(
+            'http://localhost:8080/api/auth/login',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: values.email,
+                password: values.password,
+              }),
+            }
+          )
+
+          if (loginResponse.ok) {
+            const loginData = await loginResponse.json()
+
+            // Сначала устанавливаем токены
+            dispatch(
+              setTokens({
+                accessToken: loginData.accessToken,
+                refreshToken: loginData.refreshToken,
+              })
+            )
+
+            // Затем устанавливаем данные пользователя
+            dispatch(
+              setUser({
+                id: loginData.id,
+                nickname: loginData.nickname,
+                name: loginData.name,
+                surname: loginData.surname,
+                email: loginData.email,
+                birthdayDate: loginData.birthdayDate,
+                avatar: loginData.avatar,
+                foto: loginData.avatar,
+                rating: loginData.rating,
+                internalCurrency: loginData.internalCurrency,
+                status: loginData.status,
+                nativeLanguages: loginData.nativeLanguages || [],
+                learningLanguages: loginData.learningLanguages || [],
+                roles: loginData.roles || [],
+                createdRooms: loginData.createdRooms || [],
+                message: loginData.message,
+              })
+            )
+
+            toast.success(t('signinUp.autoLoginSuccess'))
+            // Перенаправляем на страницу, с которой пришел пользователь, или на главную
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo ? decodeURIComponent(returnTo) : '/')
+          } else {
+            // Если автоматическая авторизация не удалась, сохраняем данные без токенов
+            dispatch(setUser(registrationData))
+            toast.info(t('signinUp.registrationSuccessLoginManually'))
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo ? decodeURIComponent(returnTo) : '/')
+          }
+        } catch (autoLoginError) {
+          // Если ошибка автоматической авторизации, сохраняем данные без токенов
+          dispatch(setUser(registrationData))
+          toast.info(t('signinUp.registrationSuccessLoginManually'))
+          const returnTo = searchParams.get('returnTo')
+          navigate(returnTo ? decodeURIComponent(returnTo) : '/')
+        }
       } else {
         const errorData = await response.json()
-        console.error(t('signinUp.registrationFailed:'), errorData)
         toast.error(errorData.message || t('signinUp.registrationFailed'))
       }
     } catch (error) {
-      console.error('An error occurred:', error)
       toast.error(t('signinUp.unexpectedError'))
     }
   }

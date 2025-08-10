@@ -1,4 +1,5 @@
 {
+  "locale": "uk-UA",
   "app": {
     "title": "SprachSpace - Мовна кімната для спілкування та навчання",
     "description": "SprachSpace - платформа для вивчення мов через групове спілкування"
@@ -27,6 +28,8 @@
     "passwordPlaceholder": "Пароль",
     "acceptTerms": "Я приймаю Умови користування",
     "registrationSuccess": "Ви успішно зареєструвалися!",
+    "autoLoginSuccess": "Ви автоматично авторизовані!",
+    "registrationSuccessLoginManually": "Реєстрація пройшла успішно! Увійдіть у систему для повного доступу.",
     "loginSuccess": "Ви успішно увійшли!",
     "loginFailed": "Помилка входу",
     "registrationFailed": "Помилка реєстрації",
@@ -73,23 +76,25 @@
     "avatarUploadError": "Помилка завантаження аватара"
   },
   "languageSection": {
-    "title": "Володіння мовами",
+    "title": "Знання мов",
     "addLanguage": "Додати мову",
-    "speakFluently": "Я вільно розмовляю:",
+    "speakFluently": "Я вільно говорю:",
     "learning": "Я вивчаю:",
     "language": "Мова",
     "level": "Рівень",
     "add": "Додати",
+    "selectLanguagePlaceholder": "Виберіть мову",
+    "selectLevelPlaceholder": "Виберіть рівень",
     "nativeLanguageAdded": "Рідна мова успішно додана",
     "nativeLanguageAddError": "Помилка додавання рідної мови",
-    "learningLanguageAdded": "Мова для вивчення успішно додана",
-    "learningLanguageAddError": "Помилка додавання мови для вивчення",
+    "learningLanguageAdded": "Мова, що вивчається, успішно додана",
+    "learningLanguageAddError": "Помилка додавання мови, що вивчається",
     "nativeLanguageRemoved": "Рідна мова успішно видалена",
     "nativeLanguageRemoveError": "Не вдалося видалити рідну мову",
-    "learningLanguageRemoved": "Мова для вивчення успішно видалена",
-    "learningLanguageRemoveError": "Не вдалося видалити мову для вивчення",
+    "learningLanguageRemoved": "Мова, що вивчається, успішно видалена",
+    "learningLanguageRemoveError": "Не вдалося видалити мову, що вивчається",
     "noLanguageSelected": "Мова ще не вибрана",
-    "learningLanguageDeleteError": "Помилка видалення мови для вивчення",
+    "learningLanguageDeleteError": "Помилка видалення мови, що вивчається",
     "nativeLanguageDeleteError": "Помилка видалення рідної мови"
   },
   "securitySection": {
@@ -201,7 +206,9 @@
       "beginner": "Початківець",
       "intermediate": "Середній",
       "advanced": "Просунутий"
-    }
+    },
+    "ageLimitHelperText": "Залиште порожнім для відкритого доступу (без обмежень)",
+    "ageLimitPlaceholder": "Наприклад: 18"
   },
   "roomFilter": {
     "category": "Категорія",
@@ -299,7 +306,8 @@
   },
   "meetingCard": {
     "titleLabel": "Назва або тема:",
-    "categoryLabel": "Категорія та мова",
+    "categoryLabel": "Категорія",
+    "categoryNotSet": "Категорія не вказана",
     "timeLabel": "Час",
     "startTimeLabel": "Початок:",
     "endTimeLabel": "Кінець:",
@@ -308,6 +316,7 @@
     "minParticipantsLabel": "Мінімум:",
     "maxParticipantsLabel": "Максимум:",
     "waitingParticipantsLabel": "Очікують:",
+    "onlineParticipantsLabel": "Онлайн:",
     "languageLabel": "Мова:",
     "proficiencyLabel": "Рівень:",
     "roomTypeLabel": "Тип кімнати",
@@ -373,6 +382,40 @@
     "requestPending": "Заявку відправлено",
     "requestAccepted": "Заявку прийнято",
     "requestSent": "Заявку відправлено",
-    "requestSentDescription": "Ви успішно відправили запит на приєднання. Очікуйте підтвердження від організатора кімнати."
+    "requestSentDescription": "Ви успішно відправили запит на приєднання. Очікуйте підтвердження від організатора кімнати.",
+    "authRequired": "Потрібна авторизація",
+    "authRequiredDescription": "Тільки зареєстровані користувачі можуть приєднуватися до відеокімнат. Будь ласка, увійдіть до свого акаунту або зареєструйтеся для участі в зустрічі.",
+    "authButton": "Авторизуватися"
+  },
+  "scheduledMeetings": {
+    "description": "Тут ви можете переглянути всі ваші заплановані зустрічі",
+    "notAuthenticated": "Увійдіть до свого акаунту, щоб переглянути заплановані зустрічі",
+    "noMeetings": "У вас немає запланованих зустрічей",
+    "noPastMeetings": "У вас немає завершених зустрічей",
+    "noMeetingsDescription": "Приєднайтеся до існуючих кімнат або створіть свою власну, щоб почати спілкування",
+    "createFirst": "Створити першу зустріч",
+    "participants": "учасників",
+    "joinMeeting": "Приєднатися до зустрічі",
+    "completed": "Завершено",
+    "findMoreMeetings": "Знайти більше зустрічей",
+    "tabs": {
+      "upcoming": "Майбутні",
+      "past": "Минулі",
+      "created": "Мої кімнати",
+      "joined": "Приєднався"
+    },
+    "filters": {
+      "all": "Всі",
+      "upcoming": "Майбутні",
+      "past": "Минулі",
+      "created": "Мої кімнати",
+      "joined": "Приєднався"
+    },
+    "status": {
+      "upcoming": "Заплановано",
+      "inProgress": "В процесі",
+      "completed": "Завершено",
+      "cancelled": "Скасовано"
+    }
   }
 }

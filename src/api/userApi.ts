@@ -13,6 +13,7 @@ export async function uploadAvatar(
   token: string | null // Добавляем токен для возможной авторизации
 ): Promise<UploadAvatarResponse> {
   const formData = new FormData()
+  // Передаем файл как multipart-поле
   formData.append('file', file)
 
   const headers: HeadersInit = {}
@@ -20,14 +21,16 @@ export async function uploadAvatar(
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/uploadAvatar?userId=${userId}`,
-    {
-      method: 'POST',
-      body: formData,
-      headers, // Добавляем заголовки
-    }
-  )
+  // userId передаем в query, как в рабочем примере бэка
+  const uploadUrl = `${API_BASE_URL}/uploadAvatar?userId=${encodeURIComponent(
+    String(userId)
+  )}`
+
+  const response = await fetch(uploadUrl, {
+    method: 'POST',
+    body: formData,
+    headers, // Добавляем заголовки
+  })
 
   if (!response.ok) {
     let errorMessage = 'Failed to upload avatar'
@@ -42,6 +45,7 @@ export async function uploadAvatar(
 
   // Сервер возвращает строку: "Uploaded successfully. URL: /api/user/avatar/FILENAME.png"
   const successMessage = await response.text()
+
   const urlPrefix = 'URL: '
   const urlStartIndex = successMessage.indexOf(urlPrefix)
 
@@ -52,6 +56,7 @@ export async function uploadAvatar(
   const relativePathWithLeadingSlash = successMessage.substring(
     urlStartIndex + urlPrefix.length
   )
+
   // relativePath будет, например, "/api/user/avatar/796d67b6-f380-4fd7-a09e-bbec03a595c8.png"
 
   // Извлекаем только имя файла из пути
@@ -62,6 +67,7 @@ export async function uploadAvatar(
       'Invalid server response format: Could not extract filename.'
     )
   }
+
   return { foto: fileName }
 }
 
@@ -99,5 +105,51 @@ export async function getAvatarUrl(
   } catch (error) {
     // Можно добавить обработку специфических сетевых ошибок
     return undefined
+  }
+}
+
+interface UserData {
+  id: number
+  nickname: string | null
+  name: string | null
+  email: string
+  surname: string | null
+  avatar: string | null
+  rating: number
+  password: string
+  birthdayDate: string | null
+  internalCurrency: string | null
+  status: boolean
+  nativeLanguages: any[]
+  learningLanguages: any[]
+  roles: any[]
+  createdRooms: any[]
+  enabled: boolean
+  username: string
+  authorities: any[]
+  credentialsNonExpired: boolean
+  accountNonExpired: boolean
+  accountNonLocked: boolean
+}
+
+// Функция для получения данных пользователя по ID
+export async function getUserById(userId: number): Promise<UserData | null> {
+  try {
+    const url = `${API_BASE_URL}/${userId}`
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch user data for ID ${userId}:`,
+        response.statusText
+      )
+      return null
+    }
+
+    const userData: UserData = await response.json()
+    return userData
+  } catch (error) {
+    console.error(`Error fetching user data for ID ${userId}:`, error)
+    return null
   }
 }
