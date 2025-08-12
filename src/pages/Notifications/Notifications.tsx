@@ -30,7 +30,6 @@ import {
   selectFilteredNotifications,
   selectNotificationCounts,
   selectNotificationsLoading,
-  selectNotificationsError,
   selectCurrentFilter,
   selectUnreadCount,
 } from '../../store/redux/notificationSlice/selectors'
@@ -47,7 +46,6 @@ function Notifications() {
   const filteredNotifications = useSelector(selectFilteredNotifications)
   const filterCounts = useSelector(selectNotificationCounts)
   const isLoading = useSelector(selectNotificationsLoading)
-  const error = useSelector(selectNotificationsError)
   const activeFilter = useSelector(selectCurrentFilter)
   const unreadCount = useSelector(selectUnreadCount)
 
