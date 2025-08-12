@@ -31,20 +31,6 @@ function ScheduledMeetings() {
   )
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
-  function getIds(list: Meeting[]): number[] {
-    return list.map((m) => m.id)
-  }
-
-  function findDuplicateIds(ids: number[]): number[] {
-    const seen = new Set<number>()
-    const dups = new Set<number>()
-    ids.forEach((id) => {
-      if (seen.has(id)) dups.add(id)
-      else seen.add(id)
-    })
-    return Array.from(dups)
-  }
-
   // Загружаем комнаты при монтировании компонента
   useEffect(() => {
     if (user.isAuthenticated && user.id) {
@@ -172,52 +158,7 @@ function ScheduledMeetings() {
     }
   }, [allMeetings, createdMeetings, joinedMeetings])
 
-  useEffect(() => {
-    const roomsIds = rooms.map((r) => r.id)
-    const createdIds = getIds(createdMeetings)
-    const joinedIds = getIds(joinedMeetings)
-    const allIdsBefore = [...createdIds, ...joinedIds]
-    const duplicatesBefore = findDuplicateIds(allIdsBefore)
-    const filteredIds = getIds(filteredMeetings)
-    const duplicatesFiltered = findDuplicateIds(filteredIds)
-
-    console.groupCollapsed('[ScheduledMeetings] debug')
-    console.log('userId:', user.id, 'isAuthenticated:', user.isAuthenticated)
-    console.log(
-      'roomStatuses keys:',
-      Object.keys(roomStatuses || {}).length,
-      roomStatuses
-    )
-    console.log('rooms len:', rooms.length, 'ids:', roomsIds)
-    console.log('created len:', createdMeetings.length, 'ids:', createdIds)
-    console.log('joined len:', joinedMeetings.length, 'ids:', joinedIds)
-    console.log(
-      'all (before dedup) len:',
-      allIdsBefore.length,
-      'dupIds:',
-      duplicatesBefore
-    )
-    console.log('allMeetings (after dedup) len:', allMeetings.length)
-    console.log(
-      'activeFilter:',
-      activeFilter,
-      'filtered len:',
-      filteredMeetings.length,
-      'dupIds in filtered:',
-      duplicatesFiltered
-    )
-    console.groupEnd()
-  }, [
-    rooms,
-    roomStatuses,
-    createdMeetings,
-    joinedMeetings,
-    allMeetings,
-    filteredMeetings,
-    activeFilter,
-    user.id,
-    user.isAuthenticated,
-  ])
+  // удалены отладочные логи
 
   if (!user.isAuthenticated) {
     return (

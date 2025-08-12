@@ -22,11 +22,11 @@ import { fetchRooms } from '../../store/redux/roomSlice/roomSlice'
 import { RootState, AppDispatch } from '../../store/store'
 import { ApiRoom } from '../../store/redux/roomSlice/roomTypes'
 import Loader from '../../components/Loader/Loader'
+import { prefetchUsers } from '../../hooks/useUserData'
 
 // Функция для маппинга ApiRoom в Meeting
 export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
   if (!apiRoom) {
-    console.error('mapApiRoomToMeeting - apiRoom is undefined')
     throw new Error('ApiRoom is undefined')
   }
 
@@ -66,9 +66,7 @@ export function mapApiRoomToMeeting(apiRoom: ApiRoom): Meeting {
         new Date(endTime),
         new Date(startTime)
       )
-    } catch (e) {
-      console.error('Error calculating duration:', e)
-    }
+    } catch (e) {}
   }
 
   const slug = (topic || 'unknown')
@@ -133,72 +131,84 @@ function Meetings() {
     dispatch(fetchRooms())
   }, [dispatch])
 
-  const filteredMeetings = useMemo(() => {
-    if (!apiRooms) return []
+  // Фильтрация и сортировка по ApiRoom; маппинг в Meeting только для текущей страницы
+  const { paginatedMeetings, filteredCount, pageCreatorIds } = useMemo(() => {
+    const empty = {
+      paginatedMeetings: [] as Meeting[],
+      filteredCount: 0,
+      pageCreatorIds: [] as number[],
+    }
+    if (!apiRooms || apiRooms.length === 0) return empty
 
-    const mappedMeetings = apiRooms.map(mapApiRoomToMeeting)
+    const categoryFilter = (activeFilters.category || '').toLowerCase()
+    const languageFilter = (activeFilters.language || '').toLowerCase()
+    const proficiencyFilter = (activeFilters.proficiency || '').toLowerCase()
+    const dateFilter = activeFilters.date || ''
 
-    return mappedMeetings
-      .filter((meeting) => {
-        const meetingDate = new Date(meeting.startTime)
-          .toISOString()
-          .split('T')[0]
+    const filteredSortedRooms = apiRooms
+      .filter((room) => {
+        const roomCategoryName = (
+          room.category?.name ||
+          room.categoryName ||
+          ''
+        ).toLowerCase()
+        const roomLanguage = (room.language || '').toLowerCase()
+        const roomProficiency = (room.languageLvl || '').toLowerCase()
+        const roomDate = new Date(room.startTime).toISOString().split('T')[0]
 
-        // Сравниваем значения, приводя их к нижнему регистру
-        const categoryMatch =
-          !activeFilters.category ||
-          meeting.category.toLowerCase() ===
-            activeFilters.category.toLowerCase()
-
-        const languageMatch =
-          !activeFilters.language ||
-          meeting.language.toLowerCase() ===
-            activeFilters.language.toLowerCase()
-
-        const proficiencyMatch =
-          !activeFilters.proficiency ||
-          meeting.proficiency?.toLowerCase() ===
-            activeFilters.proficiency.toLowerCase()
-
-        const dateMatch =
-          !activeFilters.date || meetingDate === activeFilters.date
-
-        return categoryMatch && languageMatch && proficiencyMatch && dateMatch
+        if (categoryFilter && roomCategoryName !== categoryFilter) return false
+        if (languageFilter && roomLanguage !== languageFilter) return false
+        if (proficiencyFilter && roomProficiency !== proficiencyFilter)
+          return false
+        if (dateFilter && roomDate !== dateFilter) return false
+        return true
       })
       .sort((a, b) => {
-        const now = new Date()
-        const aEndTime = new Date(a.endTime)
-        const bEndTime = new Date(b.endTime)
-        const aStartTime = new Date(a.startTime)
-        const bStartTime = new Date(b.startTime)
+        const now = Date.now()
+        const aEnd = new Date(a.endTime).getTime()
+        const bEnd = new Date(b.endTime).getTime()
+        const aStart = new Date(a.startTime).getTime()
+        const bStart = new Date(b.startTime).getTime()
 
-        // Проверяем, прошла ли встреча
-        const aIsPast = aEndTime < now
-        const bIsPast = bEndTime < now
-
-        // Если обе встречи прошли или обе предстоящие
+        const aIsPast = aEnd < now
+        const bIsPast = bEnd < now
         if (aIsPast === bIsPast) {
-          if (aIsPast) {
-            // Для прошедших встреч сортируем по времени окончания (более поздние сначала)
-            return bEndTime.getTime() - aEndTime.getTime()
-          } else {
-            // Для предстоящих встреч сортируем по времени начала
-            return aStartTime.getTime() - bStartTime.getTime()
-          }
+          return aIsPast ? bEnd - aEnd : aStart - bStart
         }
-
-        // Если одна встреча прошла, а другая нет
         return aIsPast ? 1 : -1
       })
-  }, [apiRooms, activeFilters])
 
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredMeetings.length / itemsPerPage)
-  const startIndex = (page - 1) * itemsPerPage
-  const paginatedMeetings = filteredMeetings.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  )
+    const total = filteredSortedRooms.length
+    const start = (page - 1) * itemsPerPage
+    const end = start + itemsPerPage
+    const pageRooms = filteredSortedRooms.slice(start, end)
+
+    // Маппим только видимые элементы
+    const meetings = pageRooms.map(mapApiRoomToMeeting)
+    // ID организаторов текущей страницы (если есть)
+    const creatorIds = pageRooms
+      .map((room) =>
+        room.creator && typeof room.creator.id === 'number'
+          ? room.creator.id
+          : null
+      )
+      .filter((id): id is number => id !== null)
+
+    return {
+      paginatedMeetings: meetings,
+      filteredCount: total,
+      pageCreatorIds: creatorIds,
+    }
+  }, [apiRooms, activeFilters, page, itemsPerPage])
+
+  const totalPages = Math.max(1, Math.ceil(filteredCount / itemsPerPage))
+
+  // Префетчим организаторов для карточек текущей страницы
+  useEffect(() => {
+    if (pageCreatorIds && pageCreatorIds.length > 0) {
+      prefetchUsers(pageCreatorIds).catch(() => {})
+    }
+  }, [pageCreatorIds])
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -261,7 +271,7 @@ function Meetings() {
       <RoomFilter onFiltersChange={handleFiltersChange} />
 
       <Box sx={meetingCardStyle}>
-        {filteredMeetings.length > 0 ? (
+        {filteredCount > 0 ? (
           <>
             <Stack spacing={3} mt={3}>
               {paginatedMeetings.map((meeting) => {
