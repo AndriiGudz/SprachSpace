@@ -5,7 +5,7 @@ import { ReactComponent as CalendarIcon } from '../../assets/icon/BiCalendar.svg
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../store/store'
-import { fetchRooms } from '../../store/redux/roomSlice/roomSlice'
+import { fetchRoomStatusesByUser } from '../../store/redux/roomSlice/roomSlice'
 import { Meeting } from '../../components/MeetingCard/types'
 import MeetingCardWithCreator from '../../components/MeetingCard/MeetingCardWithCreator'
 import Loader from '../../components/Loader/Loader'
@@ -26,17 +26,31 @@ function ScheduledMeetings() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user)
-  const { rooms, isLoading, userParticipations } = useSelector(
+  const { rooms, isLoading, roomStatuses } = useSelector(
     (state: RootState) => state.rooms
   )
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
+  function getIds(list: Meeting[]): number[] {
+    return list.map((m) => m.id)
+  }
+
+  function findDuplicateIds(ids: number[]): number[] {
+    const seen = new Set<number>()
+    const dups = new Set<number>()
+    ids.forEach((id) => {
+      if (seen.has(id)) dups.add(id)
+      else seen.add(id)
+    })
+    return Array.from(dups)
+  }
+
   // Загружаем комнаты при монтировании компонента
   useEffect(() => {
-    if (user.isAuthenticated) {
-      dispatch(fetchRooms() as any)
+    if (user.isAuthenticated && user.id) {
+      dispatch(fetchRoomStatusesByUser(user.id) as any)
     }
-  }, [dispatch, user.isAuthenticated])
+  }, [dispatch, user.isAuthenticated, user.id])
 
   // Используем ту же функцию что и в Meetings.tsx для единообразия
   // const convertApiRoomToMeeting уже не нужна - используем mapApiRoomToMeeting
@@ -44,25 +58,44 @@ function ScheduledMeetings() {
   // Получаем встречи где пользователь является организатором
   const createdMeetings = useMemo(() => {
     if (!user.id) return []
-    return rooms
-      .filter((room) => room.creator?.id === user.id)
+    const idsFromStatuses = Object.keys(roomStatuses || {}).map((k) =>
+      Number(k)
+    )
+    const roomsFromStatuses = rooms.filter((r) =>
+      idsFromStatuses.includes(r.id)
+    )
+    return roomsFromStatuses
+      .filter(
+        (room) =>
+          room.creator?.id === user.id ||
+          roomStatuses?.[room.id]?.type === 'CREATOR'
+      )
       .map(mapApiRoomToMeeting)
-  }, [rooms, user.id])
+  }, [rooms, user.id, roomStatuses])
 
   // Получаем встречи где пользователь является участником
   const joinedMeetings = useMemo(() => {
     if (!user.id) return []
-    return rooms
-      .filter(
-        (room) =>
-          room.creator?.id !== user.id && // не организатор
-          (userParticipations[room.id]?.status === 'ACCEPTED' || // принятые заявки
-            room.participants?.some(
-              (p) => p?.user?.id === user.id && p?.status === 'ACCEPTED'
-            ))
-      )
+    const idsFromStatuses = Object.keys(roomStatuses || {}).map((k) =>
+      Number(k)
+    )
+    const roomsFromStatuses = rooms.filter((r) =>
+      idsFromStatuses.includes(r.id)
+    )
+    return roomsFromStatuses
+      .filter((room) => {
+        const statusItem = roomStatuses?.[room.id]
+        if (!statusItem) return false
+        if (room.creator?.id === user.id) return false
+        // статус не учитываем. Участник — по типам заявки/приглашения
+        return (
+          statusItem.type === 'REQUESTED_BY_USER' ||
+          statusItem.type === 'INVITED_BY_CREATOR' ||
+          statusItem.type === 'INVITED_BY_ORGANIZER'
+        )
+      })
       .map(mapApiRoomToMeeting)
-  }, [rooms, user.id, userParticipations])
+  }, [rooms, user.id, roomStatuses])
 
   // Определяем прошедшие встречи
   const isPastMeeting = (meeting: Meeting): boolean => {
@@ -71,7 +104,14 @@ function ScheduledMeetings() {
 
   // Все встречи пользователя
   const allMeetings = useMemo(() => {
-    return [...createdMeetings, ...joinedMeetings].sort((a, b) => {
+    const merged = [...createdMeetings, ...joinedMeetings]
+    const uniqueById = new Map<number, Meeting>()
+    merged.forEach((m) => {
+      if (typeof m.id === 'number') uniqueById.set(m.id, m)
+    })
+    const deduped = Array.from(uniqueById.values())
+
+    return deduped.sort((a, b) => {
       const now = new Date()
       const aEndTime = new Date(a.endTime)
       const bEndTime = new Date(b.endTime)
@@ -131,6 +171,53 @@ function ScheduledMeetings() {
       joined: joinedMeetings.length,
     }
   }, [allMeetings, createdMeetings, joinedMeetings])
+
+  useEffect(() => {
+    const roomsIds = rooms.map((r) => r.id)
+    const createdIds = getIds(createdMeetings)
+    const joinedIds = getIds(joinedMeetings)
+    const allIdsBefore = [...createdIds, ...joinedIds]
+    const duplicatesBefore = findDuplicateIds(allIdsBefore)
+    const filteredIds = getIds(filteredMeetings)
+    const duplicatesFiltered = findDuplicateIds(filteredIds)
+
+    console.groupCollapsed('[ScheduledMeetings] debug')
+    console.log('userId:', user.id, 'isAuthenticated:', user.isAuthenticated)
+    console.log(
+      'roomStatuses keys:',
+      Object.keys(roomStatuses || {}).length,
+      roomStatuses
+    )
+    console.log('rooms len:', rooms.length, 'ids:', roomsIds)
+    console.log('created len:', createdMeetings.length, 'ids:', createdIds)
+    console.log('joined len:', joinedMeetings.length, 'ids:', joinedIds)
+    console.log(
+      'all (before dedup) len:',
+      allIdsBefore.length,
+      'dupIds:',
+      duplicatesBefore
+    )
+    console.log('allMeetings (after dedup) len:', allMeetings.length)
+    console.log(
+      'activeFilter:',
+      activeFilter,
+      'filtered len:',
+      filteredMeetings.length,
+      'dupIds in filtered:',
+      duplicatesFiltered
+    )
+    console.groupEnd()
+  }, [
+    rooms,
+    roomStatuses,
+    createdMeetings,
+    joinedMeetings,
+    allMeetings,
+    filteredMeetings,
+    activeFilter,
+    user.id,
+    user.isAuthenticated,
+  ])
 
   if (!user.isAuthenticated) {
     return (

@@ -4,6 +4,7 @@ import {
   CreateRoomApiRequest,
   RoomSliceState,
   RoomParticipant,
+  RoomStatusItem,
 } from './roomTypes'
 import type { RootState } from '../../store' // Предполагаем, что store.ts находится в ../../store
 
@@ -16,6 +17,7 @@ const initialState: RoomSliceState = {
   isLoading: false,
   error: null,
   userParticipations: {},
+  roomStatuses: {},
 }
 
 // Async Thunk для создания комнаты
@@ -64,6 +66,29 @@ export const fetchRooms = createAsyncThunk<
     return rejectWithValue(
       error.message || 'An unknown error occurred during fetch'
     )
+  }
+})
+
+// Новый thunk: статусы комнат для пользователя
+export const fetchRoomStatusesByUser = createAsyncThunk<
+  RoomStatusItem[],
+  number,
+  { rejectValue: string }
+>('rooms/fetchRoomStatusesByUser', async (userId, { rejectWithValue }) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/room/roomStatus?userId=${userId}`
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      return rejectWithValue(
+        errorData.message || 'Failed to fetch room statuses by user'
+      )
+    }
+    const data: RoomStatusItem[] = await response.json()
+    return data
+  } catch (error: any) {
+    return rejectWithValue(error.message || 'Unknown error occurred')
   }
 })
 
@@ -217,6 +242,49 @@ const roomSlice = createSlice({
         }
       )
       .addCase(fetchRooms.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
+      // Fetch room statuses for user
+      .addCase(fetchRoomStatusesByUser.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(
+        fetchRoomStatusesByUser.fulfilled,
+        (state, action: PayloadAction<RoomStatusItem[]>) => {
+          state.isLoading = false
+          // нормализуем статусы в map roomId -> { status, type }
+          const map: NonNullable<RoomSliceState['roomStatuses']> = {}
+          action.payload.forEach((item) => {
+            const roomId = (item.room as any)?.id
+            if (typeof roomId === 'number') {
+              map[roomId] = { status: item.status, type: item.type }
+            }
+          })
+          state.roomStatuses = map
+          // Можем также подсетить краткие карточки в rooms, если приходит room внутри ответа
+          // Разрешаем неполные данные: сливаем по id
+          const mergedById: Record<number, ApiRoom> = {}
+          state.rooms.forEach((r) => {
+            if (typeof r.id === 'number') mergedById[r.id] = r
+          })
+          action.payload.forEach((item) => {
+            const r: any = item.room || {}
+            const id: number | undefined = r?.id
+            if (typeof id === 'number') {
+              const normalized: any = { ...r }
+              if (typeof normalized.category === 'string') {
+                normalized.categoryName = normalized.category
+                delete normalized.category
+              }
+              mergedById[id] = { ...mergedById[id], ...normalized }
+            }
+          })
+          state.rooms = Object.values(mergedById)
+        }
+      )
+      .addCase(fetchRoomStatusesByUser.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload
       })
