@@ -86,6 +86,20 @@ export interface RoomSliceState {
   isLoading: boolean // Замена 'status' для простоты
   error: string | null | undefined // Сохраняем сообщение об ошибке
   userParticipations: Record<number, RoomParticipant> // roomId -> participant data
+  // Карта статусов участия пользователя по id комнаты
+  roomStatuses?: Record<
+    number,
+    {
+      status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'DECLINED'
+      type:
+        | 'REQUESTED_BY_USER'
+        | 'INVITED_BY_ORGANIZER'
+        | 'CREATOR'
+        | 'INVITED_BY_CREATOR'
+        | 'VISITED_WITHOUT_AN_INVITATION'
+        | string
+    }
+  >
 }
 
 // Можно добавить тип для пользователя, если он будет использоваться в участниках
@@ -145,4 +159,17 @@ export interface RoomParticipant {
     | 'CREATOR'
     | 'INVITED_BY_CREATOR'
     | 'VISITED_WITHOUT_AN_INVITATION'
+}
+
+// Ответ эндпоинта /api/room/roomStatus?userId=...
+export interface RoomStatusItem {
+  room: Partial<ApiRoom> & { category?: any }
+  status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'REJECTED'
+  type:
+    | 'REQUESTED_BY_USER'
+    | 'INVITED_BY_ORGANIZER'
+    | 'CREATOR'
+    | 'INVITED_BY_CREATOR'
+    | 'VISITED_WITHOUT_AN_INVITATION'
+    | string
 }

@@ -1,10 +1,6 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 
-interface ContentBoxProps {
-  isShowResult: boolean
-}
-
 const rotateAnimation = keyframes`
     100% {
       transform: rotate(1turn);

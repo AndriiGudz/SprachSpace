@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { getUserById } from '../api/userApi'
 
 interface UserData {
@@ -29,68 +29,87 @@ interface UserDataCache {
   [userId: number]: UserData
 }
 
+// Глобальные структуры кэша, разделяемые всеми инстансами хука
+const GLOBAL_CACHE: UserDataCache = {}
+const INFLIGHT = new Map<number, Promise<UserData | null>>()
+const LAST_UPDATED: Record<number, number> = {}
+const SUBSCRIBERS = new Set<() => void>()
+const TTL_MS = 5 * 60 * 1000 // 5 минут
+
+function notifySubscribers() {
+  SUBSCRIBERS.forEach((fn) => {
+    try {
+      fn()
+    } catch {}
+  })
+}
+
+function isFresh(userId: number): boolean {
+  const ts = LAST_UPDATED[userId]
+  return typeof ts === 'number' && Date.now() - ts < TTL_MS
+}
+
+async function fetchAndCache(userId: number): Promise<UserData | null> {
+  // Дедупликация параллельных запросов
+  if (INFLIGHT.has(userId)) {
+    return INFLIGHT.get(userId) as Promise<UserData | null>
+  }
+
+  const p = (async () => {
+    try {
+      const data = await getUserById(userId)
+      if (data) {
+        GLOBAL_CACHE[userId] = data
+        LAST_UPDATED[userId] = Date.now()
+        notifySubscribers()
+      }
+      return data
+    } finally {
+      INFLIGHT.delete(userId)
+    }
+  })()
+
+  INFLIGHT.set(userId, p)
+  return p
+}
+
+export async function prefetchUsers(userIds: number[]): Promise<void> {
+  const unique = Array.from(new Set(userIds)).filter(
+    (id) => !GLOBAL_CACHE[id] || !isFresh(id)
+  )
+  if (unique.length === 0) return
+  await Promise.allSettled(unique.map((id) => fetchAndCache(id)))
+}
+
 export function useUserData() {
-  const [userCache, setUserCache] = useState<UserDataCache>({})
-  const [loadingUsers, setLoadingUsers] = useState<Set<number>>(new Set())
+  // Локальный тикер, чтобы реагировать на обновления глобального кэша
+  const [, setTick] = useState(0)
 
-  const fetchUserData = useCallback(
-    async (userId: number): Promise<UserData | null> => {
-      // Если данные уже в кэше, возвращаем их
-      if (userCache[userId]) {
-        return userCache[userId]
-      }
+  useEffect(() => {
+    const fn = () => setTick((n) => n + 1)
+    SUBSCRIBERS.add(fn)
+    return () => {
+      SUBSCRIBERS.delete(fn)
+    }
+  }, [])
 
-      // Если уже загружаем этого пользователя, не делаем повторный запрос
-      if (loadingUsers.has(userId)) {
-        return null
-      }
+  const fetchUserData = useCallback(async (userId: number) => {
+    if (GLOBAL_CACHE[userId] && isFresh(userId)) return GLOBAL_CACHE[userId]
+    return await fetchAndCache(userId)
+  }, [])
 
-      try {
-        setLoadingUsers((prev) => new Set(prev).add(userId))
+  const getUserData = useCallback((userId: number): UserData | null => {
+    return GLOBAL_CACHE[userId] || null
+  }, [])
 
-        const userData = await getUserById(userId)
-
-        if (userData) {
-          // Кэшируем данные пользователя
-          setUserCache((prev) => ({
-            ...prev,
-            [userId]: userData,
-          }))
-        }
-
-        return userData
-      } catch (error) {
-        console.error(`Error fetching user data for ID ${userId}:`, error)
-        return null
-      } finally {
-        setLoadingUsers((prev) => {
-          const newSet = new Set(prev)
-          newSet.delete(userId)
-          return newSet
-        })
-      }
-    },
-    [userCache, loadingUsers]
-  )
-
-  const getUserData = useCallback(
-    (userId: number): UserData | null => {
-      return userCache[userId] || null
-    },
-    [userCache]
-  )
-
-  const isUserLoading = useCallback(
-    (userId: number): boolean => {
-      return loadingUsers.has(userId)
-    },
-    [loadingUsers]
-  )
+  const isUserLoading = useCallback((userId: number): boolean => {
+    return INFLIGHT.has(userId)
+  }, [])
 
   return {
     fetchUserData,
     getUserData,
     isUserLoading,
-    userCache,
+    userCache: GLOBAL_CACHE,
   }
 }
