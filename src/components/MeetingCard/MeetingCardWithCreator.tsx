@@ -24,7 +24,7 @@ function MeetingCardWithCreator({
   meeting,
   isPast = false,
 }: MeetingCardWithCreatorProps) {
-  const { fetchUserData, getUserData, isUserLoading } = useUserData()
+  const { fetchUserData, getUserData } = useUserData()
 
   // Получаем ID организатора из creator
   const organizerId = useMemo(() => {
@@ -93,22 +93,7 @@ function MeetingCardWithCreator({
     }
   }, [meeting, organizerData])
 
-  // Показываем загрузку если данные организатора еще загружаются
-  if (organizerId && isUserLoading(organizerId)) {
-    return (
-      <div
-        style={{
-          padding: '16px',
-          textAlign: 'center',
-          color: '#666',
-          fontStyle: 'italic',
-          fontSize: '14px',
-        }}
-      >
-        Загрузка данных организатора...
-      </div>
-    )
-  }
+  // Больше не блокируем карточку лоадером — рендерим сразу без организатора, он догрузится
 
   // Если не удалось загрузить данные организатора, показываем карточку без аватара
   if (organizerId && !organizerData && !warnedOrganizerIds.has(organizerId)) {

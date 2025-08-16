@@ -76,6 +76,9 @@ function MeetingChat() {
     'none' | 'pending' | 'accepted' | 'rejected'
   >('none')
   const [joinError, setJoinError] = useState<string | null>(null)
+  const [backendJoinStatus, setBackendJoinStatus] = useState<
+    'PENDING' | 'ACCEPTED' | 'DECLINED' | null
+  >(null)
 
   // Получаем список комнат из Redux store
   const { rooms, isLoading, userParticipations } = useSelector(
@@ -170,6 +173,55 @@ function MeetingChat() {
 
     return null
   }, [meeting?.id, meeting?.participants, userParticipations, userId]) // Добавляем meeting?.participants отдельно
+
+  // Определяем факт принятого участия (учитываем публичные комнаты, где статус может отсутствовать)
+  const isAcceptedParticipant = useMemo(() => {
+    if (isOrganizer) return true
+    if (backendJoinStatus === 'ACCEPTED') return true
+    if (!userParticipation) return false
+    const normalized = userParticipation.status?.toUpperCase()
+    if (normalized === 'ACCEPTED') return true
+    // В публичных комнатах отсутствие статуса трактуем как принятое участие (сервер может не прислать status)
+    if (
+      !meeting?.privateRoom &&
+      (normalized === undefined || normalized === '')
+    ) {
+      return true
+    }
+    return false
+  }, [isOrganizer, backendJoinStatus, userParticipation, meeting?.privateRoom])
+
+  // Единый вычисленный статус заявки пользователя для UI-индикации
+  const resolvedJoinStatus = useMemo<
+    'PENDING' | 'ACCEPTED' | 'REJECTED' | null
+  >(() => {
+    if (isOrganizer) return 'ACCEPTED'
+    if (backendJoinStatus) {
+      return backendJoinStatus === 'DECLINED' ? 'REJECTED' : backendJoinStatus
+    }
+    const local = userParticipation?.status?.toUpperCase() as
+      | 'PENDING'
+      | 'ACCEPTED'
+      | 'REJECTED'
+      | undefined
+    if (local) return local
+    if (
+      isAcceptedParticipant ||
+      joinRequestStatus === 'accepted' ||
+      hasJoinedRoom
+    )
+      return 'ACCEPTED'
+    if (joinRequestStatus === 'pending') return 'PENDING'
+    if (joinRequestStatus === 'rejected') return 'REJECTED'
+    return null
+  }, [
+    isOrganizer,
+    backendJoinStatus,
+    userParticipation?.status,
+    isAcceptedParticipant,
+    joinRequestStatus,
+    hasJoinedRoom,
+  ])
 
   // Создаем стабильную ссылку на ID комнаты
   const meetingIdRef = useRef<number | null>(null)
@@ -294,54 +346,63 @@ function MeetingChat() {
   }, [isOnline, meeting?.id, updateRoomData])
 
   // Функция для автоматического принятия приглашения (для публичных комнат)
-  const acceptInvitation = useCallback(async (participantId: number) => {
-    try {
-      if (participantId === undefined || participantId === null) {
-        console.warn(
-          '⚠️ acceptInvitation called with invalid participantId:',
-          participantId
-        )
-        return { success: false, error: 'participantId is undefined' }
-      }
-
-      console.log('🚀 Auto-accept → PUT /adminRoom/accept', {
-        participantId,
-        timestamp: new Date().toISOString(),
-      })
-
-      const response = await fetch(
-        `http://localhost:8080/api/room/adminRoom/accept?participantId=${participantId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+  const acceptInvitation = useCallback(
+    async (joiningUserId: number, roomId: number) => {
+      try {
+        if (
+          joiningUserId === undefined ||
+          joiningUserId === null ||
+          roomId === undefined ||
+          roomId === null
+        ) {
+          console.warn('⚠️ acceptInvitation invalid params:', {
+            joiningUserId,
+            roomId,
+          })
+          return { success: false, error: 'Invalid userId or roomId' }
         }
-      )
 
-      console.log('📡 Auto-accept response:', {
-        status: response.status,
-        statusText: response.statusText,
-      })
+        console.log('🚀 Auto-accept → PUT /adminRoom/accept', {
+          userId: joiningUserId,
+          roomId,
+          timestamp: new Date().toISOString(),
+        })
 
-      if (response.ok) {
-        return { success: true }
-      } else if (response.status === 409) {
-        // 409 Conflict означает что участник уже принят - это нормально
-        console.log('Participant already accepted, proceeding')
-        return { success: true, alreadyAccepted: true }
-      } else {
-        console.error('Failed to accept invitation:', response.statusText)
-        return { success: false, error: response.statusText }
+        const response = await fetch(
+          `http://localhost:8080/api/room/adminRoom/accept?userId=${joiningUserId}&roomId=${roomId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        console.log('📡 Auto-accept response:', {
+          status: response.status,
+          statusText: response.statusText,
+        })
+
+        if (response.ok) {
+          return { success: true }
+        } else if (response.status === 409) {
+          // 409 Conflict означает что участник уже принят - это нормально
+          console.log('Participant already accepted, proceeding')
+          return { success: true, alreadyAccepted: true }
+        } else {
+          console.error('Failed to accept invitation:', response.statusText)
+          return { success: false, error: response.statusText }
+        }
+      } catch (error) {
+        console.error('Error accepting invitation:', error)
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
       }
-    } catch (error) {
-      console.error('Error accepting invitation:', error)
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      }
-    }
-  }, [])
+    },
+    []
+  )
 
   // Функция для перенаправления на авторизацию с возвратом
   const handleAuthRedirect = useCallback(() => {
@@ -419,18 +480,18 @@ function MeetingChat() {
             acceptedCount,
             maxParticipants: meeting.maxParticipants,
             hasCapacity,
-            payloadParticipantId: participant?.id,
+            payloadParticipantUserId: participant?.user?.id,
           })
           try {
-            const participantIdToAccept = participant?.id as number | undefined
-            if (participantIdToAccept === undefined) {
-              console.warn(
-                '⚠️ No participant.id in payload; skipping auto-accept'
-              )
+            const requestingUserId = (participant?.user?.id ?? userId) as
+              | number
+              | undefined
+            if (requestingUserId === undefined) {
+              console.warn('⚠️ No userId resolved for auto-accept; skipping')
             }
             const acceptResult =
-              hasCapacity && participantIdToAccept !== undefined
-                ? await acceptInvitation(participantIdToAccept)
+              hasCapacity && requestingUserId !== undefined
+                ? await acceptInvitation(requestingUserId, meeting.id)
                 : { success: false }
 
             if (acceptResult.success) {
@@ -473,6 +534,56 @@ function MeetingChat() {
     userParticipations,
   ])
 
+  // Загрузка статусов комнат пользователя с бэкенда и синхронизация локального статуса
+  const fetchUserRoomStatus = useCallback(
+    async (targetUserId: number, targetRoomId: number) => {
+      try {
+        console.log('🔎 Fetching user room statuses', {
+          userId: targetUserId,
+          roomId: targetRoomId,
+        })
+        const resp = await fetch(
+          `http://localhost:8080/api/room/roomStatus?userId=${targetUserId}`
+        )
+        if (!resp.ok) {
+          console.warn(
+            'roomStatus response not ok:',
+            resp.status,
+            resp.statusText
+          )
+          setBackendJoinStatus(null)
+          return
+        }
+        const data: Array<{
+          room?: { id?: number }
+          status?: string
+          type?: string
+        }> = await resp.json()
+        const entry = (data || []).find((r) => r.room?.id === targetRoomId)
+        const status = entry?.status?.toUpperCase() as
+          | 'PENDING'
+          | 'ACCEPTED'
+          | 'DECLINED'
+          | undefined
+        console.log('🔎 roomStatus matched entry:', entry)
+        setBackendJoinStatus(status ?? null)
+      } catch (e) {
+        console.error('Failed to fetch user roomStatus:', e)
+        setBackendJoinStatus(null)
+      }
+    },
+    []
+  )
+
+  // Тригерим загрузку статуса при наличии пользователя и комнаты
+  useEffect(() => {
+    if (isAuthenticated && userId && meeting?.id) {
+      fetchUserRoomStatus(userId, meeting.id)
+    } else {
+      setBackendJoinStatus(null)
+    }
+  }, [isAuthenticated, userId, meeting?.id, fetchUserRoomStatus])
+
   // Сбрасываем локальное состояние при смене пользователя
   useEffect(() => {
     console.log('User changed, resetting local join states')
@@ -488,6 +599,25 @@ function MeetingChat() {
       setHasJoinedRoom(true)
       setJoinRequestStatus('accepted')
       setIsJoiningRoom(false)
+    } else if (backendJoinStatus) {
+      // Приоритетно используем статус с бэкенда, если он известен
+      const normalized = backendJoinStatus.toUpperCase()
+      if (normalized === 'PENDING') {
+        setJoinRequestStatus('pending')
+        setIsJoiningRoom(false)
+        setHasJoinedRoom(false)
+        console.log('Set status to PENDING (backend)')
+      } else if (normalized === 'ACCEPTED') {
+        setJoinRequestStatus('accepted')
+        setHasJoinedRoom(true)
+        setIsJoiningRoom(false)
+        console.log('Set status to ACCEPTED (backend)')
+      } else if (normalized === 'DECLINED') {
+        setJoinRequestStatus('rejected')
+        setIsJoiningRoom(false)
+        setHasJoinedRoom(false)
+        console.log('Set status to REJECTED (backend)')
+      }
     } else if (userParticipation) {
       // Если у пользователя есть заявка, устанавливаем соответствующий статус
       console.log(
@@ -499,7 +629,7 @@ function MeetingChat() {
         setIsJoiningRoom(false) // Убираем лоадер
         setHasJoinedRoom(false)
         console.log('Set status to PENDING')
-      } else if (userParticipation.status === 'ACCEPTED') {
+      } else if (isAcceptedParticipant) {
         setJoinRequestStatus('accepted')
         setHasJoinedRoom(true)
         setIsJoiningRoom(false)
@@ -518,7 +648,14 @@ function MeetingChat() {
         setHasJoinedRoom(false)
       }
     }
-  }, [meeting?.id, isOrganizer, userParticipation, isJoiningRoom]) // Используем только meeting?.id
+  }, [
+    meeting?.id,
+    isOrganizer,
+    userParticipation,
+    isJoiningRoom,
+    isAcceptedParticipant,
+    backendJoinStatus,
+  ]) // Используем только meeting?.id
 
   // Таймер для обновления текущего времени
   useEffect(() => {
@@ -661,19 +798,16 @@ function MeetingChat() {
       activeCondition: activeParticipants >= minParticipants, // Достаточно активных
     }
 
-    const reasons = []
-    if (!conditions.timeCondition) {
-      reasons.push({
+    const reasons = [
+      {
         type: 'time',
         message: t(
           'meetingChat.waitingConditions.timeCondition',
           'Meeting opens 5 minutes before start'
         ),
-        met: false,
-      })
-    }
-    if (!conditions.waitingCondition) {
-      reasons.push({
+        met: conditions.timeCondition,
+      },
+      {
         type: 'waiting',
         message: t(
           'meetingChat.waitingConditions.waitingCondition',
@@ -683,11 +817,9 @@ function MeetingChat() {
             current: waitingParticipants,
           }
         ),
-        met: false,
-      })
-    }
-    if (!conditions.activeCondition) {
-      reasons.push({
+        met: conditions.waitingCondition,
+      },
+      {
         type: 'active',
         message: t(
           'meetingChat.waitingConditions.activeCondition',
@@ -697,9 +829,9 @@ function MeetingChat() {
             current: activeParticipants,
           }
         ),
-        met: false,
-      })
-    }
+        met: conditions.activeCondition,
+      },
+    ]
 
     return {
       hasAccess:
@@ -828,7 +960,14 @@ function MeetingChat() {
                   alignItems: 'center',
                   mb: 1,
                   p: 1.5,
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  backgroundColor: reason.met
+                    ? 'rgba(76, 175, 80, 0.15)'
+                    : 'rgba(255, 193, 7, 0.1)',
+                  border: `1px solid ${
+                    reason.met
+                      ? 'rgba(76, 175, 80, 0.35)'
+                      : 'rgba(255, 193, 7, 0.35)'
+                  }`,
                   borderRadius: 1,
                 }}
               >
@@ -1190,7 +1329,11 @@ function MeetingChat() {
                   </>
                 )}
                 {/* Индикация присоединения текущего пользователя */}
-                {(userParticipation || isOrganizer) && (
+                {(userParticipation ||
+                  isOrganizer ||
+                  isAcceptedParticipant ||
+                  joinRequestStatus === 'accepted' ||
+                  resolvedJoinStatus) && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -1200,14 +1343,14 @@ function MeetingChat() {
                       pt: 1,
                       borderTop: '1px solid rgba(255,255,255,0.2)',
                       backgroundColor: isOrganizer
-                        ? 'rgba(255, 193, 7, 0.2)' // Золотой для организатора
-                        : userParticipation &&
-                          userParticipation.status === 'PENDING'
-                        ? 'rgba(255, 193, 7, 0.2)' // Желтый для pending
-                        : userParticipation &&
-                          userParticipation.status === 'ACCEPTED'
-                        ? 'rgba(76, 175, 80, 0.2)' // Зеленый для accepted
-                        : 'rgba(76, 175, 80, 0.2)', // Зеленый по умолчанию
+                        ? 'rgba(255, 193, 7, 0.2)'
+                        : (resolvedJoinStatus || userParticipation?.status) ===
+                          'PENDING'
+                        ? 'rgba(255, 193, 7, 0.2)'
+                        : (resolvedJoinStatus || userParticipation?.status) ===
+                          'ACCEPTED'
+                        ? 'rgba(76, 175, 80, 0.2)'
+                        : 'rgba(76, 175, 80, 0.2)',
                       borderRadius: 1,
                       px: 1,
                       py: 0.5,
@@ -1220,8 +1363,8 @@ function MeetingChat() {
                           {t('meetingChat.organizer', 'Вы организатор')}
                         </Typography>
                       </>
-                    ) : userParticipation &&
-                      userParticipation.status === 'PENDING' ? (
+                    ) : (resolvedJoinStatus || userParticipation?.status) ===
+                      'PENDING' ? (
                       <>
                         <Timer size={16} style={{ color: '#ff9800' }} />
                         <Typography variant="body2" sx={{ fontWeight: '500' }}>
@@ -1232,8 +1375,10 @@ function MeetingChat() {
                       <>
                         <CheckCircle size={16} style={{ color: '#4caf50' }} />
                         <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                          {userParticipation &&
-                          userParticipation.status === 'ACCEPTED'
+                          {(resolvedJoinStatus || userParticipation?.status) ===
+                            'ACCEPTED' ||
+                          isAcceptedParticipant ||
+                          joinRequestStatus === 'accepted'
                             ? t('meetingChat.requestAccepted', 'Заявка принята')
                             : t(
                                 'meetingChat.joinedWaitingRoom',
@@ -1326,6 +1471,8 @@ function MeetingChat() {
         {/* Video Area or Join Button */}
         {hasJoinedRoom ||
         isOrganizer ||
+        isAcceptedParticipant ||
+        joinRequestStatus === 'accepted' ||
         (userParticipation && userParticipation.status === 'ACCEPTED') ? (
           <Box sx={chatContainerStyle}>
             <Box sx={{ ...videoAreaStyle, position: 'relative' }}>
