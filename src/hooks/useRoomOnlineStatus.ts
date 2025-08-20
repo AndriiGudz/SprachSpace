@@ -203,55 +203,38 @@ export function useRoomOnlineStatus({
         timestamp: new Date().toISOString(),
       })
 
-      // Используем sendBeacon только при принудительном вызове (закрытие страницы)
-      if (forceBeacon && navigator.sendBeacon) {
-        console.log('📡 Attempting sendBeacon DELETE:', {
-          url,
-          data,
-          timestamp: new Date().toISOString(),
-        })
-
-        const success = navigator.sendBeacon(
-          url,
-          new Blob([data], { type: 'application/json' })
-        )
-
-        console.log('📡 sendBeacon result:', {
-          success,
-          timestamp: new Date().toISOString(),
-        })
-
-        if (success) {
-          console.log('✅ Successfully sent sendBeacon DELETE request')
-
-          // sendBeacon не позволяет читать ответ, но проверим данные через короткое время
-          setTimeout(async () => {
-            try {
-              console.log('🔍 Checking room data after sendBeacon DELETE...')
-              const checkResponse = await fetch(
-                `http://localhost:8080/api/room/id?roomId=${currentRoomIdRef.current}`
-              )
-              if (checkResponse.ok) {
-                const roomData = await checkResponse.json()
-                console.log('📊 Room data after sendBeacon DELETE:', {
-                  roomId: roomData.id,
-                  countOnlineUser: roomData.countOnlineUser,
-                  roomOnlineUsers: roomData.roomOnlineUsers?.length || 0,
-                  roomOnlineUsersData: roomData.roomOnlineUsers,
-                })
-              }
-            } catch (e) {
-              console.log('❌ Error checking room data after sendBeacon:', e)
-            }
-          }, 1000) // Проверяем через 1 секунду
-
-          hasJoinedRef.current = false
-          currentRoomIdRef.current = null
-          setIsOnline(false)
-          return
-        } else {
-          console.log('❌ sendBeacon failed, trying fetch')
+      // Используем максимально надежный способ при закрытии страницы: keepalive fetch, затем sendBeacon как запасной вариант
+      if (forceBeacon) {
+        let sent = false
+        try {
+          console.log('📡 Attempting fetch DELETE with keepalive')
+          // Не ждем ответа, чтобы не блокировать выгрузку страницы
+          fetch(url, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: data,
+            keepalive: true,
+          }).catch(() => {})
+          sent = true
+        } catch (e) {
+          console.log('❌ keepalive fetch not available or failed:', e)
         }
+
+        if (!sent && navigator.sendBeacon) {
+          console.log('📡 Attempting sendBeacon DELETE emulation')
+          const success = navigator.sendBeacon(
+            url,
+            new Blob([data], { type: 'application/json' })
+          )
+          console.log('📡 sendBeacon result:', { success })
+          if (success) {
+            hasJoinedRef.current = false
+            currentRoomIdRef.current = null
+            setIsOnline(false)
+            return
+          }
+        }
+        // Если выше не удалось гарантировать отправку, продолжим обычным путем ниже
       }
 
       // Fallback на обычный fetch
@@ -449,6 +432,18 @@ export function useRoomOnlineStatus({
     }
   }, [leaveOnline])
 
+  // Немедленно выходим из онлайн-статуса при потере аутентификации, даже если компонент еще не размонтирован
+  useEffect(() => {
+    if (
+      hasJoinedRef.current &&
+      !isAuthenticatedRef.current &&
+      isAuthenticated === false
+    ) {
+      console.log('🔒 Auth lost while in room, leaving online status')
+      leaveOnline(true)
+    }
+  }, [isAuthenticated, leaveOnline])
+
   // Обработчики событий браузера
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -461,16 +456,12 @@ export function useRoomOnlineStatus({
       }
     }
 
+    // Не снимаем онлайн при переходе вкладки в background, чтобы не терять участников
     const handleVisibilityChange = () => {
-      console.log('👁️ visibilitychange event triggered:', {
+      console.log('👁️ visibilitychange event:', {
         visibilityState: document.visibilityState,
-        hasJoinedRef: hasJoinedRef.current,
-        timestamp: new Date().toISOString(),
+        keepOnline: true,
       })
-      if (document.visibilityState === 'hidden' && hasJoinedRef.current) {
-        console.log('👁️ Page hidden, leaving room online')
-        leaveOnline(true) // Принудительно используем sendBeacon
-      }
     }
 
     const handlePageHide = () => {
