@@ -67,7 +67,6 @@ function MeetingChat() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [meeting, setMeeting] = useState<Meeting | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [activeParticipants] = useState(0) // TODO: Подключить к реальным данным Daily.co
   const [hasJoinedRoom, setHasJoinedRoom] = useState(false)
   const [isJoiningRoom, setIsJoiningRoom] = useState(false)
   const [isLoadingMeeting, setIsLoadingMeeting] = useState(true) // Состояние загрузки данных встречи
@@ -795,7 +794,7 @@ function MeetingChat() {
     const conditions = {
       timeCondition: minutesUntilStart <= 5, // За 5 минут до начала
       waitingCondition: waitingParticipants >= minParticipants, // Достаточно ожидающих
-      activeCondition: activeParticipants >= minParticipants, // Достаточно активных
+      activeCondition: onlineUsersCount >= minParticipants, // Достаточно активных (онлайн)
     }
 
     const reasons = [
@@ -826,7 +825,7 @@ function MeetingChat() {
           'Need {{min}} active participants, have {{current}}',
           {
             min: minParticipants,
-            current: activeParticipants,
+            current: onlineUsersCount,
           }
         ),
         met: conditions.activeCondition,
